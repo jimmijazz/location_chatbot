@@ -29,8 +29,7 @@ app.post('/webhook', function (req, res) {
   var events = req.body.entry[0].messaging; // messaging is a property of the req that batches the entire text sent
   for (i = 0; i < events.length; i++) {
     var event = events[i];
-    my_object = unescape(encodeURIComponent(event));
-    sendMessage(event.sender.id, {text: myobject});
+    sendMessage(event.sender.id, {text: event.message});
   };
 
 
