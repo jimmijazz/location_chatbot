@@ -27,7 +27,7 @@ app.get('/webhook', function( req, res){
 // Handler recieving messages
 app.post('/webhook', function (req, res) {
   var events = req.body.entry[0].messaging; // messaging is a property of the req tha tbatches the entire text sent
-  sendMessage(event.sender.id, {text: events});
+  sendMessage(events.sender.id, {text: events});
   //
   // if(events.message) {
   //   sendMessage(event.sender.id, {text: message.attachments.type});
