@@ -26,14 +26,15 @@ app.post('/webhook', function (req, res) {
   var events = req.body.entry[0].messaging; // messaging is a property of the req tha tbatches the entire text sent
   for (i = 0; i < events.length; i++) {
     var event = events[i];
-    if (event.message && event.message.text) {
-      sendMessage(event.sender.id, {text: "Event.message: " + event.message.text});
+    if (event.message && event.message.attachments) {
+      lat = event.message.attachments[0].payload.coordinates.lat;
+      long = event.message.attachments[0].payload.coordinates.long;
 
-    }
-    if (event.message.attachments) {
-      sendMessage(event.sender.id, {text: event.message.attachments.type});
+      sendMessage(event.sender.id, {text: "Your location is" + lat + " " + long});
     }
   }
+}
+
   res.sendStatus(200);
 });
 
