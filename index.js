@@ -31,7 +31,6 @@ app.post('/webhook', function (req, res) {
       long = event.message.attachments[0].payload.coordinates.long;
 
       sendMessage(event.sender.id, {text: "Your location is" + lat + " " + long});
-    }
   }
 }
 
