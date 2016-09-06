@@ -26,15 +26,17 @@ app.get('/webhook', function( req, res){
 
 // Handler recieving messages
 app.post('/webhook', function (req, res) {
-  var events = req.body.entry[0].messaging; // messaging is a property of the req tha tbatches the entire text sent
-  sendMessage(events.sender.id, {text: events});
+  var events = req.body.entry[0].messaging; // messaging is a property of the req that batches the entire text sent
+  for (i = 0; i < events.length; i++) {
+    var event = events[i];
+
+  sendMessage(event.sender.id, {text: event});
   //
   // if(events.message) {
   //   sendMessage(event.sender.id, {text: message.attachments.type});
   // }
   //
-  // for (i = 0; i < events.length; i++) {
-  //   var event = events[i];
+
   //   // if (event.message && event.message.attachments) {
       // lat = event.message.attachments[0].payload.coordinates.lat;
       // long = event.message.attachments[0].payload.coordinates.long;
