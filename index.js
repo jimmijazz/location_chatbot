@@ -24,6 +24,7 @@ app.get('/webhook', function( req, res){
 // Handler recieving messages
 app.post('/webhook', function (req, res) {
   var events = req.body.entry[0].messaging; // messaging is a property of the req tha tbatches the entire text sent
+  console.log('message worked')
   for (i = 0; i < events.length; i++) {
     var event = events[i];
     if (event.message && event.message.text) {
