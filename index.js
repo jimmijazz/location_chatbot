@@ -32,8 +32,9 @@ app.post('/webhook', function (req, res) {
     if (event.message && event.message.attachments) {
       lat = event.message.attachments[0].payload.coordinates.lat;
       long = event.message.attachments[0].payload.coordinates.long;
-      var location = geocode(lat,long);
-      sendMessage(event.sender.id, {text: "Your location is" + location});
+      geocoder.reverseGeocode(lat, long, function( err, data){
+        sendMessage(event.sender.id, {text: "Your location is" + data});
+      });
   }
 }
 
@@ -58,9 +59,3 @@ function sendMessage(recipientId, message) {
         }
     });
 };
-
-function geocode(lat, long){
-  geocoder.reverseGeocode(lat, long, function( err, data){
-    return data;
-  });
-}
