@@ -33,7 +33,7 @@ app.post('/webhook', function (req, res) {
       lat = event.message.attachments[0].payload.coordinates.lat;
       long = event.message.attachments[0].payload.coordinates.long;
       var location = geocode(lat,long);
-      sendMessage(event.sender.id, {text: "Your location is" + location);
+      sendMessage(event.sender.id, {text: "Your location is" + location});
   }
 }
 
