@@ -28,9 +28,10 @@ app.post('/webhook', function (req, res) {
     var event = events[i];
     if (event.message && event.message.text) {
       sendMessage(event.sender.id, {text: "Event.message: " + event.message.text});
+
     }
-    if (event.message.type) {
-      sendMessage(event.sender.id, {text: event.message.type});
+    if (event.message.attachments) {
+      sendMessage(event.sender.id, {text: event.message.attachments.type});
     }
   }
   res.sendStatus(200);
