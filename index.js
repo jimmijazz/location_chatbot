@@ -59,6 +59,8 @@ function sendMessage(recipientId, message) {
     });
 };
 
-function geocode(lat, long, function( err, data){
-  return geocoder.geocode(lat, long);
+function geocode(lat, long){
+  geocoder.reverseGeocode(lat, long, function( err, data){
+    return data;
+  });
 }
