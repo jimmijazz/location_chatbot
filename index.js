@@ -2,6 +2,9 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
 var app = express();
+var geocoder = require('geocoder');
+
+var google_api_key ="AIzaSyDbhlnIkxUmb0cwIMCx34P9W2lGYYa-UFg"
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -29,8 +32,8 @@ app.post('/webhook', function (req, res) {
     if (event.message && event.message.attachments) {
       lat = event.message.attachments[0].payload.coordinates.lat;
       long = event.message.attachments[0].payload.coordinates.long;
-
-      sendMessage(event.sender.id, {text: "Your location is" + lat + " " + long});
+      var location = geocode(lat,long);
+      sendMessage(event.sender.id, {text: "Your location is" + location);
   }
 }
 
@@ -55,3 +58,7 @@ function sendMessage(recipientId, message) {
         }
     });
 };
+
+function geocode(lat, long, function( err, data){
+  return geocoder.geocode(lat, long);
+}
