@@ -31,20 +31,7 @@ app.post('/webhook', function (req, res) {
     var event = events[i];
     sendMessage(event.sender.id, {text: event});
   };
-  //
-  // if(events.message) {
-  //   sendMessage(event.sender.id, {text: message.attachments.type});
-  // }
-  //
 
-  //   // if (event.message && event.message.attachments) {
-      // lat = event.message.attachments[0].payload.coordinates.lat;
-      // long = event.message.attachments[0].payload.coordinates.long;
-
-      // geocoder.reverseGeocode(lat, long, function( err, data){
-      // });
-  // }
-// }
 
   res.sendStatus(200);
 });
@@ -67,3 +54,18 @@ function sendMessage(recipientId, message) {
         }
     });
 };
+
+//
+// if(events.message) {
+//   sendMessage(event.sender.id, {text: message.attachments.type});
+// }
+//
+
+//   // if (event.message && event.message.attachments) {
+    // lat = event.message.attachments[0].payload.coordinates.lat;
+    // long = event.message.attachments[0].payload.coordinates.long;
+
+    // geocoder.reverseGeocode(lat, long, function( err, data){
+    // });
+// }
+// }
