@@ -29,13 +29,14 @@ app.post('/webhook', function (req, res) {
   var events = req.body.entry[0].messaging; // messaging is a property of the req tha tbatches the entire text sent
   for (i = 0; i < events.length; i++) {
     var event = events[i];
-    if (event.message && event.message.attachments) {
-      lat = event.message.attachments[0].payload.coordinates.lat;
-      long = event.message.attachments[0].payload.coordinates.long;
-      geocoder.reverseGeocode(lat, long, function( err, data){
-        sendMessage(event.sender.id, {text: "Your location is" + event.message.attachments.type});
-      });
-  }
+    // if (event.message && event.message.attachments) {
+      // lat = event.message.attachments[0].payload.coordinates.lat;
+      // long = event.message.attachments[0].payload.coordinates.long;
+      sendMessage(event.sender.id, {text: "Your location is" + event.message.attachments.type});
+
+      // geocoder.reverseGeocode(lat, long, function( err, data){
+      // });
+  // }
 }
 
   res.sendStatus(200);
