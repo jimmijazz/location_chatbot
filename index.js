@@ -33,16 +33,18 @@ app.post('/webhook', function (req, res) {
           if(event.message.text) {
             sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
           } else if (event.message.attachments) {
+
             lat = event.message.attachments[0].payload.coordinates.lat;
             long = event.message.attachments[0].payload.coordinates.long;
+
             geocoder.reverseGeocode(lat,long,function(err, data){
               var location = data;
-            })
-            sendMessage(event.sender.id, {text: data})
-          }
+            });
 
-            console.log(event.message)
-        }
+            sendMessage(event.sender.id, {text: data})
+          };
+            console.log(event.message);
+        };
     res.sendStatus(200);
 });
 
