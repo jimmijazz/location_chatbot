@@ -41,9 +41,8 @@ app.post('/webhook', function (req, res) {
             sendMessage(event.sender.id, {text: data})
           }
 
-            console.log(event.message.attachments)
+            console.log(event.message)
         }
-    }
     res.sendStatus(200);
 });
 
