@@ -29,9 +29,9 @@ app.post('/webhook', function (req, res) {
     var events = req.body.entry[0].messaging;
     for (i = 0; i < events.length; i++) {
         var event = events[i];
-        if (event.message.text) {
+        if (event.message && event.message.text) {
             sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
-          } else if (event.message.attachments) {
+          } else if (event.message && event.message.attachments) {
 
             lat = event.message.attachments[0].payload.coordinates.lat;
             long = event.message.attachments[0].payload.coordinates.long;
@@ -41,7 +41,10 @@ app.post('/webhook', function (req, res) {
             });
 
             sendMessage(event.sender.id, {text: data})
+          } else {
+            console.log('Error');
           };
+        };
             console.log(event.message);
         };
     res.sendStatus(200);
