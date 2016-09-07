@@ -30,7 +30,7 @@ app.post('/webhook', function (req, res) {
     for (i = 0; i < events.length; i++) {
         var event = events[i];
         if (event.message) {
-          if(event.message.text)
+          if(event.message.text) {
             sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
           } else if (event.message.attachments) {
             lat = event.message.attachments[0].payload.coordinates.lat;
