@@ -37,7 +37,8 @@ app.post('/webhook', function (req, res) {
             long = event.message.attachments[0].payload.coordinates.long;
 
             geocoder.reverseGeocode(lat,long,function(err, data){
-              sendMessage(event.sender.id, {text: data})
+              // sendMessage(event.sender.id, {text: data})
+              console.log(data);
             });
 
           } else {
