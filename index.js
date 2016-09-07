@@ -45,8 +45,6 @@ app.post('/webhook', function (req, res) {
             console.log('Error');
           };
         };
-            console.log(event.message);
-        };
     res.sendStatus(200);
 });
 
