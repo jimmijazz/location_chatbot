@@ -40,7 +40,7 @@ app.post('/webhook', function (req, res) {
               var location = data;
             });
 
-            sendMessage(event.sender.id, {text: data})
+            sendMessage(event.sender.id, {text: location})
           } else {
             console.log('Error');
           };
