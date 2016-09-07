@@ -24,17 +24,16 @@ app.get('/webhook', function( req, res){
   }
 });
 
-// Handler recieving messages
+// handler receiving messages
 app.post('/webhook', function (req, res) {
-  var events = req.body.entry[0]; // messaging is a property of the req that batches the entire text sent
-  for (i = 0; i < events.length; i++) {
-    var event = events[i];
-    console.log('Hello');
-    sendMessage(event.sender.id, {text: event.message.attachments});
-  };
-
-
-  res.sendStatus(200);
+    var events = req.body.entry[0].messaging;
+    for (i = 0; i < events.length; i++) {
+        var event = events[i];
+        if (event.message && event.message.text) {
+            sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
+        }
+    }
+    res.sendStatus(200);
 });
 
 // generic function sending messages
@@ -55,18 +54,3 @@ function sendMessage(recipientId, message) {
         }
     });
 };
-
-//
-// if(events.message) {
-//   sendMessage(event.sender.id, {text: message.attachments.type});
-// }
-//
-
-//   // if (event.message && event.message.attachments) {
-    // lat = event.message.attachments[0].payload.coordinates.lat;
-    // long = event.message.attachments[0].payload.coordinates.long;
-
-    // geocoder.reverseGeocode(lat, long, function( err, data){
-    // });
-// }
-// }
