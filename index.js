@@ -33,6 +33,7 @@ app.post('/webhook', function (req, res) {
             sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
           } else if (event.message && event.message.attachments) {
 
+            sendMessage(event.sender.id, {text: "Thanks, I'm retrieving properties now..."})
             lat = event.message.attachments[0].payload.coordinates.lat;
             long = event.message.attachments[0].payload.coordinates.long;
 
