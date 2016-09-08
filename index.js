@@ -10,11 +10,6 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.listen((process.env.PORT || 3000));
 
-var lat = "";
-var long = "";
-var location = ""
-
-
 // Server frontpage
 app.get('/', function (req, res) {
   res.send('This is the ChatBot server');
@@ -40,9 +35,12 @@ app.post('/webhook', function (req, res) {
 
             lat = event.message.attachments[0].payload.coordinates.lat;
             long = event.message.attachments[0].payload.coordinates.long;
-            location = reverseGeocode(lat,long);
-            // data = google JSON formatted address
-            sendMessage(event.sender.id, {text: location.results[0].formatted_address});
+
+            geocoder.reverseGeocode(lat,long,function(err, data){
+              // data = google JSON formatted address
+              sendMessage(event.sender.id, {text: data.results[0].formatted_address})
+              console.log(data);
+            });
 
           } else {
             console.log('Error');
@@ -69,10 +67,3 @@ function sendMessage(recipientId, message) {
         }
     });
 };
-
-function reverseGeocode(lat,long) {
-  geocoder.reverseGeocode(lat,long,function(err, data){
-    var location = data;
-    return location;
-  })
-}
