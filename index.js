@@ -43,7 +43,6 @@ app.post('/webhook', function (req, res) {
             location = reverseGeocode(lat,long);
             // data = google JSON formatted address
             sendMessage(event.sender.id, {text: location.results[0].formatted_address});
-            });
 
           } else {
             console.log('Error');
