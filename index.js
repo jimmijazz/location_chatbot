@@ -37,9 +37,10 @@ app.post('/webhook', function (req, res) {
           } else if (event.message && event.message.attachments) {
 
             //Probably don't need this in most cases because response is quick
-           lat = event.message.attachments[0].payload.coordinates.lat;
+            lat = event.message.attachments[0].payload.coordinates.lat;
             long = event.message.attachments[0].payload.coordinates.long;
-
+            var location = "";
+            
             geocoder.reverseGeocode(lat,long,function(err, data){
               // data = google JSON formatted address
               var location = data.results[0].formatted_address;
