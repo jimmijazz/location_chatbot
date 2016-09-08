@@ -37,8 +37,7 @@ app.post('/webhook', function (req, res) {
           } else if (event.message && event.message.attachments) {
 
             //Probably don't need this in most cases because response is quick
-            sendMessage(event.sender.id, {text: "Thanks, I'm retrieving properties now..."})
-            lat = event.message.attachments[0].payload.coordinates.lat;
+\            lat = event.message.attachments[0].payload.coordinates.lat;
             long = event.message.attachments[0].payload.coordinates.long;
 
             geocoder.reverseGeocode(lat,long,function(err, data){
@@ -49,6 +48,7 @@ app.post('/webhook', function (req, res) {
             });
 
             sendGeneric(event.sender.id, location, image_url);
+            console.log('worked');
           } else {
             console.log('Error');
           };
