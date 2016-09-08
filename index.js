@@ -96,6 +96,6 @@ function sendGeneric(recipientId, location, image_url){
                                               }]
                                             }
                                           }
-                                        };
+                                        }
   })
 };
