@@ -59,6 +59,7 @@ app.post('/webhook', function (req, res) {
         if (event.message && event.message.text) {
 
             sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
+            console.log('message sent');
 
           } else if (event.message && event.message.attachments) {
 
