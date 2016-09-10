@@ -55,17 +55,18 @@ app.post('/webhook', function (req, res) {
     for (i = 0; i < events.length; i++) {
         var event = events[i];
 
-        // Message to database
-        db.collection(CONTACTS_COLLECTION).insertOne({ ID: event.sender.id, message: event.message.text}, function(err, data){
-          if (err) {
-            handleError(res, err.message, "Failed to create new contact.");
-            res.sendStatus(200);
-          }
-        })
 
-        add_message(event.sender.id,event.message.text);
         if (event.message && event.message.text) {
             sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
+
+            // Message to database
+            db.collection(CONTACTS_COLLECTION).insertOne({ ID: event.sender.id, message: event.message.text}, function(err, data){
+              if (err) {
+                handleError(res, err.message, "Failed to create new contact.");
+                res.sendStatus(200);
+              }
+            })
+
           } else if (event.message && event.message.attachments) {
 
             lat = event.message.attachments[0].payload.coordinates.lat;
