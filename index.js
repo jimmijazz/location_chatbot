@@ -54,6 +54,15 @@ app.post('/webhook', function (req, res) {
     var events = req.body.entry[0].messaging;
     for (i = 0; i < events.length; i++) {
         var event = events[i];
+
+        // Message to database
+        db.collection(CONTACTS_COLLECTION).insertOne({ ID: event.sender.id, message: event.message.text}, function(err, data){
+          if (err) {
+            handleError(res, err.message, "Failed to create new contact.");
+            res.sendStatus(200);
+          }
+        })
+
         add_message(event.sender.id,event.message.text);
         if (event.message && event.message.text) {
             sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
@@ -123,17 +132,4 @@ function sendGeneric(recipientId, location, image_url){
                                         }
                                       }
   })
-};
-
-function add_message(recipientId, text) {
-  var newContact = {ID: recipientId, message: text};
-  newContact.createDate = new Date();
-
-  db.collection(CONTACTS_COLLECTION).insertOne(newContact, function(err, data){
-    if (err) {
-      handleError(res, err.message, "Failed to create new contact.");
-    } else {
-      res.status(201).json(doc.ops[0]);
-    }
-  });
 };
