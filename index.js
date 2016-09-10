@@ -86,7 +86,7 @@ app.post('/webhook', function (req, res) {
             console.log('Error');
           };
         };
-    res.sendStatus(200);
+    // res.sendStatus(200);
     console.log(db.collection(CONTACTS_COLLECTION).find({}).toArray(function(err, docs){
       if (err) {
         handleError(res, err.message, "Failed to get contacts.");
