@@ -3,14 +3,36 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var app = express();
 var geocoder = require('geocoder');
+var mongodb = require("mongodb");
+var ObjectID = mongodb.ObjectID;
+
+var CONTACTS_COLLECTION = :"contacts";
+
 
 var google_api_key ="AIzaSyDbhlnIkxUmb0cwIMCx34P9W2lGYYa-UFg"
 
 var image_url = "https://i3.au.reastatic.net/800x600/a177a44afd7e9afe7ba30f5b63140f1fc46eff1f5b9e4cf0c9e77485e69208c4/main.jpg"
 
-
+app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+
+// Create a database variable outside of the database connection callback to reuse the connection pool in your app.
+var db;
+
+//Connect to database before starting the application Server
+mongodb.MongoClient.connect(process.env.MONGODB_URI, function (err, database) {
+  if (err) {
+    console.log(err);
+    process.exit(1);
+  }
+
+  // Save database object from the vallback for reuse
+  db = database;
+  console.log("database connection ready");
+})
+
+// Initialize the app
 app.listen((process.env.PORT || 3000));
 
 // Server frontpage
