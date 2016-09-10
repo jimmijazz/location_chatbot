@@ -55,7 +55,7 @@ app.post('/webhook', function (req, res) {
     for (i = 0; i < events.length; i++) {
         var event = events[i];
         var id = event.sender.id;
-        var msg = event.message.text;
+        var message = event.message.text;
 
         if (event.message && event.message.text) {
             sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
@@ -81,7 +81,7 @@ app.post('/webhook', function (req, res) {
         };
 
       // Message to database
-      db.collection(CONTACTS_COLLECTION).insertOne({ user_id: id, message: msg}, function(err, data){
+      db.collection(CONTACTS_COLLECTION).insertOne({ user_id: id, message: message}, function(err, data){
         if (err) {
           handleError(res, err.message, "Failed to create new contact.");
           res.sendStatus(200);
