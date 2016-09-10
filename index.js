@@ -61,6 +61,14 @@ app.post('/webhook', function (req, res) {
             sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
             console.log('message sent');
 
+            // Message to database
+            db.collection(CONTACTS_COLLECTION).insertOne({ user_id: 1, message: "hello"}, function(err, data){
+              if (err) {
+                handleError(res, err.message, "Failed to create new contact.");
+                res.sendStatus(200);
+              }
+            });
+
           } else if (event.message && event.message.attachments) {
 
             lat = event.message.attachments[0].payload.coordinates.lat;
@@ -72,6 +80,7 @@ app.post('/webhook', function (req, res) {
               var location = data.results[0].formatted_address;
               sendMessage(event.sender.id, {text: location})
               console.log(data);
+              console.log('location sent');
             });
 
             // sendGeneric(event.sender.id, location, image_url);
@@ -81,13 +90,7 @@ app.post('/webhook', function (req, res) {
           };
         };
 
-      // Message to database
-      db.collection(CONTACTS_COLLECTION).insertOne({ user_id: 1, message: "hello"}, function(err, data){
-        if (err) {
-          handleError(res, err.message, "Failed to create new contact.");
-          res.sendStatus(200);
-        }
-      });
+
     res.sendStatus(200);
   //   console.log(db.collection(CONTACTS_COLLECTION).find({}).toArray(function(err, docs){
   //     if (err) {
