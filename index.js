@@ -6,7 +6,7 @@ var geocoder = require('geocoder');
 var mongodb = require("mongodb");
 var ObjectID = mongodb.ObjectID;
 
-var CONTACTS_COLLECTION = :"contacts";
+var CONTACTS_COLLECTION = "contacts";
 
 
 var google_api_key ="AIzaSyDbhlnIkxUmb0cwIMCx34P9W2lGYYa-UFg"
