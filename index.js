@@ -91,15 +91,16 @@ app.post('/webhook', function (req, res) {
         };
 
 
-    res.sendStatus(200);
+    // res.sendStatus(200);
+
     console.log(db.collection(CONTACTS_COLLECTION).find({}).toArray(function(err, docs){
       if (err) {
         handleError(res, err.message, "Failed to get contacts.");
       } else {
         res.status(200).json(docs);
-  //     }
-  //   })
-  // );
+      }
+    })
+  );
 });
 
 // generic function sending messages
