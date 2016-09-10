@@ -93,7 +93,7 @@ app.post('/webhook', function (req, res) {
 
     // res.sendStatus(200);
 
-    console.log(db.collection(CONTACTS_COLLECTION).find());
+    console.log(db.collection(CONTACTS_COLLECTION).find({}));
 
   });
 
