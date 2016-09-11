@@ -146,7 +146,7 @@ function sendGeneric(recipientId, location, image_url){
 function userProfile(userId){
   // Returns dict of user profile
   // userProfile(str) -> dict(first_name:str,last_name:str,profile_pic:str,locale:str,timezone:int,gender:str)
-
+  var user = {}
   request({
     url: 'https://graph.facebook.com/v2.6/'+userId+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
     qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
@@ -158,8 +158,8 @@ function userProfile(userId){
     } else if (response.body.error) {
       console.log('Error: ', response.body.error);
     }
-    return response.body;
+    user = response.body;
   })
-
+  return user;
 
 }
