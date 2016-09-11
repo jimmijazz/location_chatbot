@@ -60,6 +60,17 @@ app.post('/webhook', function (req, res) {
           console.log('message sent to', event.sender.id);
           message = {user_id: event.sender.id, message_text: event.message.text};
 
+          collection.insert(message, function(err, result) {
+            if (err) {
+              console.log("Error inserting message. Error:",err);
+
+            } else {
+              console.log('Inserted documents into the "contacts" collection.', result);
+            }
+            // Close connection
+
+          })
+
         } else if (event.message && event.message.attachments) {
 
             lat = event.message.attachments[0].payload.coordinates.lat;
@@ -79,16 +90,6 @@ app.post('/webhook', function (req, res) {
           };
         };
 
-    collection.insert(message, function(err, result) {
-      if (err) {
-        console.log("Error inserting message. Error:",err);
-
-      } else {
-        console.log('Inserted documents into the "contacts" collection.', result);
-      }
-      // Close connection
-
-    })
     res.sendStatus(200);
 
     // console.log(db.collection(CONTACTS_COLLECTION).find({}));
