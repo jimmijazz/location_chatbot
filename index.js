@@ -62,14 +62,14 @@ app.post('/webhook', function (req, res) {
             collection.insert(message, function(err, result) {
               if (err) {
                 console.log("Error inserting message. Error:",err);
-                db.close()
+
               } else {
                 console.log('Inserted documents into the "contacts" collection.');
-                db.close()
               }
               // Close connection
 
             })
+            db.close()
 
             // Message to database
             // db.collection(CONTACTS_COLLECTION).insertOne({ user_id: 1, message: "hello"}, function(err, data){
