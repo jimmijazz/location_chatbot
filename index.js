@@ -57,16 +57,18 @@ app.post('/webhook', function (req, res) {
         var event = events[i];
         if (event.message && event.message.text) {
             sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
-            console.log('message sent');
+            console.log('message sent to', event.sender.id);
             var message = {user_id: "123", message_text: "Hello World"};
             collection.insert(message, function(err, result) {
               if (err) {
                 console.log("Error inserting message. Error:",err);
+                db.close()
               } else {
-                console.log('Insert documents into the "contacts" collection.');
+                console.log('Inserted documents into the "contacts" collection.');
+                db.close()
               }
               // Close connection
-              db.close();
+
             })
 
             // Message to database
