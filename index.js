@@ -83,10 +83,9 @@ app.post('/webhook', function (req, res) {
               console.log("Location sent","\n", data);
             });
 
-            // sendGeneric(event.sender.id, location, image_url);
             console.log('worked');
           } else {
-            console.log('Error');
+            console.log('Error error');
           };
         };
 
