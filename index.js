@@ -41,7 +41,7 @@ app.get('/', function (req, res) {
 
 // Facebook Webhook
 app.get('/webhook', function( req, res){
-  if(req.query['hub.verify_token'] === 'chatbot_verify_token') {
+  if(req.query['hub.verify_token'] === '1775479496065328') {
     res.send(req.query['hub.challenge']);
   } else {
     res.send('Invalid verify token');
