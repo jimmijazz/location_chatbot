@@ -8,7 +8,6 @@ var ObjectID = mongodb.ObjectID;
 
 var CONTACTS_COLLECTION = "contacts";
 
-
 var google_api_key ="AIzaSyDbhlnIkxUmb0cwIMCx34P9W2lGYYa-UFg"
 
 var image_url = "https://i3.au.reastatic.net/800x600/a177a44afd7e9afe7ba30f5b63140f1fc46eff1f5b9e4cf0c9e77485e69208c4/main.jpg"
@@ -68,7 +67,7 @@ app.post('/webhook', function (req, res) {
               console.log('Inserted documents into the "contacts" collection.', result);
             }
           })
-
+          userProfile(event.sender.id);
         } else if (event.message && event.message.attachments) {
             console.log("Event has attachments:", event.message.attachments);
             lat = event.message.attachments[0].payload.coordinates.lat;
@@ -136,3 +135,24 @@ function sendGeneric(recipientId, location, image_url){
                                       }
   })
 };
+
+function userProfile(userId){
+  // Returns dict of user profile
+  // userProfile(str) -> dict(first_name:str,last_name:str,profile_pic:str,locale:str,timezone:int,genderLstr)
+
+  request({
+    url: 'https://graph.facebook.com/v2.6/'+userId+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
+    qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
+    method: 'GET',
+
+  }, function(error, response) {
+    if (error) {
+      console.log('Error: ', error);
+    } else if (response.body.error) {
+      console.log('Error: ', response.body.error);
+    }
+    console.log(response);
+  })
+
+
+}
