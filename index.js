@@ -62,9 +62,9 @@ app.post('/webhook', function (req, res) {
           console.log('message sent to', event.sender.id);
           message = {user_id: event.sender.id,
             message_text: event.message.text,
-            first_name = user.first_name,
-            last_name = user.last_name,
-            gender = user.gender};
+            first_name: user.first_name,
+            last_name: user.last_name,
+            gender: user.gender};
 
           // Add to database
           collection.insert(message, function(err, result) {
