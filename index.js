@@ -55,28 +55,13 @@ app.post('/webhook', function (req, res) {
     console.log("Events Length: ", events.length);
     for (i = 0; i < events.length; i++) {
         var event = events[i];
+        var message = {user_id:"", message_text: ""};
         if (event.message && event.message.text) {
             sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
             console.log('message sent to', event.sender.id);
             var message = {user_id: "123", message_text: "Hello World"};
-            collection.insert(message, function(err, result) {
-              if (err) {
-                console.log("Error inserting message. Error:",err);
 
-              } else {
-                console.log('Inserted documents into the "contacts" collection.');
-              }
-              // Close connection
 
-            })
-
-            // Message to database
-            // db.collection(CONTACTS_COLLECTION).insertOne({ user_id: 1, message: "hello"}, function(err, data){
-            //   if (err) {
-            //     handleError(res, err.message, "Failed to create new contact.");
-            //     res.sendStatus(200);
-            //   }
-            // });
 
           } else if (event.message && event.message.attachments) {
 
@@ -96,6 +81,17 @@ app.post('/webhook', function (req, res) {
             console.log('Error');
           };
         };
+
+    collection.insert(message, function(err, result) {
+      if (err) {
+        console.log("Error inserting message. Error:",err);
+
+      } else {
+        console.log('Inserted documents into the "contacts" collection.');
+      }
+      // Close connection
+
+    })
 
     db.close();
     res.sendStatus(200);
