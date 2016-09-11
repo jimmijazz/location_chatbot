@@ -67,8 +67,6 @@ app.post('/webhook', function (req, res) {
             } else {
               console.log('Inserted documents into the "contacts" collection.', result);
             }
-            // Close connection
-
           })
 
         } else if (event.message && event.message.attachments) {
@@ -84,9 +82,7 @@ app.post('/webhook', function (req, res) {
             });
 
             console.log('worked');
-          } else {
-            console.log('Error error');
-          };
+          }
         };
 
     res.sendStatus(200);
