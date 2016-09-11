@@ -69,7 +69,6 @@ app.post('/webhook', function (req, res) {
               // Close connection
 
             })
-            db.close()
 
             // Message to database
             // db.collection(CONTACTS_COLLECTION).insertOne({ user_id: 1, message: "hello"}, function(err, data){
@@ -98,7 +97,7 @@ app.post('/webhook', function (req, res) {
           };
         };
 
-
+    db.close();
     res.sendStatus(200);
 
     // console.log(db.collection(CONTACTS_COLLECTION).find({}));
