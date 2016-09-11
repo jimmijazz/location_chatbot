@@ -54,11 +54,19 @@ app.post('/webhook', function (req, res) {
     for (i = 0; i < events.length; i++) {
         var event = events[i];
         var message = {user_id:"", message_text: ""};
-        if (event.message && event.message.text && !event.message.is_echo) {
-          sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
-          console.log('message sent to', event.sender.id);
-          message = {user_id: event.sender.id, message_text: event.message.text};
+        var user = userProfile(event.sender.id);  // Get demographics of user
 
+        if (event.message && event.message.text && !event.message.is_echo) {
+          sendMessage(event.sender.id, {text: "Hello " + user.first_name + "." + event.message.text});
+
+          console.log('message sent to', event.sender.id);
+          message = {user_id: event.sender.id,
+            message_text: event.message.text,
+            first_name = user.first_name,
+            last_name = user.last_name,
+            gender = user.gender};
+
+          // Add to database
           collection.insert(message, function(err, result) {
             if (err) {
               console.log("Error inserting message. Error:",err);
@@ -67,7 +75,8 @@ app.post('/webhook', function (req, res) {
               console.log('Inserted documents into the "contacts" collection.', result);
             }
           })
-          userProfile(event.sender.id);
+
+
         } else if (event.message && event.message.attachments) {
             console.log("Event has attachments:", event.message.attachments);
             lat = event.message.attachments[0].payload.coordinates.lat;
@@ -86,12 +95,10 @@ app.post('/webhook', function (req, res) {
 
     res.sendStatus(200);
 
-    // console.log(db.collection(CONTACTS_COLLECTION).find({}));
-
   });
 
 
-// generic function sending messages
+// Generic function sending messages
 function sendMessage(recipientId, message) {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -138,7 +145,7 @@ function sendGeneric(recipientId, location, image_url){
 
 function userProfile(userId){
   // Returns dict of user profile
-  // userProfile(str) -> dict(first_name:str,last_name:str,profile_pic:str,locale:str,timezone:int,genderLstr)
+  // userProfile(str) -> dict(first_name:str,last_name:str,profile_pic:str,locale:str,timezone:int,gender:str)
 
   request({
     url: 'https://graph.facebook.com/v2.6/'+userId+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
