@@ -23,10 +23,9 @@ var db;
 //Connect to database before starting the application Server
 mongodb.MongoClient.connect(process.env.MONGODB_URI, function (err, database) {
   if (err) {
-    console.log(err);
+    console.log('Unable to connect to the database. Error:',err);
     process.exit(1);
   }
-
   // Save database object from the vallback for reuse
   db = database;
   console.log("database connection ready");
@@ -52,14 +51,23 @@ app.get('/webhook', function( req, res){
 // handler receiving messages
 app.post('/webhook', function (req, res) {
     var events = req.body.entry[0].messaging;
+    var collection = db.collection(CONTACTS_COLLECTION);
+
     for (i = 0; i < events.length; i++) {
         var event = events[i];
-
-
         if (event.message && event.message.text) {
-
             sendMessage(event.sender.id, {text: "Echo: " + event.message.text});
             console.log('message sent');
+            var message = {user_id: "123", message_text: "Hello World"};
+            collection.insert(message, function(err, result) {
+              if (err) {
+                console.log("Error inserting message. Error:",err);
+              } else {
+                console.log('Insert documents into the "contacts" collection.');
+              }
+              // Close connection
+              db.close();
+            })
 
             // Message to database
             // db.collection(CONTACTS_COLLECTION).insertOne({ user_id: 1, message: "hello"}, function(err, data){
@@ -73,14 +81,12 @@ app.post('/webhook', function (req, res) {
 
             lat = event.message.attachments[0].payload.coordinates.lat;
             long = event.message.attachments[0].payload.coordinates.long;
-            var location = "";
 
             geocoder.reverseGeocode(lat,long,function(err, data){
               // data = google JSON formatted address
               var location = data.results[0].formatted_address;
               sendMessage(event.sender.id, {text: location})
-              console.log(data);
-              console.log('location sent');
+              console.log("Location sent","\n", data);
             });
 
             // sendGeneric(event.sender.id, location, image_url);
