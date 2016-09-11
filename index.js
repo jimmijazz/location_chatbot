@@ -62,12 +62,12 @@ app.post('/webhook', function (req, res) {
             console.log('message sent');
 
             // Message to database
-            db.collection(CONTACTS_COLLECTION).insertOne({ user_id: 1, message: "hello"}, function(err, data){
-              if (err) {
-                handleError(res, err.message, "Failed to create new contact.");
-                res.sendStatus(200);
-              }
-            });
+            // db.collection(CONTACTS_COLLECTION).insertOne({ user_id: 1, message: "hello"}, function(err, data){
+            //   if (err) {
+            //     handleError(res, err.message, "Failed to create new contact.");
+            //     res.sendStatus(200);
+            //   }
+            // });
 
           } else if (event.message && event.message.attachments) {
 
@@ -91,9 +91,9 @@ app.post('/webhook', function (req, res) {
         };
 
 
-    // res.sendStatus(200);
+    res.sendStatus(200);
 
-    console.log(db.collection(CONTACTS_COLLECTION).find({}));
+    // console.log(db.collection(CONTACTS_COLLECTION).find({}));
 
   });
 
