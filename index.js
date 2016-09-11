@@ -71,7 +71,7 @@ app.post('/webhook', function (req, res) {
 
           })
 
-        } else if (event.message && event.message.attachments.type = "image") {
+        } else if (event.message && event.message.attachments.type == "image") {
 
             lat = event.message.attachments[0].payload.coordinates.lat;
             long = event.message.attachments[0].payload.coordinates.long;
