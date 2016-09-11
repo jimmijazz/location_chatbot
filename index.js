@@ -158,7 +158,7 @@ function userProfile(userId){
     } else if (response.body.error) {
       console.log('Error: ', response.body.error);
     }
-    console.log(response.body);
+    return response.body;
   })
 
 
