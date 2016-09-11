@@ -71,8 +71,8 @@ app.post('/webhook', function (req, res) {
 
           })
 
-        } else if (event.message && event.message.attachments.length > 0) {
-
+        } else if (event.message && event.message.attachments) {
+            console.log("Event has attachments:", event.message.attachments);
             lat = event.message.attachments[0].payload.coordinates.lat;
             long = event.message.attachments[0].payload.coordinates.long;
 
