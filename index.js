@@ -162,6 +162,7 @@ function userProfile(userId){
     }
     console.log(response.body["first-name"]);
     user = response.body;
+    console.log(typeof user)
   })
   return user;
 
