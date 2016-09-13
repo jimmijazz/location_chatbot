@@ -164,5 +164,5 @@ function userProfile(userId){
     console.log(typeof user);
     return user;
   })
-
+return user;
 }
