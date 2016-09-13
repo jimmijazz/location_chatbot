@@ -60,7 +60,7 @@ app.post('/webhook', function (req, res) {
           sendMessage(event.sender.id, {text: "Hello " + user.first_name + "." + event.message.text});
 
           console.log('message sent to', event.sender.id);
-          console.log(user);
+          console.log(user['first-name']);
           message = {
             user_id: event.sender.id,
             message_text: event.message.text,
@@ -161,7 +161,7 @@ function userProfile(userId){
       console.log('Error: ', response.body.error);
     }
     console.log(response.body["first-name"]);
-    user = response.body;
+    Object user = response.body;
     console.log(typeof user)
   })
   return user;
