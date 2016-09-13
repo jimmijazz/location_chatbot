@@ -60,7 +60,7 @@ app.post('/webhook', function (req, res) {
           sendMessage(event.sender.id, {text: "Hello " + user.first_name + "." + event.message.text});
 
           console.log('message sent to', event.sender.id);
-          // console.log(user['first_name']);
+          console.log(user['first_name']);
           message = {
             user_id: event.sender.id,
             message_text: event.message.text,
@@ -148,7 +148,7 @@ function sendGeneric(recipientId, location, image_url){
 function userProfile(userId){
   // Returns dict of user profile
   // userProfile(str) -> dict(first_name:str,last_name:str,profile_pic:str,locale:str,timezone:int,gender:str)
-
+  var user = {}
   request({
     url: 'https://graph.facebook.com/v2.6/'+userId+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
     qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
@@ -160,10 +160,9 @@ function userProfile(userId){
     } else if (response.body.error) {
       console.log('Error: ', response.body.error);
     }
-    console.log(response.body);
-    var user = response.body;
-    return user;
+    console.log(response.body["first-name"]);
+    user = response.body;
   })
-
+  return user;
 
 }
