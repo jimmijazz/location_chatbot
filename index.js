@@ -160,10 +160,10 @@ function userProfile(userId){
     } else if (response.body.error) {
       console.log('Error: ', response.body.error);
     }
-    console.log(response.body["first_name"]);
+    console.log(response.body);
     var user = response.body;
     return user;
   })
-  
+
 
 }
