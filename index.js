@@ -162,7 +162,8 @@ function userProfile(userId){
     }
     console.log(response.body["first_name"]);
     var user = response.body;
+    return user;
   })
-  return user;
+  
 
 }
