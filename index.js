@@ -100,7 +100,6 @@ app.post('/webhook', function (req, res) {
 
   });
 
-
 // Generic function sending messages
 function sendMessage(recipientId, message) {
     request({
@@ -161,7 +160,7 @@ function userProfile(userId){
     } else if (response.body.error) {
       console.log('Error: ', response.body.error);
     }
-    console.log(response.body);
+    console.log(response.body["first_name"]);
     user = response.body;
   })
   return user;
