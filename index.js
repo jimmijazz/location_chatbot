@@ -88,7 +88,14 @@ app.post('/webhook', function (req, res) {
                 break;
 
               case "what is my name" :
-                sendMessage(id, {text: "Your name is" + user.first_name});
+                sendMessage(id, {text: "Your name is " + user.first_name});
+                break;
+
+              case "create inspection" :
+                sendMessage(id, {text:"Please send your location "})
+
+              default :
+                sendMessage(id, {text: "Sorry I don't understand what you mean by " + msg });
                 break;
             };
 
@@ -157,9 +164,23 @@ function sendMessage(recipientId, message) {
         } else if (response.body.error) {
             console.log('Error: ', response.body.error);
         }
+        console.log(body);
     });
 };
 
+
+function createLocation(recipientId, message) {
+  // Send message requesting address
+  sendMessage(recipientId, message);
+
+  // Check if it is a location
+
+  // If not location check if it is an address
+
+  // Else return error message "not an address"
+
+
+}
 function sendGeneric(recipientId, location, image_url){
   //https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template
   request({
