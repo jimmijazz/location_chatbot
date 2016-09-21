@@ -119,7 +119,7 @@ app.post('/webhook', function (req, res) {
             geocoder.reverseGeocode(lat,long,function(err, data){
               // data = google JSON formatted address
               var location = data.results[0].formatted_address;
-              sendGeneric(id);
+              sendGenericMessage(id);
               sendMessage(id, {text: location})
               console.log("Location sent","\n", data);
             });
