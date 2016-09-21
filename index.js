@@ -61,6 +61,7 @@ app.post('/webhook', function (req, res) {
 
     for (i = 0; i < events.length; i++) {
       var event = events[i];
+      var id = event.sender.id;
 
       // Get Basic Facebook Graph Information
       request({
@@ -76,7 +77,7 @@ app.post('/webhook', function (req, res) {
         }
         // Convert FB response from string to object
         user = JSON.parse(response.body);
-        var id = event.sender.id;
+
         if (event.message && event.message.text && !event.message.echo) {
             var msg = event.message.text.toLowerCase();
 
@@ -110,8 +111,8 @@ app.post('/webhook', function (req, res) {
             lat = event.message.attachments[0].payload.coordinates.lat;
             long = event.message.attachments[0].payload.coordinates.long;
 
-            var agent = db.collection(AGENTS).find({"_id" : id}).pretty();
-            console.log(agent);
+            var agent = db.collection(AGENTS).find({"_id" : id});
+            console.log(lat, long);
             console.log("Event has attachments:", event.message.attachments);
 
 
