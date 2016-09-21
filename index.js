@@ -58,47 +58,47 @@ app.post('/webhook', function (req, res) {
         var event = events[i];
         var message = {user_id:"", message_text: ""};
 
-        userProfile(event.sender.id, function(user) {
+        userProfile(event.sender.id, function() {
           sendMessage(event.sender.id, {text: "hello" + user.first_name})
         });
 
         // Echo user message
-        if (event.message && event.message.text && !event.message.is_echo) {
-          sendMessage(event.sender.id, {text: "Hello " + event.message.text});
-          console.log('message sent to', event.sender.id);
-          message = {
-            user_id: event.sender.id,
-            message_text: event.message.text,
-            // first_name: user.first_name,
-            // last_name: user["last_name"],
-            // gender: user["gender"]
-          };
-
-          // Add to database
-          collection.insert(message, function(err, result) {
-            if (err) {
-              console.log("Error inserting message. Error:",err);
-
-            } else {
-              console.log('Inserted documents into the "contacts" collection.', result);
-            }
-          })
-
-
-        } else if (event.message && event.message.attachments) {
-            console.log("Event has attachments:", event.message.attachments);
-            lat = event.message.attachments[0].payload.coordinates.lat;
-            long = event.message.attachments[0].payload.coordinates.long;
-
-            geocoder.reverseGeocode(lat,long,function(err, data){
-              // data = google JSON formatted address
-              var location = data.results[0].formatted_address;
-              sendMessage(event.sender.id, {text: location})
-              console.log("Location sent","\n", data);
-            });
-
-            console.log('worked');
-          }
+        // if (event.message && event.message.text && !event.message.is_echo) {
+        //   sendMessage(event.sender.id, {text: "Hello " + event.message.text});
+        //   console.log('message sent to', event.sender.id);
+        //   message = {
+        //     user_id: event.sender.id,
+        //     message_text: event.message.text,
+        //     // first_name: user.first_name,
+        //     // last_name: user["last_name"],
+        //     // gender: user["gender"]
+        //   };
+        //
+        //   // Add to database
+        //   collection.insert(message, function(err, result) {
+        //     if (err) {
+        //       console.log("Error inserting message. Error:",err);
+        //
+        //     } else {
+        //       console.log('Inserted documents into the "contacts" collection.', result);
+        //     }
+        //   })
+        //
+        //
+        // } else if (event.message && event.message.attachments) {
+        //     console.log("Event has attachments:", event.message.attachments);
+        //     lat = event.message.attachments[0].payload.coordinates.lat;
+        //     long = event.message.attachments[0].payload.coordinates.long;
+        //
+        //     geocoder.reverseGeocode(lat,long,function(err, data){
+        //       // data = google JSON formatted address
+        //       var location = data.results[0].formatted_address;
+        //       sendMessage(event.sender.id, {text: location})
+        //       console.log("Location sent","\n", data);
+        //     });
+        //
+        //     console.log('worked');
+        //   }
         };
 
     res.sendStatus(200);
