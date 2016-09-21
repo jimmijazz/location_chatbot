@@ -58,7 +58,7 @@ app.post('/webhook', function (req, res) {
         var event = events[i];
         var message = {user_id:"", message_text: ""};
 
-        var user = userProfile(event.sender.id);  // Get demographics of user
+        var user = userProfile(event.sender.id, sendMessage(event.sender.id, {text: "Hello " = user.first_name}));  // Get demographics of user
 
         // Echo user message
         if (event.message && event.message.text && !event.message.is_echo) {
@@ -164,7 +164,6 @@ function userProfile(userId){
     }
     // Convert FB response from string to object
     var user = JSON.parse(response.body);
-    return user;
     console.log(user.first_name);
   })
 }
