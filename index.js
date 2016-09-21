@@ -175,6 +175,7 @@ function isAgent(id) {
     sendMessage(id, {text: "You are allowed to create inspections, please send your address"});
     return true;
   } else {
+    sendMessage(id, {text:"You are not authorized to create an inspection"});
     return false;
   };
 
