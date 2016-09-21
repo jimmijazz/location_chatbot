@@ -167,6 +167,7 @@ function userProfile(userId){
     }
     // Convert FB response from string to object
     var user = JSON.parse(response.body);
-    return user;
+    
   })
+  return user;
 }
