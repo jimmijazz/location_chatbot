@@ -133,7 +133,7 @@ app.post('/webhook', function (req, res) {
                 }],
               }];
 
-              sendGenericMessage(id);
+              sendGenericMessage(id, payload);
               sendMessage(id, {text: location})
               console.log("Location sent","\n", data);
             });
@@ -271,7 +271,7 @@ function sendGenericMessage(sender, payload) {
 			}
 		}
 	};
-  
+
 	request({
 		url: 'https://graph.facebook.com/v2.6/me/messages',
 		qs: {access_token:process.env.PAGE_ACCESS_TOKEN},
