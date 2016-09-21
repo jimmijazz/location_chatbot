@@ -119,7 +119,8 @@ app.post('/webhook', function (req, res) {
             geocoder.reverseGeocode(lat,long,function(err, data){
               // data = google JSON formatted address
               var location = data.results[0].formatted_address;
-              sendMessage(event.sender.id, {text: location})
+              sendGeneric(id);
+              sendMessage(id, {text: location})
               console.log("Location sent","\n", data);
             });
 
@@ -226,33 +227,6 @@ function isAgent(id) {
   // Else return error message "not an address"
 };
 
-
-function sendGeneric(recipientId, location, image_url){
-  //https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template
-  request({
-    url: 'https://graph.facebook.com/v2.6/me/messages',
-    qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
-    method: 'POST',
-    json: {
-      recipient: {id: recipientId},
-      message: {attachment:{type:"template",
-                            payload: {template_type:"generic",
-                                      elements:[{title : location,
-                                                item_url : image_url,
-                                                subtitle : "Please check in",
-                                                buttons: [{
-                                                  type:"web_url",
-                                                  url: "www.google.com",
-                                                  title: "Check in"
-                                                }]
-                                              }]
-                                            }
-                                          }
-                                        }
-                                      }
-  })
-};
-
 function userProfile(userId){
   // Returns dict of user profile
   // userProfile(str) -> dict(first_name:str,last_name:str,profile_pic:str,locale:str,timezone:int,gender:str)
@@ -270,4 +244,54 @@ function userProfile(userId){
     // Convert FB response from string to object
     var user = JSON.parse(response.body);
   })
+};
+
+
+function sendGenericMessage(sender) {
+	let messageData = {
+		"attachment": {
+			"type": "template",
+			"payload": {
+				"template_type": "generic",
+				"elements": [{
+					"title": "First card",
+					"subtitle": "Element #1 of an hscroll",
+					"image_url": "http://messengerdemo.parseapp.com/img/rift.png",
+					"buttons": [{
+						"type": "web_url",
+						"url": "https://www.messenger.com",
+						"title": "web url"
+					}, {
+						"type": "postback",
+						"title": "Postback",
+						"payload": "Payload for first element in a generic bubble",
+					}],
+				}, {
+					"title": "Second card",
+					"subtitle": "Element #2 of an hscroll",
+					"image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
+					"buttons": [{
+						"type": "postback",
+						"title": "Postback",
+						"payload": "Payload for second element in a generic bubble",
+					}],
+				}]
+			}
+		}
+	}
+	request({
+		url: 'https://graph.facebook.com/v2.6/me/messages',
+		qs: {access_token:process.env.PAGE_ACCESS_TOKEN},
+		method: 'POST',
+		json: {
+			recipient: {id:sender},
+			message: messageData,
+		}
+	}, function(error, response, body) {
+		if (error) {
+			console.log('Error sending messages: ', error)
+		} else if (response.body.error) {
+			console.log('Error: ', response.body.error)
+		}
+	})
 }
