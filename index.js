@@ -12,6 +12,7 @@ var ObjectID = mongodb.ObjectID;
 
 var CONTACTS_COLLECTION = "contacts";
 var HOUSES_COLLECTION = "houses"; // Collection of availale houses to inspect
+var AGENTS = "agents;"
 
 var google_api_key ="AIzaSyDbhlnIkxUmb0cwIMCx34P9W2lGYYa-UFg"
 
@@ -173,6 +174,17 @@ function isAgent(id) {
   // Check the user is allowed to create a location. Replace with DB lookup
   if (id === "1285458091486614") {
     sendMessage(id, {text: "You are allowed to create inspections, please send your address"});
+
+    // Update agent status to creating inspection
+    message = {_id:id, creating_inspection: true}
+    db.collection(AGENTS).insert(message, function(err, result) {
+      if (err) {
+        console.log("Error updating agent. Error:", err);
+      } else {
+        console.log("Updated agent");
+      };
+    });
+
     return true;
   } else {
     sendMessage(id, {text:"You are not authorized to create an inspection"});
@@ -184,9 +196,11 @@ function isAgent(id) {
   // If not location check if it is an address
 
   // Else return error message "not an address"
-
-
 };
+
+function createLocation(id) {
+  while
+}
 
 function sendGeneric(recipientId, location, image_url){
   //https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template
