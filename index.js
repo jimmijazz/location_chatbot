@@ -57,12 +57,13 @@ app.post('/webhook', function (req, res) {
     var events = req.body.entry[0].messaging;
     var collection = db.collection(CONTACTS_COLLECTION);
     var houses_collection = db.collection(HOUSES_COLLECTION);
-    var user = {}
 
+    for (i = 0; i < events.length; i++) {
+      var event = events[i];
 
-
-    // for (i = 0; i < events.length; i++) {
-    //   var event = events[i];
+      if (event.message && event.message.text && !event.message.echo) {
+        sendMessage(event.sender.id, {text:"Hello"})
+      };
     //
     //   // Get Basic Facebook Graph Information
     //   request({
