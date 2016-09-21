@@ -78,11 +78,20 @@ app.post('/webhook', function (req, res) {
         // Convert FB response from string to object
         user = JSON.parse(response.body);
         if (event.message && event.message.text && !event.message.echo) {
-            var lower_case = event.message.text.toLowerCase();
-            sendMessage(event.sender.id, {text: "hello" + user.first_name});
-        };
-        if (lower_case === "check in") {
-          sendMessage(event.sender.id, {text: "please send your location"});
+            var msg = event.message.text.toLowerCase();
+            var id = event.sender.id;
+
+            // Send message depending on input
+            switch(msg) {
+              case "check in" :
+                sendMessage(id, {text: "Please send your location"});
+                break;
+
+              case "what is my name" :
+                sendMessage(id, {text: "Your name is" + user.first_name});
+                break;
+            };
+
         };
       });
     };
