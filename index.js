@@ -67,7 +67,7 @@ app.post('/webhook', function (req, res) {
           message = {
             user_id: event.sender.id,
             message_text: event.message.text,
-            first_name: user.first_name,
+            // first_name: user.first_name,
             // last_name: user["last_name"],
             // gender: user["gender"]
           };
