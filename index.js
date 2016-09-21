@@ -79,7 +79,7 @@ app.post('/webhook', function (req, res) {
     for (i = 0; i < events.length; i++) {
         var event = events[i];
         var message = {user_id:"", message_text: ""};
-        sendMessage(event.sender.id, text:"hello" + user.first_name);
+        sendMessage(event.sender.id, {text:"hello" + user.first_name});
 
 
 
