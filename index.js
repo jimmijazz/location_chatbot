@@ -248,7 +248,7 @@ function userProfile(userId){
 
 
 function sendGenericMessage(sender) {
-	let messageData = {
+	var messageData = {
 		"attachment": {
 			"type": "template",
 			"payload": {
