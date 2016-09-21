@@ -7,6 +7,7 @@ var mongodb = require("mongodb");
 var ObjectID = mongodb.ObjectID;
 
 var CONTACTS_COLLECTION = "contacts";
+var HOUSES_COLLECTION = "houses"; // Collection of availale houses to inspect
 
 var google_api_key ="AIzaSyDbhlnIkxUmb0cwIMCx34P9W2lGYYa-UFg"
 
@@ -51,20 +52,20 @@ app.get('/webhook', function( req, res){
 app.post('/webhook', function (req, res) {
     var events = req.body.entry[0].messaging;
     var collection = db.collection(CONTACTS_COLLECTION);
+    var houses_collection = db.collection(HOUSES_COLLECTION);
+
     for (i = 0; i < events.length; i++) {
         var event = events[i];
         var message = {user_id:"", message_text: ""};
-        userProfile(event.sender.id);  // Get demographics of user
 
+        // Echo user message
         if (event.message && event.message.text && !event.message.is_echo) {
           sendMessage(event.sender.id, {text: "Hello " + "." + event.message.text});
-
           console.log('message sent to', event.sender.id);
-
           message = {
             user_id: event.sender.id,
             message_text: event.message.text,
-            // first_name: user["first_name"],
+            first_name: user["first_name"]
             // last_name: user["last_name"],
             // gender: user["gender"]
           };
@@ -159,9 +160,8 @@ function userProfile(userId){
     } else if (response.body.error) {
       console.log('Error: ', response.body.error);
     }
-
+    // Convert FB response from string to object
     var user = JSON.parse(response.body);
-    console.log(typeof user);
     console.log(user.first_name);
   })
 }
