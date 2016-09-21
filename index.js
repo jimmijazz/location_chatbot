@@ -172,7 +172,7 @@ function sendMessage(recipientId, message) {
 function isAgent(id) {
 
   // Check the user is allowed to create a location. Replace with DB lookup
-  if (db.collection(AGENTS).find({"_id" : id}) {
+  if (db.collection(AGENTS).find({"_id" : id})) {
     sendMessage(id, {text: "You are allowed to create inspections, please send your address"});
 
     // Update agent status to creating inspection
