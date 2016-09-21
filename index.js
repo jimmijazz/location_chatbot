@@ -62,7 +62,8 @@ app.post('/webhook', function (req, res) {
 
 
     for (i = 0; i < events.length; i++) {
-      
+      var event = events[i];
+
       // Get Basic Facebook Graph Information
       request({
         url: 'https://graph.facebook.com/v2.6/'+event.sender.id+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
@@ -79,7 +80,6 @@ app.post('/webhook', function (req, res) {
         user = JSON.parse(response.body);
 
       });
-        var event = events[i];
         var message = {user_id:"", message_text: ""};
         sendMessage(event.sender.id, {text:"hello" + user.first_name});
 
