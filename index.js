@@ -1,3 +1,7 @@
+// TO DO:
+// Make Facebook graph call an async callback
+
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
@@ -53,14 +57,34 @@ app.post('/webhook', function (req, res) {
     var events = req.body.entry[0].messaging;
     var collection = db.collection(CONTACTS_COLLECTION);
     var houses_collection = db.collection(HOUSES_COLLECTION);
+    var user = {}
+
+    // Get Basic Facebook Graph Information
+    request({
+      url: 'https://graph.facebook.com/v2.6/'+event.sender.id+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
+      qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
+      method: 'GET',
+
+    }, function(error, response, body) {
+      if (error) {
+        console.log('Error: ', error);
+      } else if (response.body.error) {
+        console.log('Error: ', response.body.error);
+      }
+      // Convert FB response from string to object
+      user = JSON.parse(response.body);
+
+    });
 
     for (i = 0; i < events.length; i++) {
         var event = events[i];
         var message = {user_id:"", message_text: ""};
+        sendMessage(event.sender.id, text:"hello" + user.first_name);
 
-        userProfile(event.sender.id, function(user){
-          console.log(user);
-        })
+
+
+
+
         // sendMessage(event.sender.id, {text: "hello" + user.first_name}));
 
         // Echo user message
@@ -167,7 +191,7 @@ function userProfile(userId){
     }
     // Convert FB response from string to object
     var user = JSON.parse(response.body);
-    
+
   })
   return user;
 }
