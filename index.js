@@ -58,13 +58,17 @@ app.post('/webhook', function (req, res) {
     var collection = db.collection(CONTACTS_COLLECTION);
     var houses_collection = db.collection(HOUSES_COLLECTION);
 
+
+
     for (i = 0; i < events.length; i++) {
       var event = events[i];
       if (event.message && event.message.text && !event.message.echo) {
 
       // Get Basic Facebook Graph Information
-      var user = userProfile(event.sender.id);
-      console.log(user);
+      var user = userProfile(event.sender.id, function() {
+        console.log(user);
+      });
+      
       // request({
       //   url: 'https://graph.facebook.com/v2.6/'+event.sender.id+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
       //   qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
