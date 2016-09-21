@@ -80,8 +80,8 @@ app.post('/webhook', function (req, res) {
         user = JSON.parse(response.body);
 
       });
-
-      sendMessage(event.sender.id.toString(), {text:"Hello" + user.first_name})
+      console.log(user)
+      sendMessage(event.sender.id.toString(), {text:"Hello" + user})
     };
 
     //     var message = {user_id:"", message_text: ""};
