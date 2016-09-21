@@ -62,7 +62,7 @@ app.post('/webhook', function (req, res) {
       var event = events[i];
 
       if (event.message && event.message.text && !event.message.echo) {
-        sendMessage(event.sender.id, {text:"Hello"})
+        sendMessage(event.sender.id.toString(), {text:"Hello"})
       };
     //
     //   // Get Basic Facebook Graph Information
