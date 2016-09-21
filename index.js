@@ -76,9 +76,9 @@ app.post('/webhook', function (req, res) {
         }
         // Convert FB response from string to object
         user = JSON.parse(response.body);
+        var id = event.sender.id;
         if (event.message && event.message.text && !event.message.echo) {
             var msg = event.message.text.toLowerCase();
-            var id = event.sender.id;
 
             // Send message depending on input
             switch(msg) {
@@ -91,16 +91,41 @@ app.post('/webhook', function (req, res) {
                 break;
 
               case "create inspection" :
-                isAgent(id);
+                if (isAgent(id)) {
+                  sendMessage(id, {text:"Send your location to create an inspection"});
+                };
                 break;
 
               default :
                 sendMessage(id, {text: "Sorry I don't understand what you mean by " + msg });
                 break;
+
+              // Add another statement to catch address
             };
 
         };
-      });
+
+        if (event.message && event.message.attachments) {
+            // Handle locations
+            lat = event.message.attachments[0].payload.coordinates.lat;
+            long = event.message.attachments[0].payload.coordinates.long;
+
+            var agent = db.collection(AGENTS).find({"_id":id});
+            console.log(agent);
+            console.log("Event has attachments:", event.message.attachments);
+
+
+            geocoder.reverseGeocode(lat,long,function(err, data){
+              // data = google JSON formatted address
+              var location = data.results[0].formatted_address;
+              sendMessage(event.sender.id, {text: location})
+              console.log("Location sent","\n", data);
+            });
+
+            console.log('worked');
+          }
+
+        });
     };
 
     //     var message = {user_id:"", message_text: ""};
@@ -170,10 +195,12 @@ function sendMessage(recipientId, message) {
 
 
 function isAgent(id) {
+// Checks to see if user is an agent.
+// If TRUE puts them into create inspection mode.
 
   // Check the user is allowed to create a location. Replace with DB lookup
   if (db.collection(AGENTS).find({"_id" : id})) {
-    sendMessage(id, {text: "You are allowed to create inspections, please send your address"});
+    sendMessage(id, {text: "You are allowed to create inspections."});
 
     // Update agent status to creating inspection
     message = {_id:id, creating_inspection: true}
@@ -187,7 +214,7 @@ function isAgent(id) {
 
     return true;
   } else {
-    sendMessage(id, {text:"You are not authorized to create an inspection"});
+    sendMessage(id, {text:"You are not authorized to create an inspection."});
     return false;
   };
 
