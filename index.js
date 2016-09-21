@@ -68,7 +68,7 @@ app.post('/webhook', function (req, res) {
       userProfile(event.sender.id, function(response){
         console.log(response);
       });
-
+    
       // request({
       //   url: 'https://graph.facebook.com/v2.6/'+event.sender.id+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
       //   qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
@@ -181,7 +181,7 @@ function sendGeneric(recipientId, location, image_url){
 function userProfile(userId){
   // Returns dict of user profile
   // userProfile(str) -> dict(first_name:str,last_name:str,profile_pic:str,locale:str,timezone:int,gender:str)
-  request({
+  return request({
     url: 'https://graph.facebook.com/v2.6/'+userId+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
     qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
     method: 'GET',
