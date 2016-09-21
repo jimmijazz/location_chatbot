@@ -60,7 +60,6 @@ app.post('/webhook', function (req, res) {
 
     for (i = 0; i < events.length; i++) {
       var event = events[i];
-      var user = {}
 
       if (event.message && event.message.text && !event.message.echo) {
 
@@ -78,9 +77,9 @@ app.post('/webhook', function (req, res) {
         }
         // Convert FB response from string to object
         user = JSON.parse(response.body);
+        console.log(user)
 
       });
-      console.log(user)
       sendMessage(event.sender.id.toString(), {text:"Hello" + user})
     };
 
