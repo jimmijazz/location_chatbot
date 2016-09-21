@@ -62,7 +62,6 @@ app.post('/webhook', function (req, res) {
 
     for (i = 0; i < events.length; i++) {
       var event = events[i];
-      var lower_case = event.message.text.toLowerCase();
 
       // Get Basic Facebook Graph Information
       request({
@@ -78,10 +77,11 @@ app.post('/webhook', function (req, res) {
         }
         // Convert FB response from string to object
         user = JSON.parse(response.body);
-
         if (event.message && event.message.text && !event.message.echo) {
+            var lower_case = event.message.text.toLowerCase();
             sendMessage(event.sender.id, {text: "hello" + user.first_name});
-        } else if (lower_case === "check in") {
+        };
+        if (lower_case === "check in") {
           sendMessage(event.sender.id, {text: "please send your location"});
         };
       });
