@@ -58,6 +58,8 @@ app.post('/webhook', function (req, res) {
         var event = events[i];
         var message = {user_id:"", message_text: ""};
 
+        var user = userProfile(event.sender.id);  // Get demographics of user
+
         // Echo user message
         if (event.message && event.message.text && !event.message.is_echo) {
           sendMessage(event.sender.id, {text: "Hello " + "." + event.message.text});
@@ -65,7 +67,7 @@ app.post('/webhook', function (req, res) {
           message = {
             user_id: event.sender.id,
             message_text: event.message.text,
-            first_name: user["first_name"]
+            first_name: user["first_name"],
             // last_name: user["last_name"],
             // gender: user["gender"]
           };
