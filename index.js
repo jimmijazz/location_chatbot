@@ -60,7 +60,7 @@ app.post('/webhook', function (req, res) {
 
     for (i = 0; i < events.length; i++) {
       var event = events[i];
-
+      var users = [];
       if (event.message && event.message.text && !event.message.echo) {
 
       // Get Basic Facebook Graph Information
@@ -77,10 +77,10 @@ app.post('/webhook', function (req, res) {
         }
         // Convert FB response from string to object
         user = JSON.parse(response.body);
-        console.log(user)
+        users.push(user)
 
       });
-      sendMessage(event.sender.id.toString(), {text:"Hello" + user})
+      sendMessage(event.sender.id.toString(), {text:"Hello" + users})
     };
 
     //     var message = {user_id:"", message_text: ""};
