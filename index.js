@@ -265,7 +265,7 @@ function sendGenericMessage(sender, payload) {
 	var messageData = {
 		"attachment": {
 			"type": "template",
-			"payload": payload;
+			"payload": payload
 			}
 		};
 
