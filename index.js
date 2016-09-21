@@ -57,8 +57,6 @@ app.post('/webhook', function (req, res) {
     var events = req.body.entry[0].messaging;
     var collection = db.collection(CONTACTS_COLLECTION);
     var houses_collection = db.collection(HOUSES_COLLECTION);
-    console.log(events);
-
 
     for (i = 0; i < events.length; i++) {
       var event = events[i];
@@ -92,7 +90,8 @@ app.post('/webhook', function (req, res) {
                 break;
 
               case "create inspection" :
-                sendMessage(id, {text:"Please send your location "})
+                isAgent(id);
+                break;
 
               default :
                 sendMessage(id, {text: "Sorry I don't understand what you mean by " + msg });
@@ -169,7 +168,15 @@ function sendMessage(recipientId, message) {
 };
 
 
-function createLocation(recipientId, message) {
+function isAgent(id) {
+
+  // Check the user is allowed to create a location. Replace with DB lookup
+  if (id === "652607908238304") {
+    sendMessage(id, {text: "You are allowed to create inspections, please send your address"});
+    return true;
+  } else {
+    return false;
+  };
 
   // Check if it is a location
 
