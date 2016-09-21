@@ -111,7 +111,7 @@ app.post('/webhook', function (req, res) {
             long = event.message.attachments[0].payload.coordinates.long;
 
             var agent = db.collection(AGENTS).findOne({"_id":id});
-            console.log(agent({"creating_inspection"}));
+            console.log(agent);
             console.log("Event has attachments:", event.message.attachments);
 
 
