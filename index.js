@@ -166,4 +166,5 @@ function userProfile(userId){
     var user = JSON.parse(response.body);
     console.log(user.first_name);
   })
+  return user;
 }
