@@ -62,7 +62,7 @@ app.post('/webhook', function (req, res) {
 
         // Echo user message
         if (event.message && event.message.text && !event.message.is_echo) {
-          sendMessage(event.sender.id, {text: "Hello " + user.first_name + event.message.text});
+          sendMessage(event.sender.id, {text: "Hello " + event.message.text});
           console.log('message sent to', event.sender.id);
           message = {
             user_id: event.sender.id,
