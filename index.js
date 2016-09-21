@@ -134,7 +134,6 @@ app.post('/webhook', function (req, res) {
               }];
 
               sendGenericMessage(id, payload);
-              sendMessage(id, {text: location})
               console.log("Location sent","\n", data);
             });
 
