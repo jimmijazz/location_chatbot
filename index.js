@@ -60,26 +60,27 @@ app.post('/webhook', function (req, res) {
 
     for (i = 0; i < events.length; i++) {
       var event = events[i];
-      var users = [];
       if (event.message && event.message.text && !event.message.echo) {
 
       // Get Basic Facebook Graph Information
-      request({
-        url: 'https://graph.facebook.com/v2.6/'+event.sender.id+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
-        qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
-        method: 'GET',
-
-      }, function(error, response, body) {
-        if (error) {
-          console.log('Error: ', error);
-        } else if (response.body.error) {
-          console.log('Error: ', response.body.error);
-        }
-        // Convert FB response from string to object
-        user = JSON.parse(response.body);
-        sendMessage(event.sender.id, {text: "hello" + user.first_name});
-
-      });
+      var user = userProfile(event.sender.id);
+      console.log(user);
+      // request({
+      //   url: 'https://graph.facebook.com/v2.6/'+event.sender.id+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
+      //   qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
+      //   method: 'GET',
+      //
+      // }, function(error, response, body) {
+      //   if (error) {
+      //     console.log('Error: ', error);
+      //   } else if (response.body.error) {
+      //     console.log('Error: ', response.body.error);
+      //   }
+      //   // Convert FB response from string to object
+      //   user = JSON.parse(response.body);
+      //   sendMessage(event.sender.id, {text: "hello" + user.first_name});
+      //
+      // });
     };
 
     //     var message = {user_id:"", message_text: ""};
