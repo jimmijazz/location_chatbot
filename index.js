@@ -58,8 +58,8 @@ app.post('/webhook', function (req, res) {
         var event = events[i];
         var message = {user_id:"", message_text: ""};
 
-        userProfile(event.sender.id, function() {
-          sendMessage(event.sender.id, {text: "hello"})
+        userProfile(event.sender.id, function(user) {
+          sendMessage(event.sender.id, {text: "hello" + user.first_name})
         });
 
         // Echo user message
