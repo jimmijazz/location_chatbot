@@ -65,7 +65,7 @@ app.post('/webhook', function (req, res) {
       if (event.message && event.message.text && !event.message.echo) {
 
       // Get Basic Facebook Graph Information
-      var user = userProfile(event.sender.id, function(response){
+      userProfile(event.sender.id, function(response){
         console.log(response);
       });
 
