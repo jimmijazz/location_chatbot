@@ -59,37 +59,33 @@ app.post('/webhook', function (req, res) {
     var houses_collection = db.collection(HOUSES_COLLECTION);
     var user = {}
 
-    // Get Basic Facebook Graph Information
-    request({
-      url: 'https://graph.facebook.com/v2.6/'+event.sender.id+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
-      qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
-      method: 'GET',
 
-    }, function(error, response, body) {
-      if (error) {
-        console.log('Error: ', error);
-      } else if (response.body.error) {
-        console.log('Error: ', response.body.error);
-      }
-      // Convert FB response from string to object
-      user = JSON.parse(response.body);
-
-    });
 
     for (i = 0; i < events.length; i++) {
+      
+      // Get Basic Facebook Graph Information
+      request({
+        url: 'https://graph.facebook.com/v2.6/'+event.sender.id+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
+        qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
+        method: 'GET',
+
+      }, function(error, response, body) {
+        if (error) {
+          console.log('Error: ', error);
+        } else if (response.body.error) {
+          console.log('Error: ', response.body.error);
+        }
+        // Convert FB response from string to object
+        user = JSON.parse(response.body);
+
+      });
         var event = events[i];
         var message = {user_id:"", message_text: ""};
         sendMessage(event.sender.id, {text:"hello" + user.first_name});
 
-
-
-
-
-        // sendMessage(event.sender.id, {text: "hello" + user.first_name}));
-
         // Echo user message
         // if (event.message && event.message.text && !event.message.is_echo) {
-        //   sendMessage(event.sender.id, {text: "Hello " + event.message.text});
+          // sendMessage(event.sender.id, {text: "Hello " + event.message.text});
         //   console.log('message sent to', event.sender.id);
         //   message = {
         //     user_id: event.sender.id,
@@ -193,5 +189,4 @@ function userProfile(userId){
     var user = JSON.parse(response.body);
 
   })
-  return user;
 }
