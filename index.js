@@ -83,9 +83,8 @@ app.post('/webhook', function (req, res) {
             sendMessage(event.sender.id, {text: "hello" + user.first_name});
         } else if (lower_case === "check in") {
           sendMessage(event.sender.id, {text: "please send your location"});
-        }
-      }
-    );
+        };
+      });
     };
 
     //     var message = {user_id:"", message_text: ""};
@@ -128,7 +127,6 @@ app.post('/webhook', function (req, res) {
         //
         //     console.log('worked');
         //   }
-        };
 
     res.sendStatus(200);
 
