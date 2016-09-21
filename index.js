@@ -198,9 +198,6 @@ function isAgent(id) {
   // Else return error message "not an address"
 };
 
-function createLocation(id) {
-  while
-}
 
 function sendGeneric(recipientId, location, image_url){
   //https://developers.facebook.com/docs/messenger-platform/send-api-reference/generic-template
