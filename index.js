@@ -14,9 +14,8 @@ var CONTACTS_COLLECTION = "contacts";
 var HOUSES_COLLECTION = "houses"; // Collection of availale houses to inspect
 var AGENTS = "agents;"
 
-var google_api_key ="AIzaSyDbhlnIkxUmb0cwIMCx34P9W2lGYYa-UFg"
-
-var image_url = "https://i3.au.reastatic.net/800x600/a177a44afd7e9afe7ba30f5b63140f1fc46eff1f5b9e4cf0c9e77485e69208c4/main.jpg"
+var google_api_key ="AIzaSyDbhlnIkxUmb0cwIMCx34P9W2lGYYa-UFg";
+var map_url = "https://maps.googleapis.com/maps/api/staticmap?maptype=satellite&center="
 
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({extended: false}));
@@ -111,6 +110,8 @@ app.post('/webhook', function (req, res) {
             lat = event.message.attachments[0].payload.coordinates.lat;
             long = event.message.attachments[0].payload.coordinates.long;
 
+
+
             var agent = db.collection(AGENTS).find({"_id" : id});
             console.log(lat, long);
             console.log("Event has attachments:", event.message.attachments);
@@ -119,7 +120,20 @@ app.post('/webhook', function (req, res) {
             geocoder.reverseGeocode(lat,long,function(err, data){
               // data = google JSON formatted address
               var location = data.results[0].formatted_address;
-              sendGenericMessage(id);
+              // Get static image of location
+              var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
+              var payload = [{
+                "title" : "Your Property",
+                "subtitle" : location,
+                "image_url" : location_image,
+                "button" : [{
+                  "type" : "postback",
+                  "title" : "Create Location",
+                  "payload" : "Postback",
+                }],
+              }];
+
+              sendGenericMessage(id, payload);
               sendMessage(id, {text: location})
               console.log("Location sent","\n", data);
             });
@@ -247,38 +261,14 @@ function userProfile(userId){
 };
 
 
-function sendGenericMessage(sender) {
+function sendGenericMessage(sender, payload) {
 	var messageData = {
 		"attachment": {
 			"type": "template",
-			"payload": {
-				"template_type": "generic",
-				"elements": [{
-					"title": "First card",
-					"subtitle": "Element #1 of an hscroll",
-					"image_url": "http://messengerdemo.parseapp.com/img/rift.png",
-					"buttons": [{
-						"type": "web_url",
-						"url": "https://www.messenger.com",
-						"title": "web url"
-					}, {
-						"type": "postback",
-						"title": "Postback",
-						"payload": "Payload for first element in a generic bubble",
-					}],
-				}, {
-					"title": "Second card",
-					"subtitle": "Element #2 of an hscroll",
-					"image_url": "http://messengerdemo.parseapp.com/img/gearvr.png",
-					"buttons": [{
-						"type": "postback",
-						"title": "Postback",
-						"payload": "Payload for second element in a generic bubble",
-					}],
-				}]
+			"payload": payload;
 			}
-		}
-	}
+		};
+
 	request({
 		url: 'https://graph.facebook.com/v2.6/me/messages',
 		qs: {access_token:process.env.PAGE_ACCESS_TOKEN},
