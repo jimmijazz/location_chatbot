@@ -129,7 +129,7 @@ app.post('/webhook', function (req, res) {
                 "buttons" : [{
                   "type" : "postback",
                   "title" : "Create Location",
-                  "payload" : "Postback",
+                  "payload" : "create location",
                 }],
               }];
 
