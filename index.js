@@ -126,7 +126,7 @@ app.post('/webhook', function (req, res) {
                 "title" : "Your Property",
                 "subtitle" : location,
                 "image_url" : location_image,
-                "button" : [{
+                "buttons" : [{
                   "type" : "postback",
                   "title" : "Create Location",
                   "payload" : "hello hello hello",
