@@ -105,7 +105,7 @@ app.post('/webhook', function (req, res) {
 
         };
 
-        if (event.message && event.message.attachments) {
+        if (event.message && event.message.attachments[0].type == 'location') {
             // Handle locations
             lat = event.message.attachments[0].payload.coordinates.lat;
             long = event.message.attachments[0].payload.coordinates.long;
