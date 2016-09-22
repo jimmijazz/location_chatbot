@@ -120,24 +120,22 @@ app.post('/webhook', function (req, res) {
             geocoder.reverseGeocode(lat,long,function(err, data){
               // data = google JSON formatted address
               var location = data.results[0].formatted_address;
+              // Get static image of location
+              var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
+              var payload = [{
+                "title" : "Your Property",
+                "subtitle" : location,
+                "image_url" : location_image,
+                "button" : [{
+                  "type" : "postback",
+                  "title" : "Create Location",
+                  "payload" : "hello hello hello",
+                }],
+              }];
 
+              sendGenericMessage(id, payload );
+              console.log("Location sent","\n", data);
             });
-
-            // Get static image of location
-            var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
-            var payload = [{
-              "title" : "Your Property",
-              "subtitle" : location,
-              "image_url" : location_image,
-              "button" : [{
-                "type" : "postback",
-                "title" : "Create Location",
-                "payload" : "hello hello hello",
-              }],
-            }];
-
-            sendGenericMessage(id, payload );
-            console.log("Location sent","\n", data);
 
             console.log('worked');
           }
