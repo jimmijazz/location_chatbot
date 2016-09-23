@@ -1,7 +1,6 @@
 // TO DO:
 // Make Facebook graph call an async callback
 
-
 var express = require('express');
 var bodyParser = require('body-parser');
 var request = require('request');
@@ -11,8 +10,9 @@ var mongodb = require("mongodb");
 var ObjectID = mongodb.ObjectID;
 
 var CONTACTS_COLLECTION = "contacts";
-var HOUSES_COLLECTION = "houses"; // Collection of availale houses to inspect
-var AGENTS = "agents;"
+var HOUSES_COLLECTION = "houses"; // Details of houses including whether or not they are open for inspection
+var AGENTS = "agents;"  // Registered agents and which agency they are with
+var PEOPLE = "people" // Potential vendors and tenants {_id: str, messages:[{"message":str, "timestamp": int, "mid": str, "seq": int}]}
 
 var google_api_key ="AIzaSyDbhlnIkxUmb0cwIMCx34P9W2lGYYa-UFg";
 var map_url = "https://maps.googleapis.com/maps/api/staticmap?maptype=satellite&center="
@@ -55,14 +55,13 @@ app.get('/webhook', function( req, res){
 // handler receiving messages
 app.post('/webhook', function (req, res) {
     var events = req.body.entry[0].messaging;
-    var collection = db.collection(CONTACTS_COLLECTION);
-    var houses_collection = db.collection(HOUSES_COLLECTION);
 
     for (i = 0; i < events.length; i++) {
       var event = events[i];
       var id = event.sender.id;
 
       // Get Basic Facebook Graph Information
+      // Nothing can happen until this returns info
       request({
         url: 'https://graph.facebook.com/v2.6/'+event.sender.id+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
         qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
@@ -73,13 +72,32 @@ app.post('/webhook', function (req, res) {
             console.log('Error: ', error);
         } else if (response.body.error) {
             console.log('Error: ', response.body.error);
+            sendMessage(id, {text: "I'm sorry something went wrong. I'm not sure who you are"});
         }
+
         // Convert FB response from string to object
         user = JSON.parse(response.body);
 
+        // If message is text
         if (event.message && event.message.text && !event.message.echo) {
             var msg = event.message.text.toLowerCase();
 
+            var msg_meta = [{
+                                "message" : event.message.text,
+                                "timestamp" : event.timestamp,
+                                "mid" : event.message.mid,
+                                "seq" : event.message.seq
+                            }];
+
+            db.collection(PEOPLE).insert("_id": id, messages: msg_meta);
+            // Check if user has interacted with us before
+
+                // Check if user is registered agent or not
+
+            // Check if user is agent
+
+
+            // Check if user has
             // Send message depending on input
             switch(msg) {
               case "check in" :
@@ -105,16 +123,18 @@ app.post('/webhook', function (req, res) {
 
         };
 
+        // If location sent
         if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
             // Handle locations
             lat = event.message.attachments[0].payload.coordinates.lat;
             long = event.message.attachments[0].payload.coordinates.long;
 
-
+            if isAgent(id) {
+              // Return create check in
+            }
 
             var agent = db.collection(AGENTS).find({"_id" : id});
-            console.log(lat, long);
-            console.log("Event has attachments:", event.message.attachments);
+            //console.log("Event has attachments:", event.message.attachments);
 
 
             geocoder.reverseGeocode(lat,long,function(err, data){
@@ -212,11 +232,8 @@ function sendMessage(recipientId, message) {
 function isAgent(id) {
 // Checks to see if user is an agent.
 // If TRUE puts them into create inspection mode.
-
   // Check the user is allowed to create a location. Replace with DB lookup
   if (db.collection(AGENTS).find({"_id" : id})) {
-    sendMessage(id, {text: "You are allowed to create inspections."});
-
     // Update agent status to creating inspection
     message = {_id:id, creating_inspection: true}
     db.collection(AGENTS).insert(message, function(err, result) {
@@ -226,10 +243,8 @@ function isAgent(id) {
         console.log("Updated agent");
       };
     });
-
     return true;
   } else {
-    sendMessage(id, {text:"You are not authorized to create an inspection."});
     return false;
   };
 
