@@ -9,7 +9,7 @@ var geocoder = require('geocoder');
 var mongodb = require("mongodb");
 var ObjectID = mongodb.ObjectID;
 
-var CONTACTS_COLLECTION = "contacts";
+var CONTACTS_COLLECTION = "contacts"; // All messages sent (probably won't need this)
 var HOUSES_COLLECTION = "houses"; // Details of houses including whether or not they are open for inspection
 var AGENTS = "agents;"  // Registered agents and which agency they are with
 var PEOPLE = "people" // Potential vendors and tenants {_id: str, messages:[{"message":str, "timestamp": int, "mid": str, "seq": int}]}
@@ -82,6 +82,16 @@ app.post('/webhook', function (req, res) {
         if (event.message && event.message.text && !event.message.echo) {
             var msg = event.message.text.toLowerCase();
 
+            // Check if user has sent us a message before (for onboarding purposes)
+            if (!db.collection(PEOPLE).find({_id: id})) {
+              console.log("***NEW USER! DING DING DING***");
+
+              if (isAgent(id)) {
+                sendMessage(id, {text: "Hello " + user.first_name + ". Welcome to OpenHood!"});
+              }
+            }
+
+            // Store message againts that persons name
             var msg_meta = {
                                 "message" : event.message.text,
                                 "timestamp" : event.timestamp,
@@ -116,6 +126,16 @@ app.post('/webhook', function (req, res) {
 
               case "create inspection" :
                 if (isAgent(id)) {
+                  // Update agent status to creating inspection
+                  message = {_id:id, creating_inspection: true};
+
+                  db.collection(AGENTS).insert(message, function(err, result) {
+                    if (err) {
+                      console.log("Error updating agent. Error:", err);
+                    } else {
+                      console.log("Updated agent");
+                    };
+                  });
                   sendMessage(id, {text:"Send your location to create an inspection"});
                 };
                 break;
@@ -237,19 +257,8 @@ function sendMessage(recipientId, message) {
 
 function isAgent(id) {
 // Checks to see if user is an agent.
-// If TRUE puts them into create inspection mode.
-  // Check the user is allowed to create a location. Replace with DB lookup
   if (db.collection(AGENTS).find({_id : id})) {
-    // Update agent status to creating inspection
-    message = {_id:id, creating_inspection: true}
-    db.collection(AGENTS).insert(message, function(err, result) {
-      if (err) {
-        console.log("Error updating agent. Error:", err);
-      } else {
-        console.log("Updated agent");
-      };
-    });
-    return true;
+      return true;
   } else {
     return false;
   };
