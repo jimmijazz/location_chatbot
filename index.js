@@ -72,12 +72,12 @@ app.post('/webhook', function (req, res) {
             console.log('Error: ', error);
         } else if (response.body.error) {
             console.log('Error: ', response.body.error);
-            sendMessage(id, {text: "I'm sorry something went wrong. I'm not sure who you are"});
-        }
+            sendMessage(id, {text: "I'm sorry something went wrong. I'm not sure who you are."});
+        };
 
-        // Convert FB response from string to object
-        user = JSON.parse(response.body);
+        user = JSON.parse(response.body); // Convert FB response from string to object
 
+        // ** TEXT MESSAGE ** //
         if (event.message && event.message.text && !event.message.echo) {
             var msg_meta = {
                                 "message" : event.message.text,
@@ -87,8 +87,16 @@ app.post('/webhook', function (req, res) {
                             };
 
             // Check if user has sent us a message before (for onboarding purposes)
+            // TO DO: Also add a check for 'seq' as a redundancy
             db.collection(PEOPLE).count({_id:id}, function(err, count){
-              if(count == 0) {
+              if(count === 0) {
+                db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
+                  if (err) {
+                    console.log("Error updating PEOPLE. Error:", err);
+                  } else {
+                    console.log("Updated PEOPLE");
+                  };
+                });
                 if (isAgent(id)) {
                   // ** New Agent ** //
                   // Welcome message for Agent. TO DO: Replace with help commands
@@ -96,14 +104,7 @@ app.post('/webhook', function (req, res) {
                 } else {
                   // ** New User ** //
                   console.log("***NEW USER! DING DING DING***");
-                  db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
-                    if (err) {
-                      console.log("Error updating PEOPLE. Error:", err);
-                    } else {
-                      console.log("Updated PEOPLE");
-                    };
-                  });
-                }
+                };
               } else {
                 // Not a new user. Update messages.
                 db.collection(PEOPLE).update({_id: id}, { $push: {messages: msg_meta}}, function(err, result){
@@ -114,35 +115,17 @@ app.post('/webhook', function (req, res) {
                   };
                 });
               };
-              read_message(id, event.message.text);
+              read_message(id, event.message.text); // Read input and respond
             });
 
-            // Create a function here that passes message into a switch statement so it is called after the collection
-
-
-
-            // Check if user has interacted with us before
-
-                // Check if user is registered agent or not
-
-            // Check if user is agent
-
-        };
-
-        // If location sent
-        if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
-            // Handle locations
-            lat = event.message.attachments[0].payload.coordinates.lat;
-            long = event.message.attachments[0].payload.coordinates.long;
-
-            // if (isAgent(id)) {
-            //   // Return create check in
-            // }
+            // ** LOCATION MESSAGE ** //
+        } elseif (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
+            var lat = event.message.attachments[0].payload.coordinates.lat;
+            var long = event.message.attachments[0].payload.coordinates.long;
 
             var agent = db.collection(AGENTS).find({"_id" : id});
-            //console.log("Event has attachments:", event.message.attachments);
 
-
+            // Send Generic Message with location
             geocoder.reverseGeocode(lat,long,function(err, data){
               // data = google JSON formatted address
               var location = data.results[0].formatted_address;
@@ -164,54 +147,15 @@ app.post('/webhook', function (req, res) {
             });
 
             console.log('worked');
-          }
+          } else {
+            console.log("Error. Unknown message formated", event.message);
+            sendMessage(id, {text: "That message format is not supported"});
+          };
 
         });
     };
 
-    //     var message = {user_id:"", message_text: ""};
-    //     sendMessage(event.sender.id, {text:"hello" + user.first_name});
-
-        // Echo user message
-        // if (event.message && event.message.text && !event.message.is_echo) {
-          // sendMessage(event.sender.id, {text: "Hello " + event.message.text});
-        //   console.log('message sent to', event.sender.id);
-        //   message = {
-        //     user_id: event.sender.id,
-        //     message_text: event.message.text,
-        //     // first_name: user.first_name,
-        //     // last_name: user["last_name"],
-        //     // gender: user["gender"]
-        //   };
-        //
-        //   // Add to database
-        //   collection.insert(message, function(err, result) {
-        //     if (err) {
-        //       console.log("Error inserting message. Error:",err);
-        //
-        //     } else {
-        //       console.log('Inserted documents into the "contacts" collection.', result);
-        //     }
-        //   })
-        //
-        //
-        // } else if (event.message && event.message.attachments) {
-        //     console.log("Event has attachments:", event.message.attachments);
-        //     lat = event.message.attachments[0].payload.coordinates.lat;
-        //     long = event.message.attachments[0].payload.coordinates.long;
-        //
-        //     geocoder.reverseGeocode(lat,long,function(err, data){
-        //       // data = google JSON formatted address
-        //       var location = data.results[0].formatted_address;
-        //       sendMessage(event.sender.id, {text: location})
-        //       console.log("Location sent","\n", data);
-        //     });
-        //
-        //     console.log('worked');
-        //   }
-
     res.sendStatus(200);
-
   });
 
 // Generic function sending messages
@@ -333,4 +277,47 @@ function read_message(id, user_message) {
 
     // Add another statement to catch address
   };
-}
+};
+
+
+
+    //     var message = {user_id:"", message_text: ""};
+    //     sendMessage(event.sender.id, {text:"hello" + user.first_name});
+
+        // Echo user message
+        // if (event.message && event.message.text && !event.message.is_echo) {
+          // sendMessage(event.sender.id, {text: "Hello " + event.message.text});
+        //   console.log('message sent to', event.sender.id);
+        //   message = {
+        //     user_id: event.sender.id,
+        //     message_text: event.message.text,
+        //     // first_name: user.first_name,
+        //     // last_name: user["last_name"],
+        //     // gender: user["gender"]
+        //   };
+        //
+        //   // Add to database
+        //   collection.insert(message, function(err, result) {
+        //     if (err) {
+        //       console.log("Error inserting message. Error:",err);
+        //
+        //     } else {
+        //       console.log('Inserted documents into the "contacts" collection.', result);
+        //     }
+        //   })
+        //
+        //
+        // } else if (event.message && event.message.attachments) {
+        //     console.log("Event has attachments:", event.message.attachments);
+        //     lat = event.message.attachments[0].payload.coordinates.lat;
+        //     long = event.message.attachments[0].payload.coordinates.long;
+        //
+        //     geocoder.reverseGeocode(lat,long,function(err, data){
+        //       // data = google JSON formatted address
+        //       var location = data.results[0].formatted_address;
+        //       sendMessage(event.sender.id, {text: location})
+        //       console.log("Location sent","\n", data);
+        //     });
+        //
+        //     console.log('worked');
+        //   }
