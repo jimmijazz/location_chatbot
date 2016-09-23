@@ -89,7 +89,7 @@ app.post('/webhook', function (req, res) {
                                 "seq" : event.message.seq
                             }]};
 
-            db.collection(PEOPLE).insert(msg_meta, function(err, result){
+            db.collection(PEOPLE).update(msg_meta, {upsert: true}, function(err, result){
               if (err) {
                 console.log("Error updating msg_meta. Error: ", err);
               } else {
