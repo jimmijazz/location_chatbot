@@ -130,7 +130,7 @@ app.post('/webhook', function (req, res) {
                 break;
 
               case "what is my name" :
-                sendMessage(id, {text:`` "Your name is " + user.first_name});
+                sendMessage(id, {text: "Your name is " + user.first_name});
                 break;
 
               case "create inspection" :
