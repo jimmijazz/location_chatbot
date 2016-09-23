@@ -79,41 +79,42 @@ app.post('/webhook', function (req, res) {
         user = JSON.parse(response.body);
 
         if (event.message && event.message.text && !event.message.echo) {
-            var msg = event.message.text.toLowerCase();
-            // Check if user has sent us a message before (for onboarding purposes)
-            db.collection(PEOPLE).count({_id:id}, function(err, count){
-              if(count == 0) {
-                console.log("***NEW USER! DING DING DING***");
-                db.collection(PEOPLE).insert({_id:id, messages:[]}, function(err, result) {
-                  if (err) {
-                    console.log("Error updating PEOPLE. Error:", err);
-                  } else {
-                    console.log("Updated PEOPLE");
-                  };
-                });  // TO DO: combine this in update statement below
-                if (isAgent(id)) {
-                  sendMessage(id, {text: "Hello " + user.first_name + ". Welcome to OpenHood!"});
-                };
-              };
-
-
-            });
-
-
-            // Store message againts that persons name
             var msg_meta = {
                                 "message" : event.message.text,
                                 "timestamp" : event.timestamp,
                                 "mid" : event.message.mid,
                                 "seq" : event.message.seq
                             };
-            db.collection(PEOPLE).update({_id: id}, { $push: {messages: msg_meta}}, function(err, result){
-              if (err) {
-                console.log("Error updating msg_meta. Error: ", err);
+
+            // Check if user has sent us a message before (for onboarding purposes)
+            db.collection(PEOPLE).count({_id:id}, function(err, count){
+              // No record of that user
+              if(count == 0) {
+                console.log("***NEW USER! DING DING DING***");
+                db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
+                  if (err) {
+                    console.log("Error updating PEOPLE. Error:", err);
+                  } else {
+                    console.log("Updated PEOPLE");
+                  };
+                });
+                if (isAgent(id)) {
+                  // Welcome message for Agent. Replace with help commands
+                  sendMessage(id, {text: "Hello " + user.first_name + ". Welcome to OpenHood!"});
+                };
               } else {
-                console.log("Updated msg_meta", msg_meta);
-              };
+                // Store message againts that persons name
+                db.collection(PEOPLE).update({_id: id}, { $push: {messages: msg_meta}}, function(err, result){
+                  if (err) {
+                    console.log("Error updating msg_meta. Error: ", err);
+                  } else {
+                    console.log("Updated msg_meta", msg_meta);
+                  };
+                });
+              }
             });
+
+
 
             // Check if user has interacted with us before
 
@@ -122,8 +123,8 @@ app.post('/webhook', function (req, res) {
             // Check if user is agent
 
 
-            // Check if user has
             // Send message depending on input
+            var msg = event.message.text.toLowerCase();
             switch(msg) {
               case "check in" :
                 sendMessage(id, {text: "Please send your location"});
