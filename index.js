@@ -83,7 +83,7 @@ app.post('/webhook', function (req, res) {
             var msg = event.message.text.toLowerCase();
 
             // Check if user has sent us a message before (for onboarding purposes)
-            if (!(db.collection(PEOPLE).find({_id: id})) {
+            if ((db.collection(PEOPLE).find({_id: id})).count() == 0 ) {
               console.log("***NEW USER! DING DING DING***");
 
               if (isAgent(id)) {
