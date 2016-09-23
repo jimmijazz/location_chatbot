@@ -83,13 +83,13 @@ app.post('/webhook', function (req, res) {
             var msg = event.message.text.toLowerCase();
 
             // Check if user has sent us a message before (for onboarding purposes)
-            if (!db.collection(PEOPLE).find({_id: id})) {
+            if (!(db.collection(PEOPLE).find({_id: id})) {
               console.log("***NEW USER! DING DING DING***");
 
               if (isAgent(id)) {
                 sendMessage(id, {text: "Hello " + user.first_name + ". Welcome to OpenHood!"});
               }
-            }
+            };
 
             // Store message againts that persons name
             var msg_meta = {
