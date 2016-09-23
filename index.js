@@ -95,7 +95,7 @@ app.post('/webhook', function (req, res) {
               } else {
                 console.log("Updated msg_meta");
               };
-            };
+            });
             // Check if user has interacted with us before
 
                 // Check if user is registered agent or not
