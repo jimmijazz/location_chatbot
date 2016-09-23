@@ -84,7 +84,13 @@ app.post('/webhook', function (req, res) {
             db.collection(PEOPLE).count({_id:id}, function(err, count){
               if(count == 0) {
                 console.log("***NEW USER! DING DING DING***");
-                db.collection(PEOPLE).insert(_id:id, messages:[]);  // TO DO: combine this in update statement below
+                db.collection(PEOPLE).insert({_id:id, messages:[]}, function(err, result) {
+                  if (err) {
+                    console.log("Error updating PEOPLE. Error:", err);
+                  } else {
+                    console.log("Updated PEOPLE");
+                  };
+                });  // TO DO: combine this in update statement below
                 if (isAgent(id)) {
                   sendMessage(id, {text: "Hello " + user.first_name + ". Welcome to OpenHood!"});
                 };
