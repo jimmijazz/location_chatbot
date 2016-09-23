@@ -78,18 +78,18 @@ app.post('/webhook', function (req, res) {
         // Convert FB response from string to object
         user = JSON.parse(response.body);
 
-        // If message is text
         if (event.message && event.message.text && !event.message.echo) {
             var msg = event.message.text.toLowerCase();
-
             // Check if user has sent us a message before (for onboarding purposes)
             db.collection(PEOPLE).count({_id:id}, function(err, count){
               if(count == 0) {
                 console.log("***NEW USER! DING DING DING***");
-              }
-              if (isAgent(id)) {
-                sendMessage(id, {text: "Hello " + user.first_name + ". Welcome to OpenHood!"});
+                db.collection(PEOPLE).insert(_id:id, messages:[]);  // TO DO: combine this in update statement below
+                if (isAgent(id)) {
+                  sendMessage(id, {text: "Hello " + user.first_name + ". Welcome to OpenHood!"});
+                };
               };
+
 
             });
 
@@ -124,7 +124,7 @@ app.post('/webhook', function (req, res) {
                 break;
 
               case "what is my name" :
-                sendMessage(id, {text: "Your name is " + user.first_name});
+                sendMessage(id, {text:`` "Your name is " + user.first_name});
                 break;
 
               case "create inspection" :
