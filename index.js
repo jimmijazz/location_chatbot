@@ -88,31 +88,36 @@ app.post('/webhook', function (req, res) {
 
             // Check if user has sent us a message before (for onboarding purposes)
             db.collection(PEOPLE).count({_id:id}, function(err, count){
-              // No record of that user
               if(count == 0) {
-                console.log("***NEW USER! DING DING DING***");
-                db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
-                  if (err) {
-                    console.log("Error updating PEOPLE. Error:", err);
-                  } else {
-                    console.log("Updated PEOPLE");
-                  };
-                });
                 if (isAgent(id)) {
-                  // Welcome message for Agent. Replace with help commands
+                  // ** New Agent ** //
+                  // Welcome message for Agent. TO DO: Replace with help commands
                   sendMessage(id, {text: "Hello " + user.first_name + ". Welcome to OpenHood!"});
-                };
+                } else {
+                  // ** New User ** //
+                  console.log("***NEW USER! DING DING DING***");
+                  db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
+                    if (err) {
+                      console.log("Error updating PEOPLE. Error:", err);
+                    } else {
+                      console.log("Updated PEOPLE");
+                    };
+                  });
+                }
               } else {
-                // Store message againts that persons name
+                // Not a new user. Update messages.
                 db.collection(PEOPLE).update({_id: id}, { $push: {messages: msg_meta}}, function(err, result){
                   if (err) {
                     console.log("Error updating msg_meta. Error: ", err);
                   } else {
-                    console.log("Updated msg_meta", msg_meta);
+                    console.log("Updated msg_meta");
                   };
                 });
-              }
+              };
+              read_message(event.message.text);
             });
+
+            // Create a function here that passes message into a switch statement so it is called after the collection
 
 
 
@@ -121,41 +126,6 @@ app.post('/webhook', function (req, res) {
                 // Check if user is registered agent or not
 
             // Check if user is agent
-
-
-            // Send message depending on input
-            var msg = event.message.text.toLowerCase();
-            switch(msg) {
-              case "check in" :
-                sendMessage(id, {text: "Please send your location"});
-                break;
-
-              case "what is my name" :
-                sendMessage(id, {text: "Your name is " + user.first_name});
-                break;
-
-              case "create inspection" :
-                if (isAgent(id)) {
-                  // Update agent status to creating inspection
-                  message = {_id:id, creating_inspection: true};
-
-                  db.collection(AGENTS).insert(message, function(err, result) {
-                    if (err) {
-                      console.log("Error updating agent. Error:", err);
-                    } else {
-                      console.log("Updated agent");
-                    };
-                  });
-                  sendMessage(id, {text:"Send your location to create an inspection"});
-                };
-                break;
-
-              default :
-                sendMessage(id, {text: "Sorry I don't understand what you mean by " + msg });
-                break;
-
-              // Add another statement to catch address
-            };
 
         };
 
@@ -326,4 +296,41 @@ function sendGenericMessage(sender, payload) {
 			console.log('Error: ', response.body.error)
 		}
 	})
+};
+
+function read_message(user_message) {
+// Sends a message to the user based on message
+/// read_message(str) -> None
+  var msg = user_message.toLowerCase();
+  switch(msg) {
+    case "check in" :
+      sendMessage(id, {text: "Please send your location"});
+      break;
+
+    case "what is my name" :
+      sendMessage(id, {text: "Your name is " + user.first_name});
+      break;
+
+    case "create inspection" :
+      if (isAgent(id)) {
+        // Update agent status to creating inspection
+        message = {_id:id, creating_inspection: true};
+
+        db.collection(AGENTS).insert(message, function(err, result) {
+          if (err) {
+            console.log("Error updating agent. Error:", err);
+          } else {
+            console.log("Updated agent");
+          };
+        });
+        sendMessage(id, {text:"Send your location to create an inspection"});
+      };
+      break;
+
+    default :
+      sendMessage(id, {text: "Sorry I don't understand what you mean by " + msg });
+      break;
+
+    // Add another statement to catch address
+  };
 }
