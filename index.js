@@ -147,8 +147,6 @@ app.post('/webhook', function (req, res) {
             });
             console.log('worked');
           }
-          };
-
         });
     };
     res.sendStatus(200);
