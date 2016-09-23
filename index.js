@@ -87,7 +87,7 @@ app.post('/webhook', function (req, res) {
                                 "timestamp" : event.timestamp,
                                 "mid" : event.message.mid,
                                 "seq" : event.message.seq
-                            }];
+                            }]};
 
             db.collection(PEOPLE).insert(msg_meta, function(err, result){
               if (err) {
