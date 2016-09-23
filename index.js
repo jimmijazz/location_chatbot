@@ -102,7 +102,7 @@ app.post('/webhook', function (req, res) {
               if (err) {
                 console.log("Error updating msg_meta. Error: ", err);
               } else {
-                console.log("Updated msg_meta");
+                console.log("Updated msg_meta", msg_meta);
               };
             });
 
