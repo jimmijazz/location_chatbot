@@ -114,7 +114,7 @@ app.post('/webhook', function (req, res) {
                   };
                 });
               };
-              read_message(event.message.text);
+              read_message(id, event.message.text);
             });
 
             // Create a function here that passes message into a switch statement so it is called after the collection
@@ -298,9 +298,9 @@ function sendGenericMessage(sender, payload) {
 	})
 };
 
-function read_message(user_message) {
-// Sends a message to the user based on message
-/// read_message(str) -> None
+function read_message(id, user_message) {
+// Sends a message to the user(id) based on message
+/// read_message(str,str) -> None
   var msg = user_message.toLowerCase();
   switch(msg) {
     case "check in" :
