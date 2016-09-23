@@ -82,14 +82,20 @@ app.post('/webhook', function (req, res) {
         if (event.message && event.message.text && !event.message.echo) {
             var msg = event.message.text.toLowerCase();
 
-            var msg_meta = [{
+            var msg_meta = {"_id": id, "messages" : [{
                                 "message" : event.message.text,
                                 "timestamp" : event.timestamp,
                                 "mid" : event.message.mid,
                                 "seq" : event.message.seq
                             }];
 
-            db.collection(PEOPLE).insert("_id": id, messages: msg_meta);
+            db.collection(PEOPLE).insert(msg_meta, function(err, result){
+              if (err) {
+                console.log("Error updating msg_meta. Error: ", err);
+              } else {
+                console.log("Updated msg_meta");
+              };
+            };
             // Check if user has interacted with us before
 
                 // Check if user is registered agent or not
@@ -235,7 +241,7 @@ function isAgent(id) {
   // Check the user is allowed to create a location. Replace with DB lookup
   if (db.collection(AGENTS).find({"_id" : id})) {
     // Update agent status to creating inspection
-    message = {_id:id, creating_inspection: true}
+    message = {"_id":id, "creating_inspection": true}
     db.collection(AGENTS).insert(message, function(err, result) {
       if (err) {
         console.log("Error updating agent. Error:", err);
