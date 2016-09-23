@@ -135,9 +135,9 @@ app.post('/webhook', function (req, res) {
             lat = event.message.attachments[0].payload.coordinates.lat;
             long = event.message.attachments[0].payload.coordinates.long;
 
-            if isAgent(id) {
-              // Return create check in
-            }
+            // if (isAgent(id)) {
+            //   // Return create check in
+            // }
 
             var agent = db.collection(AGENTS).find({"_id" : id});
             //console.log("Event has attachments:", event.message.attachments);
