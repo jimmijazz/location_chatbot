@@ -119,7 +119,7 @@ app.post('/webhook', function (req, res) {
             });
 
             // ** LOCATION MESSAGE ** //
-        } elseif (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
+        } else if(event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
             var lat = event.message.attachments[0].payload.coordinates.lat;
             var long = event.message.attachments[0].payload.coordinates.long;
 
