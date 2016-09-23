@@ -89,7 +89,9 @@ app.post('/webhook', function (req, res) {
               if (isAgent(id)) {
                 sendMessage(id, {text: "Hello " + user.first_name + ". Welcome to OpenHood!"});
               }
-            };
+            } else {
+              console.log(db.collection(PEOPLE).find({_id: id}));
+            }
 
             // Store message againts that persons name
             var msg_meta = {
