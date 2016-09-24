@@ -77,6 +77,12 @@ app.post('/webhook', function (req, res) {
 
         user = JSON.parse(response.body); // Convert FB response from string to object
 
+        var new_user = FALSE;
+        db.collection(PEOPLE).count({_id : id}, function (err, count) {
+          if(count === 0) {
+            new_user = TRUE;
+          };
+        })
         // ** TEXT MESSAGE ** //
         if (event.message && event.message.text && !event.message.echo) {
             var msg_meta = {
@@ -88,25 +94,27 @@ app.post('/webhook', function (req, res) {
 
             // Check if user has sent us a message before (for onboarding purposes)
             // TO DO: Also add a check for 'seq' as a redundancy
-            db.collection(PEOPLE).count({_id:id}, function(err, count){
-              if(count === 0) {
-                db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
-                  if (err) {
-                    console.log("Error updating PEOPLE. Error:", err);
-                  } else {
-                    console.log("Updated PEOPLE");
-                  };
-                });
-                if (isAgent(id)) {
-                  // ** New Agent ** //
-                  // Welcome message for Agent. TO DO: Replace with help commands
-                  sendMessage(id, {text: "Hello " + user.first_name + ". Welcome to OpenHood!"});
+            // TO DO: Check if person has sent a message outside of this statement so it can be used for location or any other message.
+            // Only issue is setting the msg_data. But could just have a BOOL that is false if a user has never sent us a message.
+            if (new_user){
+              db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
+                if (err) {
+                  console.log("Error updating PEOPLE. Error:", err);
                 } else {
-                  // ** New User ** //
-                  console.log("***NEW USER! DING DING DING***");
+                  console.log("Updated PEOPLE");
                 };
-                read_message(id, event.message.text); // Read input and respond
+              });
+              if (isAgent(id)) {
+                // ** New Agent ** //
+                // Welcome message for Agent. TO DO: Replace with help commands
+                sendMessage(id, {text: "Hello " + user.first_name + ". Welcome to OpenHood!"});
               } else {
+                // ** New User ** //
+                console.log("***NEW USER! DING DING DING***");
+                read_message(id, event.message.text); // Read input and respond
+
+              };
+            } else {
                 // Not a new user. Update messages.
                 db.collection(PEOPLE).update({_id: id}, { $push: {messages: msg_meta}}, function(err, result){
                   if (err) {
@@ -117,10 +125,9 @@ app.post('/webhook', function (req, res) {
                 });
                 read_message(id, event.message.text); // Read input and respond
               };
-            });
 
             // ** LOCATION MESSAGE ** //
-        } else if(event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
+        } else if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
             var lat = event.message.attachments[0].payload.coordinates.lat;
             var long = event.message.attachments[0].payload.coordinates.long;
 
