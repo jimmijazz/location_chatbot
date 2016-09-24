@@ -77,6 +77,7 @@ app.post('/webhook', function (req, res) {
 
         user = JSON.parse(response.body); // Convert FB response from string to object
 
+        // Check if user has sent us a message before (for onboarding purposes)
         var new_user = false;
         db.collection(PEOPLE).count({_id : id}, function (err, count) {
           if(count === 0) {
@@ -92,10 +93,7 @@ app.post('/webhook', function (req, res) {
                                 "seq" : event.message.seq
                             };
 
-            // Check if user has sent us a message before (for onboarding purposes)
             // TO DO: Also add a check for 'seq' as a redundancy
-            // TO DO: Check if person has sent a message outside of this statement so it can be used for location or any other message.
-            // Only issue is setting the msg_data. But could just have a BOOL that is false if a user has never sent us a message.
             if (new_user){
               db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
                 if (err) {
@@ -126,34 +124,39 @@ app.post('/webhook', function (req, res) {
                 read_message(id, event.message.text); // Read input and respond
               };
 
-            // ** LOCATION MESSAGE ** //
+          // ** LOCATION MESSAGE ** //
         } else if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
-            var lat = event.message.attachments[0].payload.coordinates.lat;
-            var long = event.message.attachments[0].payload.coordinates.long;
+            if (new_user) {
+              var lat = event.message.attachments[0].payload.coordinates.lat;
+              var long = event.message.attachments[0].payload.coordinates.long;
 
-            var agent = db.collection(AGENTS).find({"_id" : id});
+              var agent = db.collection(AGENTS).find({"_id" : id});
 
-            // Send Generic Message with location
-            geocoder.reverseGeocode(lat,long,function(err, data){
-              // data = google JSON formatted address
-              var location = data.results[0].formatted_address;
-              // Get static image of location
-              var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
-              var payload = [{
-                "title" : "Your Property",
-                "subtitle" : location,
-                "image_url" : location_image,
-                "buttons" : [{
-                  "type" : "postback",
-                  "title" : "Create Location",
-                  "payload" : "hello hello hello",
-                }],
-              }];
+              // Send Generic Message with location
+              geocoder.reverseGeocode(lat,long,function(err, data){
+                // data = google JSON formatted address
+                var location = data.results[0].formatted_address;
+                // Get static image of location
+                var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
+                var payload = [{
+                  "title" : "Your Property",
+                  "subtitle" : location,
+                  "image_url" : location_image,
+                  "buttons" : [{
+                    "type" : "postback",
+                    "title" : "Create Location",
+                    "payload" : "hello hello hello",
+                  }],
+                }];
 
-              sendGenericMessage(id, payload );
-              console.log("Location sent","\n", data);
-            });
-            console.log('worked');
+                sendGenericMessage(id, payload );
+                console.log("Location sent","\n", data);
+              });
+              console.log('worked');
+            } else {
+
+
+            }
           }
         });
     };
