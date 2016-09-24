@@ -77,10 +77,10 @@ app.post('/webhook', function (req, res) {
 
         user = JSON.parse(response.body); // Convert FB response from string to object
 
-        var new_user = FALSE;
+        var new_user = false;
         db.collection(PEOPLE).count({_id : id}, function (err, count) {
           if(count === 0) {
-            new_user = TRUE;
+            new_user = true;
           };
         })
         // ** TEXT MESSAGE ** //
