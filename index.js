@@ -89,16 +89,10 @@ app.post('/webhook', function (req, res) {
 
             // TO DO: Also add a check for 'seq' as a redundancy
             if (new_user(id)){
-              db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
-                if (err) {
-                  console.log("Error updating PEOPLE. Error:", err);
-                } else {
-                  console.log("Updated PEOPLE");
-                };
-              });
               if (isAgent(id)) {
                 // ** New Agent ** //
                 // Welcome message for Agent. TO DO: Replace with help commands
+                console.log("New Agent");
                 sendMessage(id, {text: "Hello " + user.first_name + ". Welcome to OpenHood!"});
               } else {
                 // ** New User ** //
@@ -306,6 +300,13 @@ function new_user(id) {
     if(count === 0) {
       new_user = true;
       console.log('new user')
+    };
+  });
+  db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
+    if (err) {
+      console.log("Error updating PEOPLE. Error:", err);
+    } else {
+      console.log("Updated PEOPLE");
     };
   });
   return new_user;
