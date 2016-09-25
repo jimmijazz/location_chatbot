@@ -1,5 +1,6 @@
 // TO DO:
 // Make Facebook graph call an async callback
+// Create house locations
 
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -77,13 +78,6 @@ app.post('/webhook', function (req, res) {
 
         user = JSON.parse(response.body); // Convert FB response from string to object
 
-        // Check if user has sent us a message before (for onboarding purposes)
-        var new_user = false;
-        db.collection(PEOPLE).count({_id : id}, function (err, count) {
-          if(count === 0) {
-            new_user = true;
-          };
-        })
         // ** TEXT MESSAGE ** //
         if (event.message && event.message.text && !event.message.echo) {
             var msg_meta = {
@@ -94,7 +88,7 @@ app.post('/webhook', function (req, res) {
                             };
 
             // TO DO: Also add a check for 'seq' as a redundancy
-            if (new_user){
+            if (new_user(id)){
               db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
                 if (err) {
                   console.log("Error updating PEOPLE. Error:", err);
@@ -109,6 +103,7 @@ app.post('/webhook', function (req, res) {
               } else {
                 // ** New User ** //
                 console.log("***NEW USER! DING DING DING***");
+                sendMessage("Hi" + user.first_name + "😊 my name is Josh and I'm the dev working on Openhood. The bot is going to assist real estate agents with creating open homes and marketing, but most of the responses won't be set up until later this week. Thank you for your interest!")
                 read_message(id, event.message.text); // Read input and respond
 
               };
@@ -126,7 +121,9 @@ app.post('/webhook', function (req, res) {
 
           // ** LOCATION MESSAGE ** //
         } else if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
-            if (new_user) {
+            if (new_user(id)) {
+              console.log("New User")
+            } else {
               var lat = event.message.attachments[0].payload.coordinates.lat;
               var long = event.message.attachments[0].payload.coordinates.long;
 
@@ -153,15 +150,32 @@ app.post('/webhook', function (req, res) {
                 console.log("Location sent","\n", data);
               });
               console.log('worked');
-            } else {
-
-
             }
           }
         });
     };
     res.sendStatus(200);
   });
+
+function createInspection(id, address, time) {
+  // Check if user is an agent
+
+  // Double check with agent if address is correct
+
+  // When would you like to schedule the inspection? (now, 10 minutes, in 1 hour)
+
+  // Check if creating_inspection is true
+
+  //
+};
+
+function finishInspection(id, address) {
+  // Check if is an agent
+
+  // Check if currently open for inspection
+
+}
+
 
 // Generic function sending messages
 function sendMessage(recipientId, message) {
@@ -282,6 +296,18 @@ function read_message(id, user_message) {
 
     // Add another statement to catch address
   };
+};
+
+function new_user(id) {
+  // Checks if user is in the database
+  // new_user(string) - > bool
+  var new_user = false;
+  db.collection(PEOPLE).count({_id : id}, function (err, count) {
+    if(count === 0) {
+      new_user = true;
+    };
+  });
+  return new_user;
 };
 
 
