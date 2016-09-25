@@ -305,6 +305,7 @@ function new_user(id) {
   db.collection(PEOPLE).count({_id : id}, function (err, count) {
     if(count === 0) {
       new_user = true;
+      console.log('new user')
     };
   });
   return new_user;
