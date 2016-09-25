@@ -88,7 +88,7 @@ app.post('/webhook', function (req, res) {
                             };
 
             // TO DO: Also add a check for 'seq' as a redundancy
-            if (new_user(id)){
+            if (new_user(id, msg_meta)){
               if (isAgent(id)) {
                 // ** New Agent ** //
                 // Welcome message for Agent. TO DO: Replace with help commands
@@ -292,9 +292,9 @@ function read_message(id, user_message) {
   };
 };
 
-function new_user(id) {
-  // Checks if user is in the database
-  // new_user(string) - > bool
+function new_user(id, msg_meta) {
+  // Checks if user is in the database. If not adds them to the db.
+  // new_user(string, dict) - > bool
   var new_user = false;
   db.collection(PEOPLE).count({_id : id}, function (err, count) {
     if(count === 0) {
