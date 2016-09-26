@@ -106,6 +106,7 @@ app.post('/webhook', function (req, res) {
                     console.log("Error finding agent. Error: ",err);
                   } else {
                     // 3. Send message depending on if agent or not.
+                    console.log(result);
                     var welcome_msg = result ? "Welcome to Openhood Agent "+user.last_name : "Hi" + user.first_name + "😊 my name is Josh and I'm the dev working on Openhood. The bot is going to assist real estate agents with creating open homes and marketing, but most of the responses won't be set up until later this week. Thank you for your interest!";
                     sendMessage(id, welcome_msg);
                     };
