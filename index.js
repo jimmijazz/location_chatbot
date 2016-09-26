@@ -88,10 +88,18 @@ const actions = {
   // Wit.Ai Custom Actions
   getForecast({context, entities}) {
     return new Promise(function(resolve, reject) {
-      context.forecast = 'sunny';
+      var location = firstEntityValue(entities, "location")
+      if (location) {
+        context.forecast = 'sunny in' + location; // Replace with API call
+        delete context.missingLocation;
+      } else {
+        context.missigLocation = true;
+        delete context.forecast;
+      }
       return resolve(context);
     });
   },
+
 };
 
 // Setting up our bot
