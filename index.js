@@ -69,8 +69,10 @@ const actions = {
     if (recipientId) {
       // We found our recipient. Let's forward our bot response to them.
       // We return a promise to let our bot know when we're done sending
-      return sendMessage(recipientId, {text:text});
+      return sendMessage(recipientId, {text:text})
+      .then(() => null)
       
+
     } else {
       console.error("Couldn't find user for session: ", sessionId);
       // Giving the wheel back to our bot
@@ -78,7 +80,6 @@ const actions = {
     }
   },
   // Wit.Ai Custom Actions
-
   getForecast({context, entities}) {
     return new Promise(function(resolve, reject) {
       context.forecast = 'sunny';
