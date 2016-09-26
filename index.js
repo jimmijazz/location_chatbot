@@ -104,7 +104,6 @@ app.use(bodyParser.json());
 // Create a database variable outside of the database connection callback to reuse the connection pool in app.
 var db;
 
-m
 // Server frontpage
 app.get('/', function (req, res) {
   res.send('OpenHood 2016');
