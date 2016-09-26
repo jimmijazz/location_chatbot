@@ -89,7 +89,7 @@ app.post('/webhook', function (req, res) {
 
             // TO DO: Also add a check for 'seq' as a redundancy
             // See if a new user
-            db.collection(PEOPLE).count({_id: id}, function(err, result) {
+            db.collection(PEOPLE).count({_id: id}, function(err, count) {
               if(count === 0) {
                 console.log('*** New User ***');
                 // 1. Insert user into database
@@ -302,28 +302,6 @@ function read_message(id, user_message) {
     // Add another statement to catch address
   };
 };
-
-function new_user(id, msg_meta) {
-  // Checks if user is in the database. If not adds them to the db.
-  // new_user(string, dict) - > bool
-  var new_user = false;
-  db.collection(PEOPLE).count({_id : id}, function (err, count) {
-    if(count === 0) {
-      new_user = true;
-      console.log('new user')
-    };
-  });
-  db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
-    if (err) {
-      console.log("Error updating PEOPLE. Error:", err);
-    } else {
-      console.log("Updated PEOPLE");
-    };
-  });
-  return new_user;
-};
-
-
 
     //     var message = {user_id:"", message_text: ""};
     //     sendMessage(event.sender.id, {text:"hello" + user.first_name});
