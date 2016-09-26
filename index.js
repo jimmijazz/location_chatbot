@@ -24,18 +24,6 @@ const WIT_TOKEN_AGENT = process.env.WIT_TOKEN_AGENT;
 let Wit = require('node-wit').Wit;
 var log = require('node-wit').log;
 
-// Vendor Bot
-const wit = new Wit({
-  accessToken: WIT_TOKEN,
-  actions
-  //logger: new log.logger(log.INFO)
-});
-
-// Agent Bot
-const wit_agent = new Wit({
-  accessToken: WIT_TOKEN,
-  actions
-});
 
 const firstEntityValue = (entities, entity) => {
     const val = entities && entities[entity] &&
@@ -134,6 +122,20 @@ const actions = {
   },
 
 };
+
+// Wit.Ai Access. One for vendors, one for agents.
+// Vendor Bot
+const wit = new Wit({
+  accessToken: WIT_TOKEN,
+  actions
+  //logger: new log.logger(log.INFO)
+});
+
+// Agent Bot
+const wit_agent = new Wit({
+  accessToken: WIT_TOKEN_AGENT,
+  actions
+});
 
 // ----------------------------------------------------------------------------
 // Start our webserver
