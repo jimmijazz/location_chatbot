@@ -251,7 +251,7 @@ app.post('/webhook', function (req, res) {
                   .catch((err) => {
                     console.error('Got an error from Wit: ', err.stack || err);
                   })
-                  )
+
                 } else {
                   // Not an agent
                     wit.runActions(
