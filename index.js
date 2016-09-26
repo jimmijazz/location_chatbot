@@ -69,8 +69,16 @@ const actions = {
     if (recipientId) {
       // We found our recipient. Let's forward our bot response to them.
       // We return a promise to let our bot know when we're done sending
-      return sendMessage(recipientId, {text:text})      
-
+      return fbMessage(recipientId, text)
+      .then(() => null)
+      .catch((err) =>{
+        console.error(
+          'An error occurred while forwarding the response to',
+          recipientId,
+          ':',
+          err.stack || err
+        );
+      });
     } else {
       console.error("Couldn't find user for session: ", sessionId);
       // Giving the wheel back to our bot
@@ -269,6 +277,27 @@ function finishInspection(id, address) {
 
 
 // Generic function sending messages
+const fbMessage = (id, text) => {
+  const body = JSON.stringify({
+    recipient: { id },
+    message: { text },
+  });
+  const qs = 'access_token=' + encodeURIComponent(process.env.PAGE_ACCESS_TOKEN);
+  return fetch('https://graph.facebook.com/me/messages?' + qs, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body,
+  })
+  .then(rsp => rsp.json())
+  .then(json => {
+    if (json.error && json.error.message) {
+      throw new Error(json.error.message);
+    }
+    return json;
+  });
+};
+
+
 function sendMessage(recipientId, message) {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
