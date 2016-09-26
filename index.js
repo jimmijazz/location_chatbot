@@ -14,6 +14,7 @@ const ObjectID = mongodb.ObjectID;
 //Wit.Ai Parameters
 const WIT_TOKEN = process.env.WIT_TOKEN;
 let Wit = require('node-wit').Wit;
+let log = require('node-wit').log;
 
 // MongoDB Collections
 var CONTACTS_COLLECTION = "contacts"; // All messages sent (probably won't need this)
