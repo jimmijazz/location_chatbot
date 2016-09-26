@@ -84,7 +84,14 @@ const actions = {
       return Promise.resolve()
     }
   },
-  // Implement custom actions here
+  // Wit.Ai Custom Actions
+
+  getForecast({context, entities}) {
+    return new Promise(function(resolve, reject) {
+      context.forecast = 'sunny';
+      return resolve(context);
+    });
+  },
 };
 
 // Setting up our bot
