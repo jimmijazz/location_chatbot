@@ -11,10 +11,32 @@ const geocoder = require('geocoder');
 const mongodb = require("mongodb");
 const ObjectID = mongodb.ObjectID;
 
-//Wit.Ai Parameters
+// Google Maps
+var google_api_key ="AIzaSyDbhlnIkxUmb0cwIMCx34P9W2lGYYa-UFg";
+var map_url = "https://maps.googleapis.com/maps/api/staticmap?maptype=satellite&center=";
+
+// ----------------------------------------------------------------------------
+// Wit.Ai Parameters
+// We use two different bots so that if the user is an agent they will have
+// additional options available to them such as creating inspections.
 const WIT_TOKEN = process.env.WIT_TOKEN;
+const WIT_TOKEN_AGENT = process.env.WIT_TOKEN_AGENT;
 let Wit = require('node-wit').Wit;
 var log = require('node-wit').log;
+
+// Vendor Bot
+const wit = new Wit({
+  accessToken: WIT_TOKEN,
+  actions
+  //logger: new log.logger(log.INFO)
+});
+
+// Agent Bot
+const wit_agent = new Wit({
+  accessToken: WIT_TOKEN,
+  actions
+});
+
 const firstEntityValue = (entities, entity) => {
     const val = entities && entities[entity] &&
             Array.isArray(entities[entity]) &&
@@ -28,17 +50,15 @@ const firstEntityValue = (entities, entity) => {
 };
 
 
+
+// ----------------------------------------------------------------------------
+// MongoDB Specific Code
+
 // MongoDB Collections
 var CONTACTS_COLLECTION = "contacts"; // All messages sent (probably won't need this)
 var HOUSES_COLLECTION = "houses"; // Details of houses including whether or not they are open for inspection
 var AGENTS = "agents;"  // Registered agents and which agency they are with
 var PEOPLE = "people" // Potential vendors and tenants {_id: str, messages:[{"message":str, "timestamp": int, "mid": str, "seq": int}]}
-
-var google_api_key ="AIzaSyDbhlnIkxUmb0cwIMCx34P9W2lGYYa-UFg";
-var map_url = "https://maps.googleapis.com/maps/api/staticmap?maptype=satellite&center="
-
-// ----------------------------------------------------------------------------
-// MongoDB Specific Code
 
 //Connect to database before starting the application Server
 mongodb.MongoClient.connect(process.env.MONGODB_URI, function (err, database) {
@@ -115,15 +135,7 @@ const actions = {
 
 };
 
-// Setting up our bot
-const wit = new Wit({
-  accessToken: WIT_TOKEN,
-  actions
-  //logger: new log.logger(log.INFO)
-});
-
-
-
+// ----------------------------------------------------------------------------
 // Start our webserver
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.urlencoded({extended: false}));
@@ -181,7 +193,6 @@ app.post('/webhook', function (req, res) {
                                 "seq" : event.message.seq
                             };
 
-            // TO DO: Also add a check for 'seq' as a redundancy
             // See if a new user
             db.collection(PEOPLE).count({_id: id}, function(err, count) {
               if(count === 0) {
@@ -207,38 +218,57 @@ app.post('/webhook', function (req, res) {
 
             // Not a new user. Update existing user's messages.
             } else {
-                db.collection(PEOPLE).update({_id: id}, { $push: {messages: msg_meta}}, function(err, result){
-                  if (err) {
-                    console.log("Error updating msg_meta. Error: ", err);
-                  } else {
-                    console.log("Updated msg_meta");
-                  };
-                });
-
-                // Forward the message to the Wit.ai Bot Engine
-                // This will run all actions until our bot has nothing left to do
-                wit.runActions(
-                  sessionId, // the user's current session
-                  event.message.text, // the user's message
-                  sessions[sessionId].context // the user's current session state
-                ).then((context) => {
-                  // Our bot did everything it has to do.
-                  // Not it's waiting for further messages to proceed.
-                  console.log('Waiting for next user messages');
-
-                  // Based on session state, might want to reset session.
-                  // This depends havily on the business logic of the bot.
-                  // Example:
-                  // if (context['done']) {
-                  // delete sessions[sessionId];
-                  //   }
-                  sessions[sessionId].context = context;
-                })
-                .catch((err) => {
-                  console.error('Got an error from Wit: ', err.stack || err);
-                })
-              }
-            })
+              db.collection(PEOPLE).update({_id: id}, { $push: {messages: msg_meta}}, function(err, result){
+                if (err) {
+                  console.log("Error updating msg_meta. Error: ", err);
+                } else {
+                  console.log("Updated msg_meta");
+                };
+              });
+              // Check if the user is an agent
+              db.collection(AGENTS).findOne({_id : id}, function (err, result) {
+                if (err) {
+                  console.log("Error finding agent. Error: ",err);
+                } else if (result){
+                  // Forward the message to the Wit.ai Bot Engine
+                  // This will run all actions until our bot has nothing left to do
+                  wit_agent.runActions(
+                    sessionId, // the user's current session
+                    event.message.text, // the user's message
+                    sessions[sessionId].context // the user's current session state
+                  ).then((context) => {
+                      // Our bot did everything it has to do.
+                      // Now it's waiting for further messages to proceed.
+                      console.log('Waiting for next user messages');
+                      // Based on session state, might want to reset session.
+                      // This depends havily on the business logic of the bot.
+                      // Example:
+                      // if (context['done']) {
+                      // delete sessions[sessionId];
+                      //   }
+                      sessions[sessionId].context = context;
+                    })
+                  .catch((err) => {
+                    console.error('Got an error from Wit: ', err.stack || err);
+                  })
+                  )
+                } else {
+                  // Not an agent
+                    wit.runActions(
+                      sessionId,
+                      event.message.text,
+                      sessions[sessionId].context
+                    ).then((context) => {
+                      console.log('Waiting for next user messages');
+                      sessions[sessionId].context = context;
+                    })
+                    .catch((err) => {
+                      console.error('Got an error from Wit: ', err.stack || err);
+                    })
+                }
+              });
+            }
+          })
           // ** LOCATION MESSAGE ** //
         } else if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
             if (new_user(id)) {
