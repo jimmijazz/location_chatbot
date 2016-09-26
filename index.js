@@ -2,14 +2,19 @@
 // Make Facebook graph call an async callback
 // Create house locations
 
-var express = require('express');
-var bodyParser = require('body-parser');
-var request = require('request');
-var app = express();
-var geocoder = require('geocoder');
-var mongodb = require("mongodb");
-var ObjectID = mongodb.ObjectID;
+const express = require('express');
+const bodyParser = require('body-parser');
+const request = require('request');
+const fetch = require('node-fetch');
+const app = express();
+const geocoder = require('geocoder');
+const mongodb = require("mongodb");
+const ObjectID = mongodb.ObjectID;
 
+//Wit.Ai Parameters
+const WIT_TOKEN = process.env.WIT_TOKEN;
+
+// MongoDB Collections
 var CONTACTS_COLLECTION = "contacts"; // All messages sent (probably won't need this)
 var HOUSES_COLLECTION = "houses"; // Details of houses including whether or not they are open for inspection
 var AGENTS = "agents;"  // Registered agents and which agency they are with
@@ -18,12 +23,8 @@ var PEOPLE = "people" // Potential vendors and tenants {_id: str, messages:[{"me
 var google_api_key ="AIzaSyDbhlnIkxUmb0cwIMCx34P9W2lGYYa-UFg";
 var map_url = "https://maps.googleapis.com/maps/api/staticmap?maptype=satellite&center="
 
-app.use(express.static(__dirname + "/public"));
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
-
-// Create a database variable outside of the database connection callback to reuse the connection pool in your app.
-var db;
+// ----------------------------------------------------------------------------
+// MongoDB Specific Code
 
 //Connect to database before starting the application Server
 mongodb.MongoClient.connect(process.env.MONGODB_URI, function (err, database) {
@@ -34,17 +35,80 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI, function (err, database) {
   // Save database object from the vallback for reuse
   db = database;
   console.log("database connection ready");
-})
-
-// Initialize the app
-app.listen((process.env.PORT || 3000));
-
-// Server frontpage
-app.get('/', function (req, res) {
-  res.send('This is the ChatBot server');
 });
 
-// Facebook Webhook
+// ----------------------------------------------------------------------------
+// Wit.ai bot specific code - https://github.com/wit-ai/node-wit/blob/master/examples/messenger.js
+const sessions = {};
+
+const findOrCreateSession = (fbid) => {
+  let sessionId;
+  // See if we have a session for the user fbid
+  Object.keys(sessions).forEach(k => {
+    if (sessions[k].fbid === fbid) {
+      // Yep, got it!
+      sessionId = k;
+    }
+  });
+  if (!sessionId) {
+    // No session found for user fbid, let's create a new one
+    sessionId = new Date().toISOString();
+    sessions[sessionId] = {fbid: fbid, context: {}};
+  }
+  return sessionId;
+};
+
+// Bot actions
+const actions = {
+  send({sessionId}, {text}) {
+    // Our bot has something to say!
+    // Let's retrieve the Facebook user whose session belongs to
+    const recipientId = sessions[sessionId].fbid;
+    if (recipientId) {
+      // We found our recipient. Let's forward our bot response to her.
+      // We return a promise to let our bot know when we're done sending
+      return fbMessage(recipient, text)
+      .then(() => null)
+      .catch((err) => {
+        console.error(
+          'An error occurred while forwarding response to', recipientId,
+          ":",
+          err.stack || err
+        );
+      });
+    } else {
+      console.error("Couldn't find user for session: ", sessionId);
+      // Giving the wheel back to our bot
+      return Promise.resolve()
+    }
+  },
+  // Implement custom actions here
+};
+
+// Setting up our bot
+const wit = new Wit({
+  accessToken: WIT_TOKEN,
+  actions,
+  logger: new log.logger(log.INFO)
+});
+
+
+
+// Start our webserver
+app.use(express.static(__dirname + "/public"));
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json());
+
+// Create a database variable outside of the database connection callback to reuse the connection pool in app.
+var db;
+
+m
+// Server frontpage
+app.get('/', function (req, res) {
+  res.send('OpenHood 2016');
+});
+
+// Facebook webhook setup
 app.get('/webhook', function( req, res){
   if(req.query['hub.verify_token'] === '1775479496065328') {
     res.send(req.query['hub.challenge']);
@@ -53,13 +117,14 @@ app.get('/webhook', function( req, res){
   }
 });
 
-// handler receiving messages
+// Message handler
 app.post('/webhook', function (req, res) {
     var events = req.body.entry[0].messaging;
 
     for (i = 0; i < events.length; i++) {
       var event = events[i];
       var id = event.sender.id;
+      const sessionId = findOrCreateSession(id);
 
       // Get Basic Facebook Graph Information
       // Nothing can happen until this returns info
@@ -106,7 +171,7 @@ app.post('/webhook', function (req, res) {
                     console.log("Error finding agent. Error: ",err);
                     // 3. Send message depending on if agent or not.
                   } else {
-                    var welcome_msg = result ? "Welcome to Openhood Agent "+user.last_name : "Hi" + user.first_name + "😊 my name is Josh and I'm the dev working on Openhood. The bot is going to assist real estate agents with creating open homes and marketing, but most of the responses won't be set up until later this week. Thank you for your interest!";
+                    var welcome_msg = result ? "Welcome to Openhood Agent "+user.last_name : "Hi " + user.first_name + "😊 my name is Josh and I'm the dev working on Openhood. Openhood is going to assist real estate agents with creating open homes and marketing, but most of the responses won't be set up until later this week. Thank you for your interest!";
                     sendMessage(id, {text:welcome_msg});
                     };
                 });
@@ -120,10 +185,31 @@ app.post('/webhook', function (req, res) {
                     console.log("Updated msg_meta");
                   };
                 });
-                read_message(id, event.message.text); // Read input and respond
-              };
-            });
 
+                // Forward the message to the Wit.ai Bot Engine
+                // This will run all actions until our bot has nothing left to do
+                wit.runActions(
+                  sessionId, // the user's current session
+                  text, // the user's message
+                  sessions[sessionId].context // the user's current session state
+                ).then((context) => {
+                  // Our bot did everything it has to do.
+                  // Not it's waiting for further messages to proceed.
+                  console.log('Waiting for next user messages');
+
+                  // Based on session state, might want to reset session.
+                  // This depends havily on the business logic of the bot.
+                  // Example:
+                  // if (context['done']) {
+                  // delete sessions[sessionId];
+                  //   }
+                  sessions[sessionId].context = context;
+                })
+                .catch((err) => {
+                  console.error('Got an error from Wit: ', err.stack || err);
+                })
+              }
+            })
           // ** LOCATION MESSAGE ** //
         } else if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
             if (new_user(id)) {
@@ -343,3 +429,5 @@ function read_message(id, user_message) {
         //
         //     console.log('worked');
         //   }
+        // Initialize the app
+app.listen((process.env.PORT || 3000));
