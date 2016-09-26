@@ -88,21 +88,31 @@ app.post('/webhook', function (req, res) {
                             };
 
             // TO DO: Also add a check for 'seq' as a redundancy
-            if (new_user(id, msg_meta)){
-              if (isAgent(id)) {
-                // ** New Agent ** //
-                // Welcome message for Agent. TO DO: Replace with help commands
-                console.log("New Agent");
-                sendMessage(id, {text: "Hello " + user.first_name + ". Welcome to OpenHood!"});
-              } else {
-                // ** New User ** //
-                console.log("***NEW USER! DING DING DING***");
-                sendMessage("Hi" + user.first_name + "😊 my name is Josh and I'm the dev working on Openhood. The bot is going to assist real estate agents with creating open homes and marketing, but most of the responses won't be set up until later this week. Thank you for your interest!")
-                read_message(id, event.message.text); // Read input and respond
+            // See if a new user
+            db.collection(PEOPLE).count({_id: id}, function(err, result) {
+              if(count === 0) {
+                console.log('*** New User ***');
+                // 1. Insert user into database
+                db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
+                  if (err) {
+                    console.log("Error updating PEOPLE. Error: ", err);
+                  } else {
+                    console.log("Updated PEOPLE");
+                  };
+              });
+              // 2. Check if is a registered agent
+                db.collection(AGENTS).find({_id : id}, function (err, result) {
+                  if (err) {
+                    console.log("Error finding agent. Error: ",err);
+                  } else {
+                    // 3. Send message depending on if agent or not.
+                    var welcome_msg = result ? "Welcome to Openhood Agent ",user.last_name : "Hi" + user.first_name + "😊 my name is Josh and I'm the dev working on Openhood. The bot is going to assist real estate agents with creating open homes and marketing, but most of the responses won't be set up until later this week. Thank you for your interest!";
+                    sendMessage(id, welcome_msg);
+                    };
+                });
 
-              };
+            // Not a new user. Update existing user's messages.
             } else {
-                // Not a new user. Update messages.
                 db.collection(PEOPLE).update({_id: id}, { $push: {messages: msg_meta}}, function(err, result){
                   if (err) {
                     console.log("Error updating msg_meta. Error: ", err);
@@ -112,6 +122,7 @@ app.post('/webhook', function (req, res) {
                 });
                 read_message(id, event.message.text); // Read input and respond
               };
+            });
 
           // ** LOCATION MESSAGE ** //
         } else if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
