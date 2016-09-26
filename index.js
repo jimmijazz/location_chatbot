@@ -67,17 +67,10 @@ const actions = {
     // Let's retrieve the Facebook user whose session belongs to
     const recipientId = sessions[sessionId].fbid;
     if (recipientId) {
-      // We found our recipient. Let's forward our bot response to her.
+      // We found our recipient. Let's forward our bot response to them.
       // We return a promise to let our bot know when we're done sending
-      return sendMessage(recipientId, {text:text})
-      .then(() => null)
-      .catch((err) => {
-        console.error(
-          'An error occurred while forwarding response to', recipientId,
-          ":",
-          err.stack || err
-        );
-      });
+      return sendMessage(recipientId, {text:text});
+      
     } else {
       console.error("Couldn't find user for session: ", sessionId);
       // Giving the wheel back to our bot
