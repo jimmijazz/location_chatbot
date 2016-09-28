@@ -139,7 +139,7 @@ const actions = {
       } else if (!time) {
         console.log(" No time");
         context.time = true;
-        delete context.address;
+        delete context.time;
       }
       return resolve(context);
     });
@@ -332,26 +332,6 @@ app.post('/webhook', function (req, res) {
     };
     res.sendStatus(200);
   });
-
-function createInspection(id, address, time) {
-  // Check if user is an agent
-
-  // Double check with agent if address is correct
-
-  // When would you like to schedule the inspection? (now, 10 minutes, in 1 hour)
-
-  // Check if creating_inspection is true
-
-  //
-};
-
-function finishInspection(id, address) {
-  // Check if is an agent
-
-  // Check if currently open for inspection
-
-}
-
 
 // Generic function sending messages
 const fbMessage = (id, text) => {
