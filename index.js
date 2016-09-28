@@ -123,15 +123,23 @@ const actions = {
     });
   },
   createInspection({context, entities}) {
+    // TO DO
+    // - add a function to handle multiple datetimes detected (error)
+    // - Add an "is this correct?" function to confirm
     return new Promise(function(resolve, rejust) {
       console.log(context);
       console.log(entities);
       var address = firstEntityValue(entities, "location");
       var time = firstEntityValue(entities, "datetime");
+
+      // Convert Time to more readable format
+      var year = time[0:3];
+      console.log(year);
       if (address && time) {
         context.inspection = "Created inspection at "+ address + " at " + time;
         delete context.address;
         delete context.time;
+
       } else if (!address) {
         console.log(" No address");
         context.address = true;
