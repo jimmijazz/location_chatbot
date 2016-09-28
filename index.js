@@ -34,6 +34,7 @@ const firstEntityValue = (entities, entity) => {
         ;
     if (!val) {
         return null;
+        console.log(entity + " entity not found")
     }
     return typeof val === 'object' ? val.value : val;
 };
