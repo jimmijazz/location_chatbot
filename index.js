@@ -126,13 +126,12 @@ const actions = {
     // TO DO
     // - add a function to handle multiple datetimes detected (error)
     // - Add an "is this correct?" function to confirm
+    // - run address through google
     return new Promise(function(resolve, rejust) {
-      console.log(context);
-      console.log(entities);
       var address = firstEntityValue(entities, "location");
       var time = firstEntityValue(entities, "datetime");
 
-      // Split date into components
+      // Split date into YEAR, MONTH, DAY, HOURS & MIN
       var year = time.substring(0,4);
       var month = time.substring(5,7);
       var day = time.substring(8,10);
@@ -146,6 +145,11 @@ const actions = {
       if (address && time) {
         context.inspection = "Created inspection at "+ address +
                               " at " + hours + ":" + minutes + suffix;
+        // Geocode Address
+        geocoder.geocode(address, function(err, data){
+          console.log(data);
+        });
+
         delete context.address;
         delete context.time;
 
