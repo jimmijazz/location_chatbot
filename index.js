@@ -155,7 +155,7 @@ const actions = {
           } else {
               // Add to database of inspections
               db.collection(INSPECTIONS).insert({"_id": data.results[0].place_id,
-                                                 "expireAt" : new Date('September 28, 2016 11:36:00'),
+                                                 "expireAt" : new Date('September 28, 2016 11:38:00'),
                                                  "address" : data.results[0].formatted_address,
               }, function(err, result) {
                   if(err) {
@@ -164,7 +164,6 @@ const actions = {
               });
             }
           });
-        };
 
         delete context.address;
         delete context.time;
