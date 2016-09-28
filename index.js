@@ -133,7 +133,7 @@ const actions = {
       var time = firstEntityValue(entities, "datetime");
 
       // Convert Time to more readable format
-      var year = time[0:3];
+      var year = time.substring(0,3);
       console.log(year);
       if (address && time) {
         context.inspection = "Created inspection at "+ address + " at " + time;
