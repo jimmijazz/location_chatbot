@@ -130,7 +130,7 @@ const actions = {
       console.log(time);
       var time = firstEntityValue(entities, "datetime");
       if (address && time) {
-        context.inspection = "Created inspection at "+ address + "in " + time;
+        context.inspection = "Created inspection at "+ address + " at " + time;
         delete context.address;
         delete context.time;
       } else if (!address) {
