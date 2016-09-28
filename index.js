@@ -126,7 +126,7 @@ const actions = {
       var address = firstEntityValue(entities, "address");
       var time = firstEntityValue(entities, "time");
       if (address && time) {
-        context.inspection = "Creating inspection at "+ address + "in " + time;
+        context.inspection = "Created inspection at "+ address + "in " + time;
         delete context.address;
         delete context.time;
       } else if (!address) {
