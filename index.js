@@ -2,6 +2,7 @@
 // Make Facebook graph call an async callback
 // Create house locations
 // Use fbMessage over SendMessage
+// Show how a person could query about a house
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -49,6 +50,7 @@ var CONTACTS_COLLECTION = "contacts"; // All messages sent (probably won't need 
 var HOUSES_COLLECTION = "houses"; // Details of houses including whether or not they are open for inspection
 var AGENTS = "agents;"  // Registered agents and which agency they are with
 var PEOPLE = "people" // Potential vendors and tenants {_id: str, messages:[{"message":str, "timestamp": int, "mid": str, "seq": int}]}
+var INSPECTIONS = "inspections" // List of inspections
 
 //Connect to database before starting the application Server
 mongodb.MongoClient.connect(process.env.MONGODB_URI, function (err, database) {
@@ -127,6 +129,7 @@ const actions = {
     // - add a function to handle multiple datetimes detected (error)
     // - Add an "is this correct?" function to confirm
     // - run address through google
+    // - check if inspection exists or not
     return new Promise(function(resolve, rejust) {
       var address = firstEntityValue(entities, "location");
       var time = firstEntityValue(entities, "datetime");
@@ -147,8 +150,21 @@ const actions = {
                               " at " + hours + ":" + minutes + suffix;
         // Geocode Address
         geocoder.geocode(address, function(err, data){
-          console.log(data);
-        });
+          if(err) {
+            console.log("Error geocoding inspection location" + err);
+          } else {
+              // Add to database of inspections
+              db.collection(INSPECTIONS).insert({"_id": data.results[0].place_id,
+                                                 "expireAt" : new Date('September 28, 2016 11:36:00'),
+                                                 "address" : data.results[0].formatted_address,
+              }, function(err, result) {
+                  if(err) {
+                    console.log(err);
+                  }
+              });
+            }
+          });
+        };
 
         delete context.address;
         delete context.time;
