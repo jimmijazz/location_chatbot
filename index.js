@@ -143,7 +143,6 @@ const actions = {
       hours = ((hours + 11 ) % 12 + 1);
 
       if (address && time) {
-        sendMessage(id, {text: "Creating Inspection"});
         context.inspection = "Created inspection at "+ address +
                               " at " + hours + ":" + minutes + suffix;
         delete context.address;
