@@ -140,7 +140,8 @@ const actions = {
       var minutes = time.substring(14,16);
       // Convert hours to 12 hour time
       var suffix = hours >= 12 ? "PM":"AM";
-      hours = ((hours + 11 ) % 12 + 1);
+      hours = (hours > 12) ? hours - 12 : hours;
+      hours = (hours == '00')? 12 : hours;  // if 00 then it is 12 am
 
       if (address && time) {
         context.inspection = "Created inspection at "+ address +
