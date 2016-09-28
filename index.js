@@ -132,11 +132,20 @@ const actions = {
       var address = firstEntityValue(entities, "location");
       var time = firstEntityValue(entities, "datetime");
 
-      // Convert Time to more readable format
-      var year = time.substring(0,3);
-      console.log(year);
+      // Split date into components
+      var year = time.substring(0,4);
+      var month = time.substring(5,7);
+      var day = time.substring(8,10);
+      var hours = time.substring(11,13);
+      var minutes = time.substring(14,16);
+      // Convert hours to 12 hour time
+      var suffix = hours >= 12 ? "PM":"AM";
+      hours = ((hours + 11 ) % 12 + 1);
+
       if (address && time) {
-        context.inspection = "Created inspection at "+ address + " at " + time;
+        sendMessage(id, {text: "Creating Inspection"});
+        context.inspection = "Created inspection at "+ address +
+                              " at " + hours + ":" + minutes + suffix;
         delete context.address;
         delete context.time;
 
