@@ -123,7 +123,6 @@ const actions = {
   },
   createInspection({context, entities}) {
     return new Promise(function(resolve, rejust) {
-      console.log("FirstEntityValue: " + firstEntityValue);
       var address = firstEntityValue(entities, "address");
       var time = firstEntityValue(entities, "time");
       if (address && time) {
@@ -131,9 +130,11 @@ const actions = {
         delete context.address;
         delete context.time;
       } else if (!address) {
+        console.log(" No address");
         context.address = true;
         delete context.address;
       } else if (!time) {
+        console.log(" No time");
         context.time = true;
         delete context.address;
       }
