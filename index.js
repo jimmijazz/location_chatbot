@@ -125,6 +125,7 @@ const actions = {
   createInspection({context, entities}) {
     return new Promise(function(resolve, rejust) {
       console.log(context);
+      console.log(entities);
       var address = firstEntityValue(entities, "location");
       var time = firstEntityValue(entities, "datetime");
       if (address && time) {
