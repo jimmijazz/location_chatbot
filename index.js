@@ -1,6 +1,7 @@
 // TO DO:
 // Make Facebook graph call an async callback
 // Create house locations
+// Use fbMessage over SendMessage
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -105,8 +106,8 @@ const actions = {
       return Promise.resolve()
     }
   },
-  // Wit.Ai Custom Actions
 
+  // Wit.Ai Custom Actions
   getForecast({context, entities}) {
     return new Promise(function(resolve, reject) {
       var location = firstEntityValue(entities, "location")
@@ -114,8 +115,27 @@ const actions = {
         context.forecast = 'sunny in' + location; // Replace with API call
         delete context.missingLocation;
       } else {
-        context.missigLocation = true;
+        context.missingLocation = true;
         delete context.forecast;
+      }
+      return resolve(context);
+    });
+  },
+  createInspection({context, entities}) {
+    return new Promise(function(resolve, rejust) {
+      console.log("FirstEntityValue: " + firstEntityValue);
+      var address = firstEntityValue(entities, "address");
+      var time = firstEntityValue(entities, "time");
+      if (location && time) {
+        context.inspection = "Creating inspection at "+ address + "in " + time;
+        delete context.address;
+        delete context.time;
+      } else if (!address) {
+        context.address = true;
+        delete context.address;
+      } else if (!time) {
+        context.time = true;
+        delete context.address;
       }
       return resolve(context);
     });
@@ -350,7 +370,6 @@ const fbMessage = (id, text) => {
   });
 };
 
-
 function sendMessage(recipientId, message) {
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -404,7 +423,6 @@ function userProfile(userId){
     var user = JSON.parse(response.body);
   })
 };
-
 
 function sendGenericMessage(sender, payload) {
 	var messageData = {
@@ -471,45 +489,6 @@ function read_message(id, user_message) {
   };
 };
 
-    //     var message = {user_id:"", message_text: ""};
-    //     sendMessage(event.sender.id, {text:"hello" + user.first_name});
-
-        // Echo user message
-        // if (event.message && event.message.text && !event.message.is_echo) {
-          // sendMessage(event.sender.id, {text: "Hello " + event.message.text});
-        //   console.log('message sent to', event.sender.id);
-        //   message = {
-        //     user_id: event.sender.id,
-        //     message_text: event.message.text,
-        //     // first_name: user.first_name,
-        //     // last_name: user["last_name"],
-        //     // gender: user["gender"]
-        //   };
-        //
-        //   // Add to database
-        //   collection.insert(message, function(err, result) {
-        //     if (err) {
-        //       console.log("Error inserting message. Error:",err);
-        //
-        //     } else {
-        //       console.log('Inserted documents into the "contacts" collection.', result);
-        //     }
-        //   })
-        //
-        //
-        // } else if (event.message && event.message.attachments) {
-        //     console.log("Event has attachments:", event.message.attachments);
-        //     lat = event.message.attachments[0].payload.coordinates.lat;
-        //     long = event.message.attachments[0].payload.coordinates.long;
-        //
-        //     geocoder.reverseGeocode(lat,long,function(err, data){
-        //       // data = google JSON formatted address
-        //       var location = data.results[0].formatted_address;
-        //       sendMessage(event.sender.id, {text: location})
-        //       console.log("Location sent","\n", data);
-        //     });
-        //
-        //     console.log('worked');
-        //   }
-        // Initialize the app
+// Initialize the app
 app.listen((process.env.PORT || 3000));
+console.log("Listening on Port 3000");
