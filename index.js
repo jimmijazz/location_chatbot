@@ -154,8 +154,10 @@ const actions = {
             console.log("Error geocoding inspection location" + err);
           } else {
               // Add to database of inspections
+              // Inspection will expire at "expireAt"
+              // See - https://docs.mongodb.com/manual/tutorial/expire-data/
               db.collection(INSPECTIONS).insert({"_id": data.results[0].place_id,
-                                                 "expireAt" : new Date('September 28, 2016 11:40:00'),
+                                                 "expireAt" : new Date('September 28, 2016 11:49:00'),
                                                  "address" : data.results[0].formatted_address,
               }, function(err, result) {
                   if(err) {
