@@ -231,7 +231,7 @@ const actions = {
                       if (err) {
                         console.log("Error finding property. Error: " + err);
                       } else {
-                          var house = result;
+                        console.log(result);
                           payload = [{
                             "title" : address.formatted_address,
                             "subtitle" : result.description,
