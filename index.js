@@ -242,7 +242,7 @@ const actions = {
                               "payload" : "hello hello hello",
                             }]
                           }]
-                          sendGenericMessage(recipientId, payload);
+                          sendGenericMessage(sessions[sessionId].fbid, payload);
                         }
                   })
                 }
