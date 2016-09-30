@@ -213,6 +213,8 @@ const actions = {
   // Sends a generic template message for the user to check into that property
   checkIn({context, entities}) {
     return new Promise(function(resolve, reject) {
+      console.log("entities: " + entities);
+      console.log("context: " + context);
       var address = firstEntityValue(entities, "location");
 
       if (address) {
