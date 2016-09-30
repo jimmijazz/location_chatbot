@@ -185,7 +185,7 @@ const actions = {
           if(err) {
             console.log("Error geocoding property location" + err);
           } else {
-            addres = data.results[0].formatted_address;
+            address = data.results[0].formatted_address;
             // Add to property database
             db.collection(PROPERTIES).insert({
                 "_id" : data.results[0].place_id,
