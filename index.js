@@ -227,7 +227,7 @@ const actions = {
                 if (err) {
                   console.log("Error finding inspection. Error: " + err);
                 } else if (result) {
-                    db.collection(PROPERTIES).find({"_id" : address.place_id}, function(err, prop_result) {
+                    db.collection(PROPERTIES).findOne({"_id" : address.place_id}, function(err, prop_result) {
                       if (err) {
                         console.log("Error finding property. Error: " + err);
                       } else {
