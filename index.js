@@ -227,15 +227,15 @@ const actions = {
                 if (err) {
                   console.log("Error finding inspection. Error: " + err);
                 } else if (result) {
-                    db.collection(PROPERTIES).find({"_id" : address.place_id}, function(err, result) {
+                    db.collection(PROPERTIES).find({"_id" : address.place_id}, function(err, prop_result) {
                       if (err) {
                         console.log("Error finding property. Error: " + err);
                       } else {
-                        console.log(result);
+                        console.log(prop_result);
                           payload = [{
                             "title" : address.formatted_address,
-                            "subtitle" : result.description,
-                            "image_url" : result.photos[0],
+                            "subtitle" : prop_result.description,
+                            "image_url" : prop_result.photos[0],
                             "buttons" : [{
                               "type" : "postback",
                               "title" : "Check In",
