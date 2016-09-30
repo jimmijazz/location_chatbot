@@ -125,12 +125,14 @@ const actions = {
     });
   },
   createInspection({context, entities}) {
+    // Used by agent to create an inspection at a property
+
     // TO DO
     // - add a function to handle multiple datetimes detected (error)
     // - Add an "is this correct?" function to confirm
-    // - run address through google
     // - check if inspection exists or not
-    return new Promise(function(resolve, rejust) {
+    // - Get length of inspection and set expireat date to that
+    return new Promise(function(resolve, reject) {
       var address = firstEntityValue(entities, "location");
       var time = firstEntityValue(entities, "datetime");
 
@@ -146,24 +148,26 @@ const actions = {
       hours = (hours == '00')? 12 : hours;  // if 00 then it is 12 am
 
       if (address && time) {
-        context.inspection = "Created inspection at "+ address +
-                              " at " + hours + ":" + minutes + suffix;
+
         // Geocode Address
         geocoder.geocode(address, function(err, data){
           if(err) {
             console.log("Error geocoding inspection location" + err);
           } else {
               // Add to database of inspections
-              // Inspection will expire at "expireAt"
-              // See - https://docs.mongodb.com/manual/tutorial/expire-data/
-              db.collection(INSPECTIONS).insert({"_id": data.results[0].place_id,
-                                                 "expireAt" : new Date('September 28, 2016 11:54:00'),
-                                                 "address" : data.results[0].formatted_address,
+              db.collection(INSPECTIONS).insert({
+                "_id": data.results[0].place_id, // ID returned by Gmaps
+                // When inspection will finish
+                "expireAt" : new Date('September 28, 2016 11:54:00'),
+                "address" : data.results[0].formatted_address, // From Gmaps
               }, function(err, result) {
                   if(err) {
                     console.log(err);
                   }
               });
+              // Send response back to wit.ai
+              context.inspection = "Created inspection at "+ address +
+                                    " at " + hours + ":" + minutes + suffix;
             }
           });
 
@@ -178,6 +182,42 @@ const actions = {
         console.log(" No time");
         context.time = true;
         delete context.time;
+      }
+      return resolve(context);
+    });
+  },
+  createProperty({context, entities}) {
+    // Used by agent to create an inspection at a property
+
+    return new Promise(function(resolve, reject) {
+      var address = firstEntityValue(entities, "location");
+
+      if (address) {
+        // Geocode address
+        geocoder.geocode(address, function(err, data) {
+          if(err) {
+            console.log("Error geocoding property location" + err);
+          } else {
+            addres = data.results[0].formatted_address;
+            // Add to property database
+            db.collection(HOUSES).insert({
+                "_id" : data.results[0].place_id,
+                "address" : data.results[0].formatted_address,
+                "lat" : data.results[0].geometry.location.lat,
+                "lng" : data.results[0].geometry.location.lng
+              }, function(err, result) {
+                if(err) {
+                  console.log(err);
+                }
+              });
+              context.property = "Created property at " + address + ".";
+          }
+        });
+        delete context.address;
+      } else if (!address) {
+        console.log("No address provided");
+        context.address = true;
+        delete context.address;
       }
       return resolve(context);
     });
