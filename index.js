@@ -173,15 +173,15 @@ const actions = {
       return resolve(context);
     });
   },
-  createProperty({context, entities}) {
-    // Used by agent to create an inspection at a property
 
+  // Used by agent to create an inspection at a property
+  createProperty({context, entities}) {
     return new Promise(function(resolve, reject) {
       var address = firstEntityValue(entities, "location");
 
       if (address) {
         // Geocode address
-        geocoder.geocode(address, function(err, data) {
+        geocoder.geocode(address + "Australia", function(err, data) {
           if(err) {
             console.log("Error geocoding property location" + err);
           } else {
@@ -209,6 +209,63 @@ const actions = {
       return resolve(context);
     });
   },
+
+  // Sends a generic template message for the user to check into that property
+  checkIn({context, entities}) {
+    return new Promise(function(resolve, reject) {
+      var address = firstEntityValue(entities, "location");
+
+      if (address) {
+        // Geocode address
+        geocode.geocode(address + "Australia", function(err, data) {
+          if (err) {
+            console.log("Error geocoding property location" + err);
+          } else {
+            address = data.results[0];
+            // If in inspection send generic view with option to check in
+            var inspecting = db.collection(INSPECTIONS).findOne({"_id" : address.place_id }, function(err, result) {
+                if (err) {
+                  console.log("Error finding inspection. Error: " + err);
+                } else if (result) {
+                    db.collection(PROPERTIES).find({"_id" : address.place_id}, function(err, result) {
+                      if (err) {
+                        console.log("Error finding property. Error: " + err);
+                      } else {
+                          var house = result;
+                          payload = [{
+                            "title" : address.formatted_address,
+                            "subtitle" : result.description,
+                            "image_url" : result.photos[0],
+                            "buttons" : [{
+                              "type" : "postback",
+                              "title" : "Check In",
+                              "payload" : "hello hello hello",
+                            }];
+                          }]
+                        }
+                  })
+                }
+              })
+            }
+          });
+
+            // Else if property is in properties collection send more info
+
+            // Else send a list of close by properties
+
+        delete context.address;
+
+      } else if (!address){
+        // Probably not needed because Wit.Ai will only call this function if it
+        // detects a location but will help with user flow later on.
+        console.log("No address provided");
+        delete context.address;
+      }
+      return resolve(context);
+    })
+  },
+
+
 
 };
 
@@ -473,7 +530,7 @@ function userProfile(userId){
   })
 };
 
-function sendGenericMessage(sender, payload) {
+function sendGenericMessage(recipientId, payload) {
 	var messageData = {
 		"attachment": {
 			"type": "template",
@@ -489,7 +546,7 @@ function sendGenericMessage(sender, payload) {
 		qs: {access_token:process.env.PAGE_ACCESS_TOKEN},
 		method: 'POST',
 		json: {
-			recipient: {id:sender},
+			recipient: {id:recipientId},
 			message: messageData,
 		}
 	}, function(error, response, body) {
@@ -501,23 +558,23 @@ function sendGenericMessage(sender, payload) {
 	})
 };
 
-function read_message(id, user_message) {
+function read_message(recipientId, user_message) {
 // Sends a message to the user(id) based on message
 /// read_message(str,str) -> None
   var msg = user_message.toLowerCase();
   switch(msg) {
     case "check in" :
-      sendMessage(id, {text: "Please send your location"});
+      sendMessage(recipientId, {text: "Please send your location"});
       break;
 
     case "what is my name" :
-      sendMessage(id, {text: "Your name is " + user.first_name});
+      sendMessage(recipientId, {text: "Your name is " + user.first_name});
       break;
 
     case "create inspection" :
-      if (isAgent(id)) {
+      if (isAgent(recipientId)) {
         // Update agent status to creating inspection
-        message = {_id:id, creating_inspection: true};
+        message = {_id:recipientId, creating_inspection: true};
 
         db.collection(AGENTS).insert(message, function(err, result) {
           if (err) {
@@ -526,12 +583,12 @@ function read_message(id, user_message) {
             console.log("Updated agent");
           };
         });
-        sendMessage(id, {text:"Send your location to create an inspection"});
+        sendMessage(recipientId, {text:"Send your location to create an inspection"});
       };
       break;
 
     default :
-      sendMessage(id, {text: "Sorry I don't understand what you mean by " + msg });
+      sendMessage(recipientId, {text: "Sorry I don't understand what you mean by " + msg });
       break;
 
     // Add another statement to catch address
