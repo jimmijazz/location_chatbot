@@ -217,7 +217,7 @@ const actions = {
 
       if (address) {
         // Geocode address
-        geocode.geocode(address + "Australia", function(err, data) {
+        geocoder.geocode(address + "Australia", function(err, data) {
           if (err) {
             console.log("Error geocoding property location" + err);
           } else {
