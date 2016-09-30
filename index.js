@@ -240,7 +240,7 @@ const actions = {
                               "type" : "postback",
                               "title" : "Check In",
                               "payload" : "hello hello hello",
-                            }];
+                            }]
                           }]
                         }
                   })
