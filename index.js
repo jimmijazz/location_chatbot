@@ -47,7 +47,7 @@ const firstEntityValue = (entities, entity) => {
 
 // MongoDB Collections
 var CONTACTS_COLLECTION = "contacts"; // All messages sent (probably won't need this)
-var HOUSES = "houses"; // Details of houses including whether or not they are open for inspection
+var PROPERTIES = "properties"; // Details of houses including whether or not they are open for inspection
 var AGENTS = "agents;"  // Registered agents and which agency they are with
 var PEOPLE = "people" // Potential vendors and tenants {_id: str, messages:[{"message":str, "timestamp": int, "mid": str, "seq": int}]}
 var INSPECTIONS = "inspections" // List of inspections
@@ -111,19 +111,6 @@ const actions = {
   },
 
   // Wit.Ai Custom Actions
-  getForecast({context, entities}) {
-    return new Promise(function(resolve, reject) {
-      var location = firstEntityValue(entities, "location")
-      if (location) {
-        context.forecast = 'sunny in' + location; // Replace with API call
-        delete context.missingLocation;
-      } else {
-        context.missingLocation = true;
-        delete context.forecast;
-      }
-      return resolve(context);
-    });
-  },
   createInspection({context, entities}) {
     // Used by agent to create an inspection at a property
 
@@ -200,7 +187,7 @@ const actions = {
           } else {
             addres = data.results[0].formatted_address;
             // Add to property database
-            db.collection(HOUSES).insert({
+            db.collection(PROPERTIES).insert({
                 "_id" : data.results[0].place_id,
                 "address" : data.results[0].formatted_address,
                 "lat" : data.results[0].geometry.location.lat,
