@@ -47,7 +47,7 @@ const firstEntityValue = (entities, entity) => {
 
 // MongoDB Collections
 var CONTACTS_COLLECTION = "contacts"; // All messages sent (probably won't need this)
-var HOUSES_COLLECTION = "houses"; // Details of houses including whether or not they are open for inspection
+var HOUSES = "houses"; // Details of houses including whether or not they are open for inspection
 var AGENTS = "agents;"  // Registered agents and which agency they are with
 var PEOPLE = "people" // Potential vendors and tenants {_id: str, messages:[{"message":str, "timestamp": int, "mid": str, "seq": int}]}
 var INSPECTIONS = "inspections" // List of inspections
