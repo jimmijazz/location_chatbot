@@ -249,10 +249,12 @@ const actions = {
                 console.log("Property is not in INSPECTIONS collection")
               }
 
-            }
+            })
           }
         });
+
         delete context.address;
+        
       } else if (!address) {
         console.log("No address provided");
         context.address = true;
