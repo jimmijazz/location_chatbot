@@ -248,9 +248,10 @@ const actions = {
                               "title" : "Check In",
                               "payload" : "hello hello hello",
                             }]
-                          },
+                          }
 
                         };
+
                         context.property = [payload];
                   })
 
