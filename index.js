@@ -469,8 +469,9 @@ app.post('/webhook', function (req, res) {
 // Generic function sending messages
 const fbMessage = (id, text) => {
   var x = true;
+  payload = text.text.split('" "')
   console.log(text.text)
-  console.log(text.text[0]);
+  console.log(payload[0]);
 
 
   if (x) {
