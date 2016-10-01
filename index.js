@@ -259,7 +259,7 @@ const actions = {
                         	}
 
                         };
-                        context.property = message;
+                        context.property = "Checking in";
 
                   })
 
