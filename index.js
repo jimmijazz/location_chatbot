@@ -239,6 +239,7 @@ const actions = {
                         console.log("Error finding property. Error: " + err);
                       } else {
                           console.log("Found property in PROPERTIES collection")
+                          // For some reason it sends payload as a str so have to try and convert to JSON or split
                           var payload = [
                             address.formatted_address,
                             prop_result.description,
@@ -471,7 +472,7 @@ const fbMessage = (id, text) => {
   var x = true;
   payload = text.text.split('" "')
   console.log(text.text)
-  console.log(payload[0]);
+  console.log(payload);
 
 
   if (x) {
@@ -483,9 +484,9 @@ const fbMessage = (id, text) => {
           "payload" : {
             "template_type" : "generic",
             "elements" : [{
-              "title": "TITLE",
-              "subtitle" : "SUBTITLE",
-              "image_url" : text.text.image_url,
+              "title": payload[0],
+              "subtitle" : payload[1],
+              "image_url" : payload[2],
               "buttons" : text.text.buttons,
             }],
           }
