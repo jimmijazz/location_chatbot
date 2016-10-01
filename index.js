@@ -179,7 +179,9 @@ const actions = {
   createProperty({context, entities}) {
     return new Promise(function(resolve, reject) {
       console.log("Creating property");
+
       var address = firstEntityValue(entities, "location");
+      console.log(address);
 
       if (address) {
         // Geocode address
