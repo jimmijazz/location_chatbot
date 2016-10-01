@@ -260,7 +260,7 @@ const actions = {
               })
             }
           });
-
+          //
             // Else if property is in properties collection send more info
 
             // Else send a list of close by properties
