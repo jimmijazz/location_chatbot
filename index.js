@@ -189,7 +189,6 @@ const actions = {
             console.log("Error geocoding property location" + err);
           } else {
             address = data.results[0].formatted_address;
-            console.log(data);
             // Add to property database
             db.collection(PROPERTIES).insert({
                 "_id" : data.results[0].place_id,
@@ -239,6 +238,7 @@ const actions = {
                         console.log("Error finding property. Error: " + err);
                       } else {
                           console.log("Found property in PROPERTIES collection")
+                          console.log(data);
                           payload = [{
                             "title" : address.formatted_address,
                             "subtitle" : prop_result.description,
