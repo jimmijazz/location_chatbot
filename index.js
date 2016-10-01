@@ -242,7 +242,7 @@ const actions = {
                       console.log("FOUND property in PROPERTIES collection");
                       context.property = "Checked in at " + address + ".";
                     }
-                  }
+                  })
 
               } else {
                 // Replace by sending a list of close by properties
