@@ -213,7 +213,7 @@ const actions = {
     });
   },
 
-  checkin_location({context, entities}) {
+  checkIn({context, entities}) {
     return new Promise(function(resolve, reject) {
       console.log("Creating property");
 
