@@ -215,7 +215,7 @@ const actions = {
 
   checkIn({context, entities}) {
     return new Promise(function(resolve, reject) {
-      console.log("Creating property");
+      console.log("Checking in to property");
 
       var address = firstEntityValue(entities, "location");
 
@@ -227,6 +227,7 @@ const actions = {
           } else {
 
             address = data.results[0];
+            context.property = "Checked in at " + address + ".";
 
             var inspecting = db.collection(INSPECTIONS).findOne({"_id" : address.place_id }, function(err, result) {
               if(err) {
@@ -240,7 +241,6 @@ const actions = {
                       context.property = "Error checking into address";
                     } else {
                       console.log("FOUND property in PROPERTIES collection");
-                      context.property = "Checked in at " + address + ".";
                     }
                   })
 
@@ -254,7 +254,7 @@ const actions = {
         });
 
         delete context.address;
-        
+
       } else if (!address) {
         console.log("No address provided");
         context.address = true;
