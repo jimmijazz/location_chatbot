@@ -231,11 +231,12 @@ const actions = {
                 if (err) {
                   console.log("Error finding inspection. Error: " + err);
                 } else if (result) {
+                  console.log("Found property in INSPECTIONS collection");
                     db.collection(PROPERTIES).findOne({"_id" : address.place_id}, function(err, prop_result) {
                       if (err) {
                         console.log("Error finding property. Error: " + err);
                       } else {
-
+                          console.log("Found property in PROPERTIES collection")
                           payload = [{
                             "title" : address.formatted_address,
                             "subtitle" : prop_result.description,
