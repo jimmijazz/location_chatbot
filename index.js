@@ -239,7 +239,7 @@ const actions = {
                         console.log("Error finding property. Error: " + err);
                       } else {
                           console.log("Found property in PROPERTIES collection")
-                          payload = [{
+                          payload = {
                             "title" : address.formatted_address,
                             "subtitle" : prop_result.description,
                             "image_url" : prop_result.photos[0],
@@ -248,7 +248,7 @@ const actions = {
                               "title" : "Check In",
                               "payload" : "hello hello hello",
                             }]
-                          }]
+                          }
 
                         };
                         context.property = payload;
@@ -467,7 +467,7 @@ app.post('/webhook', function (req, res) {
 
 // Generic function sending messages
 const fbMessage = (id, text) => {
-
+  var payload = JSON.parse("[" + text "]");
   var x = true;
   console.log(text.text)
   if (x) {
@@ -478,7 +478,7 @@ const fbMessage = (id, text) => {
           "type" : "template",
           "payload" : {
             "template_type" : "generic",
-            "elements" : text.text
+            "elements" : payload;
           }
         }
       },
