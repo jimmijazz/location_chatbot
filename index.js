@@ -252,7 +252,7 @@ const actions = {
 
                         };
 
-                        context.property = [payload];
+                        context.property = payload;
                   })
 
                 }
@@ -478,7 +478,7 @@ const fbMessage = (id, text) => {
           "type" : "template",
           "payload" : {
             "template_type" : "generic",
-            "elements" : text.text,
+            "elements" : [text.text],
           }
         }
       },
