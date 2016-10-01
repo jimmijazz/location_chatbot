@@ -230,7 +230,7 @@ const actions = {
             context.property = "checked in at " + address + ".";
           }
         });
-        delete context.property;
+        delete context.address;
       } else if (!address) {
         console.log("No address provided");
         context.address = true;
