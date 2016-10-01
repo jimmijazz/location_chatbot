@@ -181,7 +181,6 @@ const actions = {
       console.log("Creating property");
 
       var address = firstEntityValue(entities, "location");
-      console.log(address);
 
       if (address) {
         // Geocode address
@@ -190,6 +189,7 @@ const actions = {
             console.log("Error geocoding property location" + err);
           } else {
             address = data.results[0].formatted_address;
+            console.log(address);
             // Add to property database
             db.collection(PROPERTIES).insert({
                 "_id" : data.results[0].place_id,
