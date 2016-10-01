@@ -225,9 +225,31 @@ const actions = {
           if(err) {
             console.log("Error geocoding property location" + err);
           } else {
-            address = data.results[0].formatted_address;
-            // Add to property database
-              context.property = "Checked in at " + address + ".";
+
+            address = data.results[0];
+
+            var inspecting = db.collection(INSPECTIONS).findOne({"_id" : address.place_id }, function(err, result) {
+              if(err) {
+                console.log("Error geocoding property location" + err);
+
+              } else if (result){
+                  console.log("Property is in INSPECTIONS collection");
+                  db.collection(PROPERTIES).findOne({"_id" : address.place_id}, function(err, prop_result) {
+                    if (err) {
+                      console.log("Error finding property. Error: " + err);
+                      context.property = "Error checking into address";
+                    } else {
+                      console.log("FOUND property in PROPERTIES collection");
+                      context.property = "Checked in at " + address + ".";
+                    }
+                  }
+
+              } else {
+                // Replace by sending a list of close by properties
+                console.log("Property is not in INSPECTIONS collection")
+              }
+
+            }
           }
         });
         delete context.address;
