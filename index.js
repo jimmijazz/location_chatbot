@@ -84,9 +84,10 @@ const findOrCreateSession = (fbid) => {
   return sessionId;
 };
 
+const recipientId = sessions[sessionId].fbid;
+
 // Bot actions
 const actions = {
-  const recipientId = sessions[sessionId].fbid;
 
   send({sessionId}, text) {
     // Our bot has something to say!
