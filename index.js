@@ -238,7 +238,6 @@ const actions = {
                         console.log("Error finding property. Error: " + err);
                       } else {
                           console.log("Found property in PROPERTIES collection")
-                          console.log(data);
                           payload = [{
                             "title" : address.formatted_address,
                             "subtitle" : prop_result.description,
@@ -259,11 +258,12 @@ const actions = {
                         			}
                         		}
                         	}
-                          context.checkIn = "Checking in";
                         };
                   })
                 }
               })
+              context.checkIn = "Checking in";
+
             }
           });
           //
