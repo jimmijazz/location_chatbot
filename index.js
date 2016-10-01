@@ -239,7 +239,7 @@ const actions = {
                         console.log("Error finding property. Error: " + err);
                       } else {
                           console.log("Found property in PROPERTIES collection")
-                          payload = {
+                          var payload = {
                             title : address.formatted_address,
                             subtitle : prop_result.description,
                             image_url : prop_result.photos[0],
