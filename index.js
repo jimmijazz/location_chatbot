@@ -223,7 +223,6 @@ const actions = {
             console.log("Error geocoding property location" + err);
           } else {
             let address = data.results[0];
-            console.log(address)
             // If in inspection send generic view with option to check in
             var inspecting = db.collection(INSPECTIONS).findOne({"_id" : address.place_id }, function(err, result) {
                 if (err) {
@@ -233,7 +232,6 @@ const actions = {
                       if (err) {
                         console.log("Error finding property. Error: " + err);
                       } else {
-                        console.log(prop_result);
                           payload = [{
                             "title" : address.formatted_address,
                             "subtitle" : prop_result.description,
@@ -244,7 +242,7 @@ const actions = {
                               "payload" : "hello hello hello",
                             }]
                           }]
-
+                          console.log(actions.recipientId)
                           sendGenericMessage(actions.recipientId, payload);
                         }
                   })
