@@ -239,16 +239,16 @@ const actions = {
                         console.log("Error finding property. Error: " + err);
                       } else {
                           console.log("Found property in PROPERTIES collection")
-                          var payload = {
-                            title : address.formatted_address,
-                            subtitle : prop_result.description,
-                            image_url : prop_result.photos[0],
-                            buttons : [{
-                              type : "postback",
-                              title : "Check In",
-                              payload : "hello hello hello",
-                            }]
-                          }
+                          var payload = [
+                            address.formatted_address,
+                            prop_result.description,
+                            prop_result.photos[0],
+                            //buttons : [{
+                              //type : "postback",
+                            //  title : "Check In",
+                              //payload : "hello hello hello",
+                            //}]
+                          ];
 
                         };
 
@@ -470,7 +470,7 @@ app.post('/webhook', function (req, res) {
 const fbMessage = (id, text) => {
   var x = true;
   console.log(text.text)
-  console.log(text.text["title"]);
+  console.log(text.text[0]);
 
 
   if (x) {
