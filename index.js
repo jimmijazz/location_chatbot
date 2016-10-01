@@ -240,13 +240,13 @@ const actions = {
                       } else {
                           console.log("Found property in PROPERTIES collection")
                           payload = {
-                            "title" : address.formatted_address,
-                            "subtitle" : prop_result.description,
-                            "image_url" : prop_result.photos[0],
-                            "buttons" : [{
-                              "type" : "postback",
-                              "title" : "Check In",
-                              "payload" : "hello hello hello",
+                            title : address.formatted_address,
+                            subtitle : prop_result.description,
+                            image_url : prop_result.photos[0],
+                            buttons : [{
+                              type : "postback",
+                              title : "Check In",
+                              payload : "hello hello hello",
                             }]
                           }
 
@@ -469,7 +469,7 @@ app.post('/webhook', function (req, res) {
 // Generic function sending messages
 const fbMessage = (id, text) => {
   var x = true;
-  console.log(text.title)
+  console.log(text.text.title);
   if (x) {
     var body = JSON.stringify({
       recipient: { id },
