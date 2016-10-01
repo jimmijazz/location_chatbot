@@ -89,7 +89,7 @@ const actions = {
   send({sessionId}, {text}) {
     // Our bot has something to say!
     // Let's retrieve the Facebook user whose session belongs to
-    recipientId = sessions[sessionId].fbid;
+    const recipientId = sessions[sessionId].fbid;
     if (recipientId) {
       // We found our recipient. Let's forward our bot response to them.
       // We return a promise to let our bot know when we're done sending
@@ -242,7 +242,7 @@ const actions = {
                               "payload" : "hello hello hello",
                             }]
                           }]
-                          console.log(recipientId)
+                          console.log(sessions)
                           sendGenericMessage(actions.recipientId, payload);
                         }
                   })
