@@ -84,11 +84,9 @@ const findOrCreateSession = (fbid) => {
   return sessionId;
 };
 
-const recipientId = sessions[sessionId].fbid;
 
 // Bot actions
 const actions = {
-
   send({sessionId}, text) {
     // Our bot has something to say!
     // Let's retrieve the Facebook user whose session belongs to
@@ -481,7 +479,7 @@ app.post('/webhook', function (req, res) {
 const fbMessage = (id, text) => {
   const body = JSON.stringify({
     recipient: { id },
-    message: text ,
+    message: { text } ,
   });
   const qs = 'access_token=' + encodeURIComponent(process.env.PAGE_ACCESS_TOKEN);
   return fetch('https://graph.facebook.com/me/messages?' + qs, {
