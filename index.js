@@ -478,7 +478,7 @@ app.post('/webhook', function (req, res) {
 const fbMessage = (id, text) => {
   const body = JSON.stringify({
     recipient: { id },
-    message: { text },
+    message: text ,
   });
   const qs = 'access_token=' + encodeURIComponent(process.env.PAGE_ACCESS_TOKEN);
   return fetch('https://graph.facebook.com/me/messages?' + qs, {
