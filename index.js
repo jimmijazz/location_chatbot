@@ -120,6 +120,7 @@ const actions = {
     // - check if inspection exists or not
     // - Get length of inspection and set expireat date to that
     return new Promise(function(resolve, reject) {
+      console.log("Creating inspection");
       var address = firstEntityValue(entities, "location");
       var time = firstEntityValue(entities, "datetime");
 
@@ -177,6 +178,7 @@ const actions = {
   // Used by agent to create an inspection at a property
   createProperty({context, entities}) {
     return new Promise(function(resolve, reject) {
+      console.log("Creating property");
       var address = firstEntityValue(entities, "location");
 
       if (address) {
@@ -217,6 +219,7 @@ const actions = {
       var address = firstEntityValue(entities, "location");
 
       if (address) {
+        console.log("Checking In");
         // Geocode address
         geocoder.geocode(address + "Australia", function(err, data) {
           if (err) {
