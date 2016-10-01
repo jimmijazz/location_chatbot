@@ -214,7 +214,7 @@ const actions = {
   checkIn({context, entities}) {
     return new Promise(function(resolve, reject) {
       console.log("entities: " + JSON.stringify(entities, null, 4));
-      console.log("context: " + JSON.stringify(context, null, 4));
+      console.log("context: " + JSON.stringify(context.address, null, 4));
       var address = firstEntityValue(entities, "location");
 
       if (address) {
