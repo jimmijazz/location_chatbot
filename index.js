@@ -213,8 +213,37 @@ const actions = {
     });
   },
 
+  checkin_location({context, entities}) {
+    return new Promise(function(resolve, reject) {
+      console.log("Creating property");
+
+      var address = firstEntityValue(entities, "location");
+
+      if (address) {
+        // Geocode address
+        geocoder.geocode(address + "Australia", function(err, data) {
+          if(err) {
+            console.log("Error geocoding property location" + err);
+          } else {
+            address = data.results[0].formatted_address;
+            // Add to property database
+              context.property = "Checked in at " + address + ".";
+          }
+        });
+        delete context.address;
+      } else if (!address) {
+        console.log("No address provided");
+        context.address = true;
+        delete context.address;
+      }
+      return resolve(context);
+    });
+  },
+
+
+
   // Sends a generic template message for the user to check into that property
-  checkIn({context, entities}) {
+  checkIn2({context, entities}) {
     return new Promise(function(resolve, reject) {
 
       var address = firstEntityValue(entities, "location");
@@ -260,11 +289,10 @@ const actions = {
 
                         };
                   })
-                  context.checkin_location = "Checking in";
 
                 }
               })
-
+              context.checkin_location = "Checking in";
             }
           });
           //
