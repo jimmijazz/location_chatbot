@@ -245,7 +245,7 @@ const actions = {
                             }]
                           }]
 
-                          sendGenericMessage(recipientId, payload);
+                          sendGenericMessage(actions.recipientId, payload);
                         }
                   })
                 }
