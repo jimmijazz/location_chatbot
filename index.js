@@ -215,7 +215,7 @@ const actions = {
 
   checkIn({context, entities}) {
     return new Promise(function(resolve, reject) {
-      console.log("Checking in to property");
+      console.log("Creating property");
 
       var address = firstEntityValue(entities, "location");
 
@@ -226,39 +226,17 @@ const actions = {
             console.log("Error geocoding property location" + err);
           } else {
 
-            address = data.results[0];
-            context.checkin_location = "Checked in at " + address + ".";
-
-            var inspecting = db.collection(INSPECTIONS).findOne({"_id" : address.place_id }, function(err, result) {
-              if(err) {
-                console.log("Error geocoding property location" + err);
-
-              } else if (result){
-                  console.log("Property is in INSPECTIONS collection");
-                  db.collection(PROPERTIES).findOne({"_id" : address.place_id}, function(err, prop_result) {
-                    if (err) {
-                      console.log("Error finding property. Error: " + err);
-                      context.checkin_location = "Error checking into address";
-                    } else {
-                      console.log("FOUND property in PROPERTIES collection");
-                    }
-                  })
-
-              } else {
-                // Replace by sending a list of close by properties
-                console.log("Property is not in INSPECTIONS collection")
-              }
-
-            })
+            //
+            address = data.results[0].formatted_address;
+            // Add to property database
+            context.property = "Checked in at " + address + ".";
           }
         });
-
-        delete context.checkin_location;
-
+        delete context.address;
       } else if (!address) {
         console.log("No address provided");
-        context.property = true;
-        delete context.checkin_location;
+        context.address = true;
+        delete context.address;
       }
       return resolve(context);
     });
