@@ -260,7 +260,6 @@ const actions = {
                         	}
 
                         };
-                        console.log(recipientId);
                         context.property = message;
                   })
 
