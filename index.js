@@ -259,11 +259,12 @@ const actions = {
                         	}
 
                         };
+                        context.property = message;
+
                   })
 
                 }
               })
-              context.property = message;
             }
           });
           //
