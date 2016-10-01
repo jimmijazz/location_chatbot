@@ -249,18 +249,9 @@ const actions = {
                               "payload" : "hello hello hello",
                             }]
                           }]
-                          var message = {
-                        		attachment: {
-                        			"type": "template",
-                        			"payload": {
-                        				"template_type": "generic",
-                        				"elements": payload
-                        			}
-                        		}
-                        	}
 
                         };
-                        context.property = message;
+                        context.property = payload;
                   })
 
                 }
@@ -476,11 +467,29 @@ app.post('/webhook', function (req, res) {
 
 // Generic function sending messages
 const fbMessage = (id, text) => {
-  const body = JSON.stringify({
-    recipient: { id },
-    message: { text },
 
-  });
+  var x = text.substring(0,4);
+
+  if (x == 'http') {
+    var body = JSON.stringify({
+      recipient: { id },
+      message: {
+        attachment: {
+          "type" : "image",
+          "payload" : {
+            "template_type" : "generic",
+            "elements" : text
+          }
+        }
+      },
+    });
+  } else {
+      var body = JSON.stringify({
+        recipient: { id },
+        message: { text },
+      });
+  }
+
   const qs = 'access_token=' + encodeURIComponent(process.env.PAGE_ACCESS_TOKEN);
   return fetch('https://graph.facebook.com/me/messages?' + qs, {
     method: 'POST',
