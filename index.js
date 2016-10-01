@@ -232,6 +232,7 @@ const actions = {
                       if (err) {
                         console.log("Error finding property. Error: " + err);
                       } else {
+
                           payload = [{
                             "title" : address.formatted_address,
                             "subtitle" : prop_result.description,
@@ -242,9 +243,18 @@ const actions = {
                               "payload" : "hello hello hello",
                             }]
                           }]
-                          console.log(sessionId);
-                          sendGenericMessage(actions.recipientId, payload);
-                        }
+
+                          var message = {
+                        		"attachment": {
+                        			"type": "template",
+                        			"payload": {
+                        				"template_type": "generic",
+                        				"elements": payload
+                        			}
+                        		}
+                        	}
+                          context.address = message;
+                        };
                   })
                 }
               })
