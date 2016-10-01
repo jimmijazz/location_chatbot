@@ -473,9 +473,9 @@ const fbMessage = (id, text) => {
   if (x) {
     var body = JSON.stringify({
       recipient: { id },
-      message: {
-        attachment: {
-          "type" : "image",
+      "message": {
+        "attachment": {
+          "type" : "template",
           "payload" : {
             "template_type" : "generic",
             "elements" : [text]
