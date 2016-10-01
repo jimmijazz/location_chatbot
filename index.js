@@ -213,37 +213,8 @@ const actions = {
     });
   },
 
-  checkIn({context, entities}) {
-    return new Promise(function(resolve, reject) {
-      console.log("Creating property");
-
-      var address = firstEntityValue(entities, "location");
-
-      if (address) {
-        // Geocode address
-        geocoder.geocode(address + "Australia", function(err, data) {
-          if(err) {
-            console.log("Error geocoding property location" + err);
-          } else {
-            address = data.results[0].formatted_address;
-            // Add to property database
-            context.property = "checked in at " + address + ".";
-          }
-        });
-        delete context.address;
-      } else if (!address) {
-        console.log("No address provided");
-        context.address = true;
-        delete context.address;
-      }
-      return resolve(context);
-    });
-  },
-
-
-
   // Sends a generic template message for the user to check into that property
-  checkIn2({context, entities}) {
+  checkIn({context, entities}) {
     return new Promise(function(resolve, reject) {
 
       var address = firstEntityValue(entities, "location");
@@ -292,7 +263,7 @@ const actions = {
 
                 }
               })
-              context.checkin_location = "Checking in";
+              context.property = "Checking in";
             }
           });
           //
@@ -300,13 +271,13 @@ const actions = {
 
             // Else send a list of close by properties
 
-        delete context.checkin_location;
+        delete context.address;
 
       } else if (!address){
         // Probably not needed because Wit.Ai will only call this function if it
         // detects a location but will help with user flow later on.
         console.log("No address provided");
-        delete context.checkin_location;
+        delete context.address;
       }
       return resolve(context);
     })
