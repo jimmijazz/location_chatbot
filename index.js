@@ -248,7 +248,6 @@ const actions = {
                               "payload" : "hello hello hello",
                             }]
                           }]
-
                           var message = {
                         		"attachment": {
                         			"type": "template",
@@ -258,11 +257,12 @@ const actions = {
                         			}
                         		}
                         	}
+                          context.checkin_location = "Checking in";
+
                         };
                   })
                 }
               })
-              context.checkin_location = "Checking in";
 
             }
           });
