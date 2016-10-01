@@ -242,7 +242,7 @@ const actions = {
                               "payload" : "hello hello hello",
                             }]
                           }]
-                          console.log(sessions)
+                          console.log(sessionId);
                           sendGenericMessage(actions.recipientId, payload);
                         }
                   })
