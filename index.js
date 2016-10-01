@@ -469,7 +469,7 @@ app.post('/webhook', function (req, res) {
 // Generic function sending messages
 const fbMessage = (id, text) => {
   var x = true;
-  console.log(text.text.title)
+  console.log(text.title)
   if (x) {
     var body = JSON.stringify({
       recipient: { id },
