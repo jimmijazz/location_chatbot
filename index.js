@@ -253,7 +253,7 @@ const actions = {
           }
         });
 
-        delete context.address;
+        delete context.property;
 
       } else if (!address) {
         console.log("No address provided");
