@@ -479,8 +479,8 @@ const fbMessage = (id, text) => {
           "payload" : {
             "template_type" : "generic",
             "elements" : [{
-              "title": text.text.title,
-              "subtitle" : text.text.subtitle,
+              "title": "TITLE",
+              "subtitle" : "SUBTITLE",
               "image_url" : text.text.image_url,
               "buttons" : text.text.buttons,
             }],
