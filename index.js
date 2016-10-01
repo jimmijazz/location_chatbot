@@ -257,7 +257,7 @@ const actions = {
                         			}
                         		}
                         	}
-                          context.checkAddress = message;
+                          context.checkIn = "Checking in";
                         };
                   })
                 }
@@ -269,13 +269,13 @@ const actions = {
 
             // Else send a list of close by properties
 
-        delete context.checkAddress;
+        delete context.checkIn;
 
       } else if (!address){
         // Probably not needed because Wit.Ai will only call this function if it
         // detects a location but will help with user flow later on.
         console.log("No address provided");
-        delete context.checkAddress;
+        delete context.checkIn;
       }
       return resolve(context);
     })
