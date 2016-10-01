@@ -213,8 +213,8 @@ const actions = {
   // Sends a generic template message for the user to check into that property
   checkIn({context, entities}) {
     return new Promise(function(resolve, reject) {
-      console.log("entities: " + JSON.stringify(entities, null, 4));
-      console.log("context: " + JSON.stringify(context.address, null, 4));
+      const recipientId = sessions[sessionId].fbid;
+
       var address = firstEntityValue(entities, "location");
 
       if (address) {
@@ -244,7 +244,8 @@ const actions = {
                               "payload" : "hello hello hello",
                             }]
                           }]
-                          sendGenericMessage(sessionId, payload);
+
+                          sendGenericMessage(recipientId, payload);
                         }
                   })
                 }
