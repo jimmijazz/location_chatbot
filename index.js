@@ -86,6 +86,8 @@ const findOrCreateSession = (fbid) => {
 
 // Bot actions
 const actions = {
+  const recipientId = sessions[sessionId].fbid;
+
   send({sessionId}, text) {
     // Our bot has something to say!
     // Let's retrieve the Facebook user whose session belongs to
@@ -259,8 +261,8 @@ const actions = {
                         	}
 
                         };
+                        console.log(recipientId);
                         context.property = message;
-
                   })
 
                 }
