@@ -222,7 +222,8 @@ const actions = {
           if (err) {
             console.log("Error geocoding property location" + err);
           } else {
-            address = data.results[0];
+            let address = data.results[0];
+            console.log(address)
             // If in inspection send generic view with option to check in
             var inspecting = db.collection(INSPECTIONS).findOne({"_id" : address.place_id }, function(err, result) {
                 if (err) {
