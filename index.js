@@ -227,7 +227,7 @@ const actions = {
           } else {
 
             address = data.results[0];
-            context.property = "Checked in at " + address + ".";
+            context.checkin_location = "Checked in at " + address + ".";
 
             var inspecting = db.collection(INSPECTIONS).findOne({"_id" : address.place_id }, function(err, result) {
               if(err) {
@@ -238,7 +238,7 @@ const actions = {
                   db.collection(PROPERTIES).findOne({"_id" : address.place_id}, function(err, prop_result) {
                     if (err) {
                       console.log("Error finding property. Error: " + err);
-                      context.property = "Error checking into address";
+                      context.checkin_location = "Error checking into address";
                     } else {
                       console.log("FOUND property in PROPERTIES collection");
                     }
@@ -253,12 +253,12 @@ const actions = {
           }
         });
 
-        delete context.property;
+        delete context.checkin_location;
 
       } else if (!address) {
         console.log("No address provided");
-        context.address = true;
-        delete context.address;
+        context.property = true;
+        delete context.checkin_location;
       }
       return resolve(context);
     });
