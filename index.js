@@ -470,6 +470,7 @@ app.post('/webhook', function (req, res) {
 const fbMessage = (id, text) => {
   var x = true;
   console.log(text.text)
+  console.log(text.text["title"]);
 
 
   if (x) {
