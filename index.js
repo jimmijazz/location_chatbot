@@ -225,14 +225,12 @@ const actions = {
           if(err) {
             console.log("Error geocoding property location" + err);
           } else {
-
-            //
             address = data.results[0].formatted_address;
             // Add to property database
-            context.property = "Checked in at " + address + ".";
+            context.property = "checked in at " + address + ".";
           }
         });
-        delete context.property;
+        delete context.address;
       } else if (!address) {
         console.log("No address provided");
         context.address = true;
