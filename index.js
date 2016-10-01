@@ -263,7 +263,7 @@ const actions = {
 
                 }
               })
-              context.property = "Checking in";
+              context.property = message;
             }
           });
           //
