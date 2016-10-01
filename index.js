@@ -257,10 +257,11 @@ const actions = {
                         			}
                         		}
                         	}
-                          context.checkin_location = "Checking in";
 
                         };
                   })
+                  context.checkin_location = "Checking in";
+
                 }
               })
 
