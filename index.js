@@ -245,9 +245,9 @@ const actions = {
                             '"subtitle"' + ":" + '"' + prop_result.description + '"' + ","+
                             '"image_url"' + ":" + '"' + prop_result.photos[0] + '"' + ","+
                             '"buttons"' + ":" + "[{" +
-                              '"type"' + ":" + "postback," +
-                               '"title"' + ":" + "Check In" +
-                                '"payload"' + ":" + "hello hello hello,"+
+                              '"type"' + ":" + '"postback",' +
+                               '"title"' + ":" + '"Check In",' +
+                                '"payload"' + ":" + '"hello hello hello",'+
                               "}]" +
                             "}"
                           );
