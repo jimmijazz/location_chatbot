@@ -485,7 +485,7 @@ app.post('/webhook', function (req, res) {
 
                         sendGenericMessage(id, payload );
                       }
-                    }
+                    })
                   }
                 // Get static image of location
 
