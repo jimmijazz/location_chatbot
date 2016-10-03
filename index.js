@@ -218,11 +218,12 @@ const actions = {
   checkIn({context, entities}) {
     return new Promise(function(resolve, reject) {
 
+      // Text version of address ie: 12 Mascot Street, Upper Mount Gravatt
       var address = firstEntityValue(entities, "location");
 
       if (address) {
         console.log("Checking In");
-        // Geocode address
+        // Geocode text address into a google maps component
         geocoder.geocode(address + "Australia", function(err, data) {
           if (err) {
             console.log("Error geocoding property location" + err);
@@ -454,31 +455,41 @@ app.post('/webhook', function (req, res) {
               var lat = event.message.attachments[0].payload.coordinates.lat;
               var long = event.message.attachments[0].payload.coordinates.long;
 
-              // Check if property is in PROPERTIES collection
-              // db.collection()
-
-
               // Send Generic Message with location
               geocoder.reverseGeocode(lat,long,function(err, data){
-                // data = google JSON formatted address
-                var location = data.results[0].formatted_address;
-                // Get static image of location
-                var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
-                var payload = [{
-                  "title" : "Your Property",
-                  "subtitle" : location,
-                  "image_url" : location_image,
-                  "buttons" : [{
-                    "type" : "postback",
-                    "title" : "Create Location",
-                    "payload" : "hello hello hello",
-                  }],
-                }];
+                if(err) {
+                  console.log("Error geocoding property location");
+                } else {
+                  // data = google JSON formatted address
+                  var address = data.results[0];
 
-                sendGenericMessage(id, payload );
-                console.log("Location sent","\n", data);
+                  // Check if property is in PROPERTIES collection
+                  db.collection(PROPERTIES).findOne({"_id" : address.place_id}, function(err, result) {
+                    if (err) {
+                      ("Error finding property in PROPERTIES database");
+                    } else if (result) {
+                        console.log("Found property in PROPERTIES collection");
+                        var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
+                        var payload = [{
+                          "title" : address.formatted_address,
+                          "subtitle" : address.formatted_address,
+                          "image_url" : result.photos[0],
+                          "buttons" :  [{
+                            "type" : "postback",
+                            "title" : "View Inspections",
+                            "payload" : {
+                              "text" : result.inspection_times[0]
+                              }
+                          }],
+                        }];
+
+                        sendGenericMessage(id, payload );
+                      }
+                    }
+                  }
+                // Get static image of location
+
               });
-              console.log('worked');
 
           }
         });
