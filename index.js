@@ -344,7 +344,7 @@ app.post('/webhook', function (req, res) {
         user = JSON.parse(response.body); // Convert FB response from string to object
 
         // ** LOCATION VIA MESSAGE ** //
-        if (event.message && event.message.text && !event.message.echo && event.message.text === "location check in") {
+        if (event.message && event.message.text && !event.message.echo && event.message.text === "Location check in") {
           //TO DO:
           //  - add user to db if new
           //  - add msg meta to db
@@ -449,9 +449,7 @@ app.post('/webhook', function (req, res) {
           })
           // ** LOCATION MESSAGE ** //
         } else if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
-            if (new_user(id)) {
-              console.log("New User")
-            } else {
+
               var lat = event.message.attachments[0].payload.coordinates.lat;
               var long = event.message.attachments[0].payload.coordinates.long;
 
@@ -478,7 +476,7 @@ app.post('/webhook', function (req, res) {
                 console.log("Location sent","\n", data);
               });
               console.log('worked');
-            }
+
           }
         });
     };
