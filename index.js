@@ -451,7 +451,6 @@ app.post('/webhook', function (req, res) {
           // ** LOCATION MESSAGE ** //
         } else if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
 
-              console.log(event.message.attachments[0].payload);
               var lat = event.message.attachments[0].payload.coordinates.lat;
               var long = event.message.attachments[0].payload.coordinates.long;
 
@@ -484,7 +483,10 @@ app.post('/webhook', function (req, res) {
                         }];
 
                         sendGenericMessage(id, payload );
+                      } else {
+                        console.log("Property not found");
                       }
+
                     })
                   }
                 // Get static image of location
