@@ -278,8 +278,6 @@ const actions = {
     })
   },
 
-
-
 };
 
 // Wit.Ai Access. One for vendors, one for agents.
@@ -345,8 +343,25 @@ app.post('/webhook', function (req, res) {
 
         user = JSON.parse(response.body); // Convert FB response from string to object
 
+        // ** LOCATION VIA MESSAGE ** //
+        if (event.message && event.message.text && !event.message.echo && event.message.text === "location check in") {
+          //TO DO:
+          //  - add user to db if new
+          //  - add msg meta to db
+
+            var payload = {
+            "text" : "Please share your location:",
+            "quick_replies" : [
+              {
+                "content_type":"location",
+              }
+            ]
+          }
+        }
+
         // ** TEXT MESSAGE ** //
-        if (event.message && event.message.text && !event.message.echo) {
+        else if (event.message && event.message.text && !event.message.echo) {
+
             var msg_meta = {
                                 "message" : event.message.text,
                                 "timestamp" : event.timestamp,
@@ -523,7 +538,7 @@ function sendMessage(recipientId, message) {
         method: 'POST',
         json: {
             recipient: {id: recipientId},
-            message: message,
+              message: message,
         }
     }, function(error, response, body) {
         if (error) {
