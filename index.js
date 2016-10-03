@@ -450,10 +450,13 @@ app.post('/webhook', function (req, res) {
           // ** LOCATION MESSAGE ** //
         } else if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
 
+              console.log(event.message.attachments[0].payload);
               var lat = event.message.attachments[0].payload.coordinates.lat;
               var long = event.message.attachments[0].payload.coordinates.long;
 
-              var agent = db.collection(AGENTS).find({"_id" : id});
+              // Check if property is in PROPERTIES collection
+              // db.collection()
+
 
               // Send Generic Message with location
               geocoder.reverseGeocode(lat,long,function(err, data){
