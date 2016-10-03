@@ -247,7 +247,7 @@ const actions = {
                             '"buttons"' + ":" + "[{" +
                               '"type"' + ":" + '"postback",' +
                                '"title"' + ":" + '"Check In",' +
-                                '"payload"' + ":" + '"hello hello hello",'+
+                                '"payload"' + ":" + '"hello hello hello"'+
                               "}]" +
                             "}"
                           );
