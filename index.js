@@ -240,16 +240,16 @@ const actions = {
                       } else {
                           console.log("Found property in PROPERTIES collection")
                           // For some reason it sends payload as a str so have to try and convert to JSON or split
-                          var payload = [
-                            address.formatted_address,
-                            prop_result.description,
-                            prop_result.photos[0],
-                            //buttons : [{
-                              //type : "postback",
-                            //  title : "Check In",
-                              //payload : "hello hello hello",
-                            //}]
-                          ];
+                          var payload =
+                          {"title" + ":" + address.formatted_address,
+                            "subtitle" + ":" + prop_result.description,
+                            "image_url" + ":" + prop_result.photos[0],
+                            "buttons" + ":" + "[{" +
+                            "type" + ":" + "postback," +
+                             "title" + ":" + "Check In" +
+                              "payload" ":" "hello hello hello,"+
+                            "}]"
+                          };
 
                         };
 
@@ -470,8 +470,8 @@ app.post('/webhook', function (req, res) {
 // Generic function sending messages
 const fbMessage = (id, text) => {
   var x = true;
-  payload = text.text.split('" "')
-  console.log(text.text)
+  payload = JSON.parse(text);
+  console.log()
   console.log(payload);
 
 
@@ -484,10 +484,10 @@ const fbMessage = (id, text) => {
           "payload" : {
             "template_type" : "generic",
             "elements" : [{
-              "title": payload[0],
-              "subtitle" : payload[1],
-              "image_url" : payload[2],
-              "buttons" : text.text.buttons,
+              "title": payload.title,
+              "subtitle" : payload.subtitle,
+              "image_url" : payload.image_url,
+              "buttons" : payload.buttons,
             }],
           }
         }
