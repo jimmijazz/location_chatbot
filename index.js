@@ -357,6 +357,8 @@ app.post('/webhook', function (req, res) {
               }
             ]
           }
+
+          sendMessage(id, payload);
         }
 
         // ** TEXT MESSAGE ** //
