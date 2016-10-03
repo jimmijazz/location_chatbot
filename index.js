@@ -241,14 +241,15 @@ const actions = {
                           console.log("Found property in PROPERTIES collection")
                           // For some reason it sends payload as a str so have to try and convert to JSON or split
                           var payload =
-                          ("title" + ":" + address.formatted_address,
+                          ("{" + "title" + ":" + address.formatted_address,
                             "subtitle" + ":" + prop_result.description,
                             "image_url" + ":" + prop_result.photos[0],
                             "buttons" + ":" + "[{" +
-                            "type" + ":" + "postback," +
-                             "title" + ":" + "Check In" +
-                              "payload" ":" "hello hello hello,"+
-                            "}]"
+                              "type" + ":" + "postback," +
+                               "title" + ":" + "Check In" +
+                                "payload" + ":" + "hello hello hello,"+
+                              "}]" +
+                            "}"
                           );
 
                         };
