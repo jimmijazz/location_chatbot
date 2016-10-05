@@ -471,33 +471,47 @@ app.post('/webhook', function (req, res) {
                   // data = google JSON formatted address
                   var address = data.results[0];
 
-                  // Check if property is in PROPERTIES collection
-                  db.collection(PROPERTIES).findOne({"_id" : address.place_id}, function(err, result) {
+                  // Search or property in x amount of metres
+                  db.collection(PROPERTIES).find({loc : { $geoWithin : { $geometry : [lat,long]}}}, function(err, result){
                     if (err) {
-                      ("Error finding property in PROPERTIES database");
-                      sendMessage(id, {text: "Could not find property in database"});
-                    } else if (result) {
-                        console.log("Found property in PROPERTIES collection");
-                        var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
-                        var payload = [{
-                          "title" : address.formatted_address,
-                          "subtitle" : address.formatted_address,
-                          "image_url" : result.photos[0],
-                          "buttons" :  [{
-                            "type" : "postback",
-                            "title" : "View Inspections",
-                            "payload" : {
-                              "text" : string(result.inspection_times[0])
-                              }
-                          }],
-                        }];
+                      console.log("No property found bro");
+                    } else (
+                      console.log("I found your property!" + result);
+                    )
+                  });
 
-                        sendGenericMessage(id, payload );
-                      } else {
-                        console.log("Property not found");
-                      }
 
-                    })
+                  // Check if property is in PROPERTIES collection
+                  // db.collection(PROPERTIES).findOne({"_id" : address.place_id}, function(err, result) {
+                  //   if (err) {
+                  //     ("Error finding property in PROPERTIES database");
+                  //     sendMessage(id, {text: "Could not find property in database"});
+                  //   } else if (result) {
+                  //       console.log("Found property in PROPERTIES collection");
+                  //       var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
+                  //       var payload = [{
+                  //         "title" : address.formatted_address,
+                  //         "subtitle" : address.formatted_address,
+                  //         "image_url" : result.photos[0],
+                  //         "buttons" :  [{
+                  //           "type" : "postback",
+                  //           "title" : "View Inspections",
+                  //           "payload" : {
+                  //             "text" : string(result.inspection_times[0])
+                  //             }
+                  //         }],
+                  //       }];
+                  //
+                  //       sendGenericMessage(id, payload );
+                  //     } else {
+                  //       console.log("Property not found");
+                  //       sendMessage("Sorry I could not find your property");
+                  //     }
+                  //
+                  //   })
+
+
+
                   }
                 // Get static image of location
 
