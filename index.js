@@ -197,8 +197,10 @@ const actions = {
             db.collection(PROPERTIES).insert({
                 "_id" : data.results[0].place_id,
                 "address" : data.results[0].formatted_address,
-                "lat" : data.results[0].geometry.location.lat,
-                "lng" : data.results[0].geometry.location.lng
+                "loc" : {
+                  "type" : "Point",
+                  "coordinates" : [data.results[0].geometry.location.lat, data.results[0].geometry.location.lng]
+                }
               }, function(err, result) {
                 if(err) {
                   console.log(err);
@@ -471,6 +473,7 @@ app.post('/webhook', function (req, res) {
                   db.collection(PROPERTIES).findOne({"_id" : address.place_id}, function(err, result) {
                     if (err) {
                       ("Error finding property in PROPERTIES database");
+                      sendMessage(id, {text: "Could not find property in database"});
                     } else if (result) {
                         console.log("Found property in PROPERTIES collection");
                         var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
