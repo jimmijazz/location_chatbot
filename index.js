@@ -489,7 +489,22 @@ app.post('/webhook', function (req, res) {
                     if (err) {
                       console.log("Error finding property. Error: " + err);
                     } else if (result) {
-                      console.log("I found your property!" + result);
+                      console.log("Property found by location!" + result);
+                      var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
+                      var payload = [{
+                        "title" : address.formatted_address,
+                        "subtitle" : address.formatted_address,
+                        "image_url" : result.photos[0],
+                        "buttons" :  [{
+                          "type" : "postback",
+                          "title" : "View Inspections",
+                          "payload" : {
+                            "text" : string(result.inspection_times[0])
+                            }
+                        }],
+                      }];
+
+                      sendGenericMessage(id, payload );
                       for (var key in result) {
                         console.log(result[key]);
                       }
