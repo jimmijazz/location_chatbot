@@ -674,7 +674,7 @@ function sendGenericMessage(recipientId, payload) {
 			"type": "template",
 			"payload": {
 				"template_type": "generic",
-				"elements": payload
+				"elements": [payload]
 			}
 		}
 	};
