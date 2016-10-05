@@ -483,7 +483,7 @@ app.post('/webhook', function (req, res) {
                           type : "Point" ,
                            coordinates: [long, lat]
                          },
-                         $maxDistance : 200000 }
+                         $maxDistance : 5000 }
                        }
                  }, function(err, result){
                     if (err) {
