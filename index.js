@@ -150,13 +150,15 @@ const actions = {
                 "expireAt" : new Date('September 28, 2016 11:54:00'),
                 "address" : data.results[0].formatted_address, // From Gmaps
               }, function(err, result) {
+                // Send response back to wit.ai
                   if(err) {
                     console.log(err);
+                    context.inspection = "Error creating inspection at " + address;
+                  } else {
+                    context.inspection = "Created inspection at "+ address +
+                                          " at " + hours + ":" + minutes + suffix;
                   }
               });
-              // Send response back to wit.ai
-              context.inspection = "Created inspection at "+ address +
-                                    " at " + hours + ":" + minutes + suffix;
             }
           });
 
@@ -199,6 +201,7 @@ const actions = {
               }, function(err, result) {
                 if(err) {
                   console.log(err);
+                  context.property = "Property already exists at " + address;
                 }
               });
               context.property = "Created property at " + address + ".";
