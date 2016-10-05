@@ -363,16 +363,7 @@ app.post('/webhook', function (req, res) {
           //  - add user to db if new
           //  - add msg meta to db
 
-            var payload = {
-            "text" : "Please share your location:",
-            "quick_replies" : [
-              {
-                "content_type":"location",
-              }
-            ]
-          }
-
-          sendMessage(id, payload);
+          requestLocation(id);
         }
 
         // ** TEXT MESSAGE ** //
@@ -679,6 +670,20 @@ function read_message(recipientId, user_message) {
     // Add another statement to catch address
   };
 };
+
+function requestLocation(id) {
+
+  var payload = {
+  "text" : "Please share your location:",
+  "quick_replies" : [
+    {
+      "content_type":"location",
+    }
+  ]
+}
+
+sendMessage(id, payload);
+}
 
 // Initialize the app
 app.listen((process.env.PORT || 3000));
