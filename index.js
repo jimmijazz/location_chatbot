@@ -489,21 +489,28 @@ app.post('/webhook', function (req, res) {
                     if (err) {
                       console.log("Error finding property. Error: " + err);
                     } else if (result) {
-                      console.log("Property found by location!" + result);
-                      var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
-                      var payload = String([{
-                        "title" : address.formatted_address,
-                        "subtitle" : address.formatted_address,
-                        "image_url" : result.photos[0],
-                        "buttons" :  [{
-                          "type" : "postback",
-                          "title" : "View Inspections",
-                          "payload" : {
-                            "text" : "View Property"
-                            }
-                        }],
-                      }]
-                    );
+                        console.log("Property found by location!" + result);
+                        var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
+                        var payload =
+                        ("{" + '"title"' + ":" + '"' + address.formatted_address +'"' + ","+
+                          '"subtitle"' + ":" + '"' + prop_result.description + '"' + ","+
+                          '"image_url"' + ":" + '"' + prop_result.photos[0] + '"' + ","+
+                          '"buttons"' + ":" + "[{" +
+                            '"type"' + ":" + '"postback",' +
+                             '"title"' + ":" + '"Check In",' +
+                              '"payload"' + ":" + '"hello hello hello"'+
+                            "},{" +
+                              '"type"' + ":" + '"postback",' +
+                              '"title"' + ":" + '"View Photos",' +
+                              '"payload"' + ":" + '"hello hello hello"'+
+                            "},{" +
+                              '"type"' + ":" + '"postback",' +
+                              '"title"' + ":" + '"Inspection Times",' +
+                              '"payload"' + ":" + '"hello hello hello"'+
+                              "}" +
+                           "]" +
+                          "}"
+                        );
 
 
                       sendGenericMessage(id, payload );
