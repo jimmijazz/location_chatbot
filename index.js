@@ -491,7 +491,7 @@ app.post('/webhook', function (req, res) {
                     } else if (result) {
                       console.log("Property found by location!" + result);
                       var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
-                      var payload = [String({
+                      var payload = String([{
                         "title" : address.formatted_address,
                         "subtitle" : address.formatted_address,
                         "image_url" : result.photos[0],
@@ -502,7 +502,8 @@ app.post('/webhook', function (req, res) {
                             "text" : "View Property"
                             }
                         }],
-                      })]
+                      }]
+                    );
 
 
                       sendGenericMessage(id, payload );
@@ -660,6 +661,7 @@ function userProfile(userId){
 };
 
 function sendGenericMessage(recipientId, payload) {
+
 	var messageData = {
 		"attachment": {
 			"type": "template",
@@ -669,7 +671,7 @@ function sendGenericMessage(recipientId, payload) {
 			}
 		}
 	};
-
+  console.log(messageData);
 	request({
 		url: 'https://graph.facebook.com/v2.6/me/messages',
 		qs: {access_token:process.env.PAGE_ACCESS_TOKEN},
