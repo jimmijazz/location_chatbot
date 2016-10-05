@@ -358,7 +358,7 @@ app.post('/webhook', function (req, res) {
         user = JSON.parse(response.body); // Convert FB response from string to object
 
         // ** LOCATION VIA MESSAGE ** //
-        if (event.message && event.message.text && !event.message.echo && event.message.text === "Location check in") {
+        if (event.message && event.message.text && !event.message.echo && event.message.text === "Location") {
           //TO DO:
           //  - add user to db if new
           //  - add msg meta to db
