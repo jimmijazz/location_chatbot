@@ -249,6 +249,10 @@ const actions = {
                               '"type"' + ":" + '"postback",' +
                                '"title"' + ":" + '"Check In",' +
                                 '"payload"' + ":" + '"hello hello hello"'+
+                              "},{" +
+                                '"type"' + ":" + '"postback",' +
+                                '"title"' + ":" + '"View Inspection Times",' +
+                                '"payload"' + ":" + '"hello hello hello"'+
                               "}]" +
                             "}"
                           );
@@ -450,7 +454,8 @@ app.post('/webhook', function (req, res) {
           })
           // ** LOCATION MESSAGE ** //
         } else if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
-
+              // TO DO:
+              // - Search for nearest property rather then trying to find an exact match
               var lat = event.message.attachments[0].payload.coordinates.lat;
               var long = event.message.attachments[0].payload.coordinates.long;
 
