@@ -474,7 +474,7 @@ app.post('/webhook', function (req, res) {
                   // Search or property in x amount of metres
                   db.collection(PROPERTIES).findOne({loc : { $geoWithin : { $geometry : [lat,long]}}}, function(err, result){
                     if (err) {
-                      console.log("Error finding property");
+                      console.log("Error finding property. Error: " + err);
                     } else if (result) {
                       console.log("I found your property!" + result);
                       for (var key in result) {
