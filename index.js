@@ -251,9 +251,14 @@ const actions = {
                                 '"payload"' + ":" + '"hello hello hello"'+
                               "},{" +
                                 '"type"' + ":" + '"postback",' +
-                                '"title"' + ":" + '"View Inspection Times",' +
+                                '"title"' + ":" + '"View Photos",' +
                                 '"payload"' + ":" + '"hello hello hello"'+
-                              "}]" +
+                              "},{" +
+                                '"type"' + ":" + '"postback",' +
+                                '"title"' + ":" + '"Inspection Times",' +
+                                '"payload"' + ":" + '"hello hello hello"'+
+                                "}" +
+                             "]" +
                             "}"
                           );
 
