@@ -493,8 +493,8 @@ app.post('/webhook', function (req, res) {
                         var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
                         var payload =
                         ("{" + '"title"' + ":" + '"' + address.formatted_address +'"' + ","+
-                          '"subtitle"' + ":" + '"' + prop_result.description + '"' + ","+
-                          '"image_url"' + ":" + '"' + prop_result.photos[0] + '"' + ","+
+                          '"subtitle"' + ":" + '"' + result.description + '"' + ","+
+                          '"image_url"' + ":" + '"' + result.photos[0] + '"' + ","+
                           '"buttons"' + ":" + "[{" +
                             '"type"' + ":" + '"postback",' +
                              '"title"' + ":" + '"Check In",' +
