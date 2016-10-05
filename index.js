@@ -477,6 +477,9 @@ app.post('/webhook', function (req, res) {
                       console.log("Error finding property");
                     } else if (result) {
                       console.log("I found your property!" + result);
+                      for (var key in result) {
+                        console.log(result[key]);
+                      }
                     } else {
                       console.log("No property found ")
                     }
