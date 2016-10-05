@@ -478,7 +478,7 @@ app.post('/webhook', function (req, res) {
                       $near : {
                         $geometry: {
                           type : "Point" ,
-                           coordinates: [long , lat]
+                           coordinates: [lat , long]
                          },
                          $maxDistance : 200000 }
                        }
