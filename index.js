@@ -502,8 +502,8 @@ app.post('/webhook', function (req, res) {
                             "text" : "View Property"
                             }
                         }],
-                      }]
-                    );
+                      })]
+
 
                       sendGenericMessage(id, payload );
                       for (var key in result) {
