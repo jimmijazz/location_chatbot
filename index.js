@@ -153,11 +153,12 @@ const actions = {
                 // Send response back to wit.ai
                   if(err) {
                     console.log(err);
-                    context.inspection = "Error creating inspection at " + address;
+                    inspection_message = "Error creating inspection at " + address;
                   } else {
-                    context.inspection = "Created inspection at "+ address +
+                    inspection_message = "Created inspection at "+ address +
                                           " at " + hours + ":" + minutes + suffix;
                   }
+                  context.inspection = inspection_message;
               });
             }
           });
