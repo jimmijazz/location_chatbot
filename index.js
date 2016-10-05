@@ -499,7 +499,7 @@ app.post('/webhook', function (req, res) {
                           "type" : "postback",
                           "title" : "View Inspections",
                           "payload" : {
-                            "text" : string(result.inspection_times[0])
+                            "text" : "View Property")
                             }
                         }],
                       }];
