@@ -204,10 +204,12 @@ const actions = {
               }, function(err, result) {
                 if(err) {
                   console.log(err);
-                  context.property = "Property already exists at " + address;
+                  property_msg = "Property already exists at " + address;
+                } else {
+                  property_msg = "Created property at " + address + ".";
                 }
               });
-              context.property = "Created property at " + address + ".";
+              context.property = property_msg;
           }
         });
         delete context.address;
