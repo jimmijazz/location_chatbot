@@ -199,7 +199,7 @@ const actions = {
                 "address" : data.results[0].formatted_address,
                 "loc" : {
                   "type" : "Point",
-                  "coordinates" : [data.results[0].geometry.location.lat, data.results[0].geometry.location.lng]
+                  "coordinates" : [data.results[0].geometry.location.lng, data.results[0].geometry.location.lat]
                 }
               }, function(err, result) {
                 if(err) {
