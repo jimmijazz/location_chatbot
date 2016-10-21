@@ -365,7 +365,7 @@ app.post('/webhook', function (req, res) {
         user = JSON.parse(response.body); // Convert FB response from string to object
         console.log(event);
         // ** GET STARTED **//
-        if (event.message && event.message.text && !event.message.echo && event.message.text == "Get Started") {
+        if (event.postback && event.postback.payload && !event.message.echo && event.postback.payload == "Get Started") {
 
               var msg_meta = {
                                   "message" : event.message.text,
