@@ -438,7 +438,7 @@ app.post('/webhook', function (req, res) {
                                 "seq" : event.message.seq
                             };
             // See if new user (This should rarely happen)
-            db.collection(PEOPLE.count({_id:id}, function(err, count){
+            db.collection(PEOPLE).count({_id:id}, function(err, count){
               if(count === 0) {
                 console.log("New User");
 
