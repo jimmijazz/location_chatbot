@@ -428,6 +428,72 @@ app.post('/webhook', function (req, res) {
           requestLocation(id);
         }
 
+        // ** EMAIL VIA MESSAGE ** //
+        else if ((event.message.text).includes("@")) {
+            // user sends email address
+            var msg_meta = {
+                                "message" : event.message.text,
+                                "timestamp" : event.timestamp,
+                                "mid" : event.message.mid,
+                                "seq" : event.message.seq
+                            };
+            // See if new user (This should rarely happen)
+            db.collection(PEOPLE.count({_id:id}, function(err, count){
+              if(count === 0) {
+                console.log("New User");
+
+                // 1. Isert user into database
+                db.collection(PEOPLE).insert({_id : id, messages:msg_meta, email:event.message.text}, function(err, result) {
+                  if (err) {
+                    console.log("Error updating PEOPLE. Error: ", err)
+                  } else {
+                    console.log("Updated PEOPLE");
+                  };
+                });
+                // Not a new user. Update existing user's messages
+              } else {
+                  db.collection(PEOPLE).update({_id: id}, {email:event.message.text}, { $push: {messages: msg_meta}}, function(err, result){
+                    if (err) {
+                      console.log("Error updating msg_meta. Error: ", err);
+                    } else {
+                      console.log("Updated msg_meta");
+                    };
+                  });
+                }
+            }))
+            sendMessage(id, {text: "Thank you."})
+            // Update leads in LockedOn
+            // Eventually this will have within the context of talking about a
+            // property where the user asks about a property, we ask for their
+            // email for updates and then update the database with leads.
+
+            var formdata = {
+              to: 				      lockedOnCode,
+              property_address: "12 Mascot Street Upper Mount Gravatt",
+              property_url: 		"",
+              ad_id: 				    "",
+              full_name: 			  user.first_name + " " + user.last_name,
+              email: 				    event.message.text,
+              phone: 				    "",
+              comments: 			  ""
+            };
+
+            // Send enquiry to the server
+            request({
+              url: 'https://www.lockedoncloud.com/leads/submit',
+              method:'POST',
+              json: formdata,
+            }, function(error, message, body) {
+                if (error) {
+                  console.log("Error sending message: ", error);
+                } else if (response.body.error) {
+                    console.log("Error: ", response.body.error);
+                }
+              }
+            );
+
+        }
+
         // ** TEXT MESSAGE ** //
         else if (event.message && event.message.text && !event.message.echo) {
 
@@ -580,70 +646,7 @@ app.post('/webhook', function (req, res) {
                   }
               });
 
-          } else if (event.message.text.includes("@")) {
-              // user sends email address
-              var msg_meta = {
-                                  "message" : event.message.text,
-                                  "timestamp" : event.timestamp,
-                                  "mid" : event.message.mid,
-                                  "seq" : event.message.seq
-                              };
-              // See if new user (This should rarely happen)
-              db.collection(PEOPLE.count({_id:id}, function(err, count){
-                if(count === 0) {
-                  console.log("New User");
-
-                  // 1. Isert user into database
-                  db.collection(PEOPLE).insert({_id : id, messages:msg_meta, email:event.message.text}, function(err, result) {
-                    if (err) {
-                      console.log("Error updating PEOPLE. Error: ", err)
-                    } else {
-                      console.log("Updated PEOPLE");
-                    };
-                  });
-                  // Not a new user. Update existing user's messages
-                } else {
-                    db.collection(PEOPLE).update({_id: id}, {email:event.message.text}, { $push: {messages: msg_meta}}, function(err, result){
-                      if (err) {
-                        console.log("Error updating msg_meta. Error: ", err);
-                      } else {
-                        console.log("Updated msg_meta");
-                      };
-                    });
-                  }
-              }))
           }
-          sendMessage(id, {text: "Thank you."})
-
-          // Update leads in LockedOn
-          // Eventually this will have within the context of talking about a
-          // property where the user asks about a property, we ask for their
-          // email for updates and then update the database with leads.
-
-          var formdata = {
-            to: 				      lockedOnCode,
-            property_address: "12 Mascot Street Upper Mount Gravatt",
-            property_url: 		"",
-            ad_id: 				    "",
-            full_name: 			  user.first_name + " " + user.last_name,
-            email: 				    event.message.text,
-            phone: 				    "",
-            comments: 			  ""
-          };
-
-          // Send enquiry to the server
-          request({
-            url: 'https://www.lockedoncloud.com/leads/submit',
-            method:'POST',
-            json: formdata,
-          }, function(error, message, body) {
-              if (error) {
-                console.log("Error sending message: ", error);
-              } else if (response.body.error) {
-                  console.log("Error: ", response.body.error);
-              }
-            }
-          );
 
         });
     };
