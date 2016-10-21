@@ -429,7 +429,7 @@ app.post('/webhook', function (req, res) {
         }
 
         // ** EMAIL VIA MESSAGE ** //
-        else if ((event.message.text).includes("@")) {
+        else if (event.message && event.message.text && !event.message.echo && String(event.message.text).includes("@")) {
             // user sends email address
             var msg_meta = {
                                 "message" : event.message.text,
@@ -461,7 +461,7 @@ app.post('/webhook', function (req, res) {
                   });
                 }
             });
-            
+
             sendMessage(id, {text: "Thank you."})
             // Update leads in LockedOn
             // Eventually this will have within the context of talking about a
