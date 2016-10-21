@@ -14,6 +14,19 @@ const geocoder = require('geocoder');
 const mongodb = require("mongodb");
 const ObjectID = mongodb.ObjectID;
 
+// JQuery
+require("jsdom").env("", function(err, window) {
+    if (err) {
+        console.error(err);
+        return;
+    }
+
+    var $ = require("jquery")(window);
+});
+
+// LockedOn CRM
+var lockedOnCode = "6975de34da026024dae43389185661ef@lockedoncloud.com";
+
 // Google Maps
 var google_api_key ="AIzaSyDbhlnIkxUmb0cwIMCx34P9W2lGYYa-UFg";
 var map_url = "https://maps.googleapis.com/maps/api/staticmap?maptype=satellite&center=";
@@ -608,6 +621,49 @@ app.post('/webhook', function (req, res) {
                   }
               }))
           }
+          sendMessage(id, {text: "Thank you."})
+
+          // Update leads in LockedOn
+          // Eventually this will have within the context of talking about a
+          // property where the user asks about a property, we ask for their
+          // email for updates and then update the database with leads.
+
+          var formdata = {
+            to: 				      lockedOnCode,
+            property_address: "12 Mascot Street Upper Mount Gravatt",
+            property_url: 		"",
+            ad_id: 				    "",
+            full_name: 			  user.first_name + " " + user.last_name,
+            email: 				    event.message.text,
+            phone: 				    "",
+            comments: 			  ""
+          };
+
+          // Send enquiry to the server
+          $.ajax({
+            type: 'POST',
+            url: 'https://www.lockedoncloud.com/leads/submit',
+            data: formdata,
+            dataType: 'json',
+            encode: true
+          }).done(function(data){
+            //if success then enquiry has been successfully saved
+            console.log("Added lead");
+          }).error(function(err){
+            //if err.responseJSON.errors isn't present then it should be a server error (status 500)
+            var errors = err.responseJSON && err.responseJSON.errors
+            if(errors){
+              //add class to each label that has validation errors
+              $.each(errors, function(name, type){
+                $('label[for=' + name + ']').addClass('error');
+              });
+            }
+            else{
+              console.log('Error, please try again later');
+            }
+          });
+
+
 
         });
     };
