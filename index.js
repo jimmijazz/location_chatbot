@@ -489,6 +489,8 @@ app.post('/webhook', function (req, res) {
                   console.log("Error sending message: ", error);
                 } else if (response.body.error) {
                     console.log("Error: ", response.body.error);
+                } else {
+                  console.log("Added lead");
                 }
               }
             );
