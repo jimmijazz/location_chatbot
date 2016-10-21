@@ -575,7 +575,40 @@ app.post('/webhook', function (req, res) {
                   }
               });
 
+          } else if (event.message.text.includes("@")) {
+              // user sends email address
+              var msg_meta = {
+                                  "message" : event.message.text,
+                                  "timestamp" : event.timestamp,
+                                  "mid" : event.message.mid,
+                                  "seq" : event.message.seq
+                              };
+              // See if new user (This should rarely happen)
+              db.collection(PEOPLE.count({_id:id}, function(err, count){
+                if(count === 0) {
+                  console.log("New User");
+
+                  // 1. Isert user into database
+                  db.collection(PEOPLE).insert({_id : id, messages[msg_meta]}, function(err, result) {
+                    if (err) {
+                      console.log("Error updating PEOPLE. Error: ", err)
+                    } else {
+                      console.log("Updated PEOPLE");
+                    };
+                  });
+                  // Not a new user. Update existing user's messages
+                } else {
+                    db.collection(PEOPLE).update({_id: id}, {email:event.message.text}, { $push: {messages: msg_meta}}, function(err, result){
+                      if (err) {
+                        console.log("Error updating msg_meta. Error: ", err);
+                      } else {
+                        console.log("Updated msg_meta");
+                      };
+                    });
+                  }
+              }))
           }
+
         });
     };
     res.sendStatus(200);
