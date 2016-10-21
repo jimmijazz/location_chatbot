@@ -369,7 +369,7 @@ app.post('/webhook', function (req, res) {
         if (event.postback && event.postback.payload && event.postback.payload == "Get Started") {
 
               var msg_meta = {
-                                  "message" : event.message.text,
+                                  "message" : event.postback.payload,
                                   "timestamp" : event.timestamp,
                                   "mid" : event.message.mid,
                                   "seq" : event.message.seq
