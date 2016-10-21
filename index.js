@@ -602,7 +602,7 @@ app.post('/webhook', function (req, res) {
                   console.log("New User");
 
                   // 1. Isert user into database
-                  db.collection(PEOPLE).insert({_id : id, messages[msg_meta]}, function(err, result) {
+                  db.collection(PEOPLE).insert({_id : id, messages:msg_meta, email:event.message.text}, function(err, result) {
                     if (err) {
                       console.log("Error updating PEOPLE. Error: ", err)
                     } else {
