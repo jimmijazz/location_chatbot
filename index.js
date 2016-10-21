@@ -3,6 +3,7 @@
 // Create house locations
 // Use fbMessage over SendMessage
 // Show how a person could query about a house
+// Condense new user check into a class (is agent? is new user? messages)
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -84,8 +85,7 @@ const findOrCreateSession = (fbid) => {
   return sessionId;
 };
 
-
-// Bot actions
+// Bot actions for Wit.Ai
 const actions = {
   send({sessionId}, text) {
     // Our bot has something to say!
@@ -363,6 +363,56 @@ app.post('/webhook', function (req, res) {
         };
 
         user = JSON.parse(response.body); // Convert FB response from string to object
+        for (var prop in user) {console.log(prop)}; // Log user details
+
+        // ** GET STARTED **//
+        if (event.message && event.message.text && !event.message.echo && event.message.text == "Get Started") {
+
+              var msg_meta = {
+                                  "message" : event.message.text,
+                                  "timestamp" : event.timestamp,
+                                  "mid" : event.message.mid,
+                                  "seq" : event.message.seq
+                              };
+
+              // See if a new user
+              db.collection(PEOPLE).count({_id: id}, function(err, count) {
+                if(count === 0) {
+                  console.log('*** New User ***' + user);
+
+                  // 1. Insert user into database
+                  db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
+                    if (err) {
+                      console.log("Error updating PEOPLE. Error: ", err);
+                    } else {
+                      console.log("Updated PEOPLE");
+                    };
+                });
+
+                // 2. Check if is a registered agent
+                  db.collection(AGENTS).findOne({_id : id}, function (err, result) {
+                    if (err) {
+                      console.log("Error finding agent. Error: ",err);
+                      // 3. Send message depending on if agent or not.
+                    } else {
+                      // Onboarding message
+                      // var welcome_msg = result ? "Welcome to Openhood Agent "+user.last_name : "Hi " + user.first_name + "😊 my name is Josh and I'm the dev working on Openhood. Openhood is going to assist real estate agents with creating open homes and marketing, but most of the responses won't be set up until later this week. Thank you for your interest!";
+                      // sendMessage(id, {text:welcome_msg});
+                      };
+                  });
+              // Not a new user. Update existing user's messages.
+              } else {
+                db.collection(PEOPLE).update({_id: id}, { $push: {messages: msg_meta}}, function(err, result){
+                  if (err) {
+                    console.log("Error updating msg_meta. Error: ", err);
+                  } else {
+                    console.log("Updated msg_meta");
+                  };
+                });
+              }
+            })
+            requestLocation(id);
+        }
 
         // ** LOCATION VIA MESSAGE ** //
         if (event.message && event.message.text && !event.message.echo && event.message.text === "Location") {
@@ -512,7 +562,6 @@ app.post('/webhook', function (req, res) {
                           "}"
                         );
 
-
                       sendGenericMessage(id, payload );
                       for (var key in result) {
                         console.log(result[key]);
@@ -523,40 +572,7 @@ app.post('/webhook', function (req, res) {
                   });
 
 
-                  // Check if property is in PROPERTIES collection
-                  // db.collection(PROPERTIES).findOne({"_id" : address.place_id}, function(err, result) {
-                  //   if (err) {
-                  //     ("Error finding property in PROPERTIES database");
-                  //     sendMessage(id, {text: "Could not find property in database"});
-                  //   } else if (result) {
-                  //       console.log("Found property in PROPERTIES collection");
-                  //       var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
-                  //       var payload = [{
-                  //         "title" : address.formatted_address,
-                  //         "subtitle" : address.formatted_address,
-                  //         "image_url" : result.photos[0],
-                  //         "buttons" :  [{
-                  //           "type" : "postback",
-                  //           "title" : "View Inspections",
-                  //           "payload" : {
-                  //             "text" : string(result.inspection_times[0])
-                  //             }
-                  //         }],
-                  //       }];
-                  //
-                  //       sendGenericMessage(id, payload );
-                  //     } else {
-                  //       console.log("Property not found");
-                  //       sendMessage("Sorry I could not find your property");
-                  //     }
-                  //
-                  //   })
-
-
-
                   }
-                // Get static image of location
-
               });
 
           }
@@ -613,7 +629,9 @@ const fbMessage = (id, text) => {
   });
 };
 
+
 function sendMessage(recipientId, message) {
+  // Sends generic Message
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
