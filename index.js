@@ -371,8 +371,8 @@ app.post('/webhook', function (req, res) {
               var msg_meta = {
                                   "message" : event.postback.payload,
                                   "timestamp" : event.timestamp,
-                                  "mid" : event.message.mid,
-                                  "seq" : event.message.seq
+                                  "mid" : "NA",
+                                  "seq" : "NA"
                               };
 
               // See if a new user
