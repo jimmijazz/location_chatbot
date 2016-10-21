@@ -643,7 +643,7 @@ app.post('/webhook', function (req, res) {
                   console.log("Error: ", response.body.error);
               }
             }
-          });
+          );
 
         });
     };
