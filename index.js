@@ -460,7 +460,8 @@ app.post('/webhook', function (req, res) {
                     };
                   });
                 }
-            }))
+            });
+            
             sendMessage(id, {text: "Thank you."})
             // Update leads in LockedOn
             // Eventually this will have within the context of talking about a
