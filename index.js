@@ -14,15 +14,7 @@ const geocoder = require('geocoder');
 const mongodb = require("mongodb");
 const ObjectID = mongodb.ObjectID;
 
-// JQuery
-require("jsdom").env("", function(err, window) {
-    if (err) {
-        console.error(err);
-        return;
-    }
 
-    var $ = require("jquery")(window);
-});
 
 // LockedOn CRM
 var lockedOnCode = "6975de34da026024dae43389185661ef@lockedoncloud.com";
@@ -640,30 +632,18 @@ app.post('/webhook', function (req, res) {
           };
 
           // Send enquiry to the server
-          $.ajax({
-            type: 'POST',
+          request({
             url: 'https://www.lockedoncloud.com/leads/submit',
-            data: formdata,
-            dataType: 'json',
-            encode: true
-          }).done(function(data){
-            //if success then enquiry has been successfully saved
-            console.log("Added lead");
-          }).error(function(err){
-            //if err.responseJSON.errors isn't present then it should be a server error (status 500)
-            var errors = err.responseJSON && err.responseJSON.errors
-            if(errors){
-              //add class to each label that has validation errors
-              $.each(errors, function(name, type){
-                $('label[for=' + name + ']').addClass('error');
-              });
-            }
-            else{
-              console.log('Error, please try again later');
+            method:'POST',
+            json: formdata,
+          }, function(error, message, body) {
+              if (error) {
+                console.log("Error sending message: ", error);
+              } else if (response.body.error) {
+                  console.log("Error: ", response.body.error);
+              }
             }
           });
-
-
 
         });
     };
