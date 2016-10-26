@@ -101,7 +101,7 @@ const actions = {
       // We return a promise to let our bot know when we're done sending
 
       // Check if text paylad is an object
-      if (text.charAt(0) === "{") {
+      if (text[0] === "{") {
         sendGenericMessage(recipientId, text);
       } else {
         sendMessage(recipientId,text);
@@ -242,7 +242,7 @@ const actions = {
   checkIn({context, entities}) {
     return new Promise(function(resolve, reject) {
     //  const recipientId = sessions[sessionId].fbid;
-      console.log("Context:");
+
       for(var prop in context){
         console.log(prop);
       };
