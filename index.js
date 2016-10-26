@@ -744,7 +744,7 @@ function updateMsg(id, msg) {
     if(count === 0) {
 
       // 1a. If new user, insert into database
-      db.collection(PEOPLE).insert({_id : id, messages:msg_meta, email:event.message.text}, function(err, result) {
+      db.collection(PEOPLE).insert({_id : id, messages:msg_meta, function(err, result) {
         if (err) {
           console.log("Error updating PEOPLE. Error: ", err)
         } else {
@@ -753,7 +753,7 @@ function updateMsg(id, msg) {
       });
       // 1.b If not new user, update user messages
     } else {
-        db.collection(PEOPLE).update({_id: id}, {email:event.message.text}, { $push: {messages: msg_meta}}, function(err, result){
+        db.collection(PEOPLE).update({_id: id}, { $push: {messages: msg_meta}}, function(err, result){
           if (err) {
             console.log("Error updating msg_meta. Error: ", err);
           } else {
