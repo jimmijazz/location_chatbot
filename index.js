@@ -93,6 +93,7 @@ const findOrCreateSession = (fbid) => {
 // Bot actions for Wit.Ai
 const actions = {
   send({sessionId}, text) {
+    // DELETE THIS COMMENT
     // Our bot has something to say!
     // Let's retrieve the Facebook user whose session belongs to
     const recipientId = sessions[sessionId].fbid;
