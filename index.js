@@ -392,53 +392,9 @@ app.post('/webhook', function (req, res) {
                                   "seq" : "NA"
                               };
 
-              // See if a new user
-              db.collection(PEOPLE).count({_id: id}, function(err, count) {
-                if(count === 0) {
-                  console.log('*** New User ***' + user);
-
-                  // 1. Insert user into database
-                  db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
-                    if (err) {
-                      console.log("Error updating PEOPLE. Error: ", err);
-                    } else {
-                      console.log("Updated PEOPLE");
-                    };
-                });
-
-                // 2. Check if is a registered agent
-                  db.collection(AGENTS).findOne({_id : id}, function (err, result) {
-                    if (err) {
-                      console.log("Error finding agent. Error: ",err);
-                      // 3. Send message depending on if agent or not.
-                    } else {
-                      // Onboarding message
-                      // var welcome_msg = result ? "Welcome to Openhood Agent "+user.last_name : "Hi " + user.first_name + "😊 my name is Josh and I'm the dev working on Openhood. Openhood is going to assist real estate agents with creating open homes and marketing, but most of the responses won't be set up until later this week. Thank you for your interest!";
-                      // sendMessage(id, {text:welcome_msg});
-                      };
-                  });
-              // Not a new user. Update existing user's messages.
-              } else {
-                db.collection(PEOPLE).update({_id: id}, { $push: {messages: msg_meta}}, function(err, result){
-                  if (err) {
-                    console.log("Error updating msg_meta. Error: ", err);
-                  } else {
-                    console.log("Updated msg_meta");
-                  };
-                });
-              }
-            })
-            requestLocation(id);
-        }
-
-        // ** LOCATION VIA MESSAGE ** //
-        if (event.message && event.message.text && !event.message.echo && event.message.text === "Location") {
-          //TO DO:
-          //  - add user to db if new
-          //  - add msg meta to db
-
-          requestLocation(id);
-        }
+              updateMsg(id,msg_meta);   // See if new user and update message.
+              requestLocation(id);      // Request users location
+        };
 
         // ** EMAIL VIA MESSAGE ** //
         else if (event.message && event.message.text && !event.message.echo && String(event.message.text).includes("@")) {
@@ -449,31 +405,8 @@ app.post('/webhook', function (req, res) {
                                 "mid" : event.message.mid,
                                 "seq" : event.message.seq
                             };
-            // See if new user (This should rarely happen)
-            db.collection(PEOPLE).count({_id:id}, function(err, count){
-              if(count === 0) {
-                console.log("New User");
-
-                // 1. Isert user into database
-                db.collection(PEOPLE).insert({_id : id, messages:msg_meta, email:event.message.text}, function(err, result) {
-                  if (err) {
-                    console.log("Error updating PEOPLE. Error: ", err)
-                  } else {
-                    console.log("Updated PEOPLE");
-                  };
-                });
-                // Not a new user. Update existing user's messages
-              } else {
-                  db.collection(PEOPLE).update({_id: id}, {email:event.message.text}, { $push: {messages: msg_meta}}, function(err, result){
-                    if (err) {
-                      console.log("Error updating msg_meta. Error: ", err);
-                    } else {
-                      console.log("Updated msg_meta");
-                    };
-                  });
-                }
-            });
-
+            // See if new user and update messages
+            updateMsg(id, msg_meta);
             sendMessage(id, {text: "Thank you."})
             // Update leads in LockedOn
             // Eventually this will have within the context of talking about a
@@ -520,83 +453,48 @@ app.post('/webhook', function (req, res) {
                             };
 
             // See if a new user
-            db.collection(PEOPLE).count({_id: id}, function(err, count) {
-              if(count === 0) {
-                console.log('*** New User ***');
-                // 1. Insert user into database
-                db.collection(PEOPLE).insert({_id:id, messages:[msg_meta]}, function(err, result) {
-                  if (err) {
-                    console.log("Error updating PEOPLE. Error: ", err);
-                  } else {
-                    console.log("Updated PEOPLE");
-                  };
-              });
-              // 2. Check if is a registered agent
-                db.collection(AGENTS).findOne({_id : id}, function (err, result) {
-                  if (err) {
-                    console.log("Error finding agent. Error: ",err);
-                    // 3. Send message depending on if agent or not.
-                  } else {
-                    var welcome_msg = result ? "Welcome to Openhood Agent "+user.last_name : "Hi " + user.first_name + "😊 my name is Josh and I'm the dev working on Openhood. Openhood is going to assist real estate agents with creating open homes and marketing, but most of the responses won't be set up until later this week. Thank you for your interest!";
-                    sendMessage(id, {text:welcome_msg});
-                    };
-                });
+            updateMsg(id, msg_meta);
 
-            // Not a new user. Update existing user's messages.
+            if(isAgent(id)) {
+              // Forward the message to the Wit.ai Bot Engine
+              // This will run all actions until our bot has nothing left to do
+              wit_agent.runActions(
+                sessionId, // the user's current session
+                event.message.text, // the user's message
+                sessions[sessionId].context // the user's current session state
+              ).then((context) => {
+                  // Our bot did everything it has to do.
+                  // Now it's waiting for further messages to proceed.
+                  console.log('Waiting for next user messages');
+                  // Based on session state, might want to reset session.
+                  // This depends havily on the business logic of the bot.
+                  // Example:
+                  // if (context['done']) {
+                  // delete sessions[sessionId];
+                  //   }
+                  sessions[sessionId].context = context;
+                })
+              .catch((err) => {
+                console.log(sessionId,event.message.text,sessions[sessionId].context);
+                console.error('Got an error from Wit: ', err.stack || err);
+
+              })
             } else {
-              db.collection(PEOPLE).update({_id: id}, { $push: {messages: msg_meta}}, function(err, result){
-                if (err) {
-                  console.log("Error updating msg_meta. Error: ", err);
-                } else {
-                  console.log("Updated msg_meta");
-                };
-              });
-              // Check if the user is an agent
-              db.collection(AGENTS).findOne({_id : id}, function (err, result) {
-                if (err) {
-                  console.log("Error finding agent. Error: ",err);
-                } else if (result){
-                  // Forward the message to the Wit.ai Bot Engine
-                  // This will run all actions until our bot has nothing left to do
-                  wit_agent.runActions(
-                    sessionId, // the user's current session
-                    event.message.text, // the user's message
-                    sessions[sessionId].context // the user's current session state
-                  ).then((context) => {
-                      // Our bot did everything it has to do.
-                      // Now it's waiting for further messages to proceed.
-                      console.log('Waiting for next user messages');
-                      // Based on session state, might want to reset session.
-                      // This depends havily on the business logic of the bot.
-                      // Example:
-                      // if (context['done']) {
-                      // delete sessions[sessionId];
-                      //   }
-                      sessions[sessionId].context = context;
-                    })
-                  .catch((err) => {
-                    console.log(sessionId,event.message.text,sessions[sessionId].context);
-                    console.error('Got an error from Wit: ', err.stack || err);
-
-                  })
-
-                } else {
-                  // Not an agent
-                    wit.runActions(
-                      sessionId,
-                      event.message.text,
-                      sessions[sessionId].context
-                    ).then((context) => {
-                      console.log('Waiting for next user messages');
-                      sessions[sessionId].context = context;
-                    })
-                    .catch((err) => {
-                      console.error('Got an error from Wit: ', err.stack || err);
-                    })
-                }
-              });
+              wit.runActions(
+                sessionId,
+                event.message.text,
+                sessions[sessionId].context
+              ).then((context) => {
+                console.log('Waiting for next user messages');
+                sessions[sessionId].context = context;
+              })
+              .catch((err) => {
+                console.error('Got an error from Wit: ', err.stack || err);
+              })
             }
-          })
+
+          }
+
           // ** LOCATION MESSAGE ** //
         } else if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
               // TO DO:
@@ -738,22 +636,6 @@ function sendMessage(recipientId, message) {
     });
 };
 
-
-function isAgent(id) {
-// Checks to see if user is an agent.
-  if (db.collection(AGENTS).find({_id : id})) {
-      return true;
-  } else {
-    return false;
-  };
-
-  // Check if it is a location
-
-  // If not location check if it is an address
-
-  // Else return error message "not an address"
-};
-
 function userProfile(userId){
   // Returns dict of user profile
   // userProfile(str) -> dict(first_name:str,last_name:str,profile_pic:str,locale:str,timezone:int,gender:str)
@@ -852,6 +734,52 @@ function requestLocation(id) {
 
 sendMessage(id, payload);
 }
+
+function updateMsg(id, msg) {
+  // Updates the database with messages the user has sent.
+  // updateMsg(string,string) -> None
+
+  // TO DO: - Check if user is a registered agent
+
+  // 1. Check if new user
+  db.collection(PEOPLE).count({_id:id}, function(err, count){
+    if(count === 0) {
+
+      // 1a. If new user, insert into database
+      db.collection(PEOPLE).insert({_id : id, messages:msg_meta, email:event.message.text}, function(err, result) {
+        if (err) {
+          console.log("Error updating PEOPLE. Error: ", err)
+        } else {
+          console.log("Updated PEOPLE");
+        };
+      });
+      // 1.b If not new user, update user messages
+    } else {
+        db.collection(PEOPLE).update({_id: id}, {email:event.message.text}, { $push: {messages: msg_meta}}, function(err, result){
+          if (err) {
+            console.log("Error updating msg_meta. Error: ", err);
+          } else {
+            console.log("Updated msg_meta");
+          };
+        });
+      }
+  });
+};
+
+function isAgent(id) {
+  // Checks if the user is a registered agent
+  // isAgent(string) -> Bool
+
+  db.collection(AGENTS).findOne({_id : id}, function (err, result) {
+    if (err) {
+      console.log("Error finding agent. Error: ", err);
+      return false;
+    } else if (result) {
+      return true;
+    }
+  })
+};
+
 
 // Initialize the app
 app.listen((process.env.PORT || 3000));
