@@ -102,7 +102,10 @@ const actions = {
 
       // Check if text paylad is an object
       if (text[0] === "{") {
-        console.log("Sending generic message" + text);
+        console.log("Sending generic message:" + text);
+        for(var prop in text) {
+          console.log(prop)
+        };
         sendGenericMessage(recipientId, text);
       } else {
         console.log("Sending regular message" + text);
@@ -265,12 +268,9 @@ const actions = {
                 if (err) {
                   console.log("Error finding inspection. Error: " + err);
                 } else if (result) {
-                  console.log("Found property in INSPECTIONS collection");
                     db.collection(PROPERTIES).findOne({"_id" : address.place_id}, function(err, prop_result) {
                       if (err) {
-                        console.log("Error finding property. Error: " + err);
                       } else {
-                          console.log("Found property in PROPERTIES collection")
                           // For some reason it sends payload as a str so have to try and convert to JSON or split
                           var payload =
                           ("{" + '"title"' + ":" + '"' + address.formatted_address +'"' + ","+
