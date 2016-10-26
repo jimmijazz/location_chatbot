@@ -99,6 +99,7 @@ const actions = {
     if (recipientId) {
       // We found our recipient. Let's forward our bot response to them.
       // We return a promise to let our bot know when we're done sending
+
       sendMessage(recipientId,text);
       // return fbMessage(recipientId, text)
       // .then(() => null)
@@ -281,8 +282,8 @@ const actions = {
                           );
 
                         };
-
-                        context.property = payload;
+                        sendGenericMessage(id,payload)
+                        delete context.property
                   })
 
                 }
