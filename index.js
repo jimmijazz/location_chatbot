@@ -775,6 +775,8 @@ function isAgent(id) {
       return false;
     } else if (result) {
       return true;
+    } else {
+      return false;
     }
   })
 };
