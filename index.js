@@ -101,21 +101,20 @@ const actions = {
       // We return a promise to let our bot know when we're done sending
 
       // Check if text paylad is an object
-      if (text[0] === "{") {
         console.log("Sending generic message:" + text);
 
         for (var prop in text){
             if (text.hasOwnProperty(prop)) {
          alert("Key is " + prop + ", value is" + text[prop]);
     }
-}
+  }
 
-        sendGenericMessage(recipientId, text);
-      } else {
-        console.log("Sending regular message" + text);
-
-        sendMessage(recipientId,text);
-      }
+      //   sendGenericMessage(recipientId, text);
+      // } else {
+      //   console.log("Sending regular message" + text);
+      //
+      //   sendMessage(recipientId,text);
+      // }
       // return fbMessage(recipientId, text)
       // .then(() => null)
       // .catch((err) =>{
