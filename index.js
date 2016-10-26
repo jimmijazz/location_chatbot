@@ -236,6 +236,7 @@ const actions = {
   // Sends a generic template message for the user to check into that property
   checkIn({context, entities}) {
     return new Promise(function(resolve, reject) {
+      const recipientId = sessions[sessionId].fbid;
 
       // Text version of address ie: 12 Mascot Street, Upper Mount Gravatt
       var address = firstEntityValue(entities, "location");
@@ -282,7 +283,7 @@ const actions = {
                           );
 
                         };
-                        sendGenericMessage(id,payload)
+                        sendGenericMessage(recipientId,payload)
                         delete context.property
                   })
 
