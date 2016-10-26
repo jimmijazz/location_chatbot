@@ -750,6 +750,7 @@ function updateMsg(id, msg) {
         } else {
           console.log("Updated PEOPLE");
         };
+      }
       });
       // 1.b If not new user, update user messages
     } else {
