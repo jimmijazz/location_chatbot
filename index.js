@@ -493,8 +493,6 @@ app.post('/webhook', function (req, res) {
               })
             }
 
-          }
-
           // ** LOCATION MESSAGE ** //
         } else if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
               // TO DO:
