@@ -99,16 +99,17 @@ const actions = {
     if (recipientId) {
       // We found our recipient. Let's forward our bot response to them.
       // We return a promise to let our bot know when we're done sending
-      return fbMessage(recipientId, text)
-      .then(() => null)
-      .catch((err) =>{
-        console.error(
-          'An error occurred while forwarding the response to',
-          recipientId,
-          ':',
-          err.stack || err
-        );
-      });
+      sendMessage(recipientId,text);
+      // return fbMessage(recipientId, text)
+      // .then(() => null)
+      // .catch((err) =>{
+      //   console.error(
+      //     'An error occurred while forwarding the response to',
+      //     recipientId,
+      //     ':',
+      //     err.stack || err
+      //   );
+      // });
     } else {
       console.error("Couldn't find user for session: ", sessionId);
       // Giving the wheel back to our bot
