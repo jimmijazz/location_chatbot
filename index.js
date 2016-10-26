@@ -103,8 +103,8 @@ const actions = {
       // Check if text paylad is an object
       if (text[0] === "{") {
         console.log("Sending generic message:" + text);
-        for(var prop in text) {
-          console.log(prop)
+        for(var key,prop in text) {
+          console.log(key + ":" + prop)
         };
         sendGenericMessage(recipientId, text);
       } else {
