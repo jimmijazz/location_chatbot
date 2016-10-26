@@ -92,7 +92,7 @@ const findOrCreateSession = (fbid) => {
 
 // Bot actions for Wit.Ai
 const actions = {
-  send({sessionId}, text) {
+  send({sessionId}, {text}) {
     // Our bot has something to say!
     // Let's retrieve the Facebook user whose session belongs to
     const recipientId = sessions[sessionId].fbid;
@@ -549,7 +549,7 @@ app.post('/webhook', function (req, res) {
                   // This will run all actions until our bot has nothing left to do
                   wit_agent.runActions(
                     sessionId, // the user's current session
-                    JSON.stringify(event.message.text), // the user's message
+                    event.message.text, // the user's message
                     sessions[sessionId].context // the user's current session state
                   ).then((context) => {
                       // Our bot did everything it has to do.
