@@ -102,8 +102,11 @@ const actions = {
 
       // Check if text paylad is an object
       if (text[0] === "{") {
+        console.log("Sending generic message" + text);
         sendGenericMessage(recipientId, text);
       } else {
+        console.log("Sending regular message" + text);
+
         sendMessage(recipientId,text);
       }
       // return fbMessage(recipientId, text)
