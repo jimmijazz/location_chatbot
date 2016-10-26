@@ -237,6 +237,7 @@ const actions = {
   checkIn({context, entities}) {
     return new Promise(function(resolve, reject) {
       const recipientId = sessions[sessionId].fbid;
+      console.log("Context:");
       for(var prop in context){
         console.log(prop);
       };
