@@ -100,7 +100,12 @@ const actions = {
       // We found our recipient. Let's forward our bot response to them.
       // We return a promise to let our bot know when we're done sending
 
-      sendMessage(recipientId,text);
+      // Check if text paylad is an object
+      if text[0] === "{" {
+        sendGenericMessage(recipientId, text);
+      } else {
+        sendMessage(recipientId,text);
+      }
       // return fbMessage(recipientId, text)
       // .then(() => null)
       // .catch((err) =>{
@@ -246,7 +251,6 @@ const actions = {
       var address = firstEntityValue(entities, "location");
 
       if (address) {
-        console.log("Checking In");
         // Geocode text address into a google maps component
         geocoder.geocode(address + "Australia", function(err, data) {
           if (err) {
@@ -287,8 +291,7 @@ const actions = {
                           );
 
                         };
-                        sendGenericMessage(recipientId,payload)
-                        delete context.property
+                        context.property = payload;
                   })
 
                 }
