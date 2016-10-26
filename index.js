@@ -105,7 +105,7 @@ const actions = {
 
         for (var prop in text){
             if (text.hasOwnProperty(prop)) {
-         alert("Key is " + prop + ", value is" + text[prop]);
+         console.log("Key is " + prop + ", value is" + text[prop]);
     }
   }
 
