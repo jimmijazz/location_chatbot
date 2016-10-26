@@ -236,7 +236,7 @@ const actions = {
   // Sends a generic template message for the user to check into that property
   checkIn({context, entities}) {
     return new Promise(function(resolve, reject) {
-      const recipientId = sessions[sessionId].fbid;
+    //  const recipientId = sessions[sessionId].fbid;
       console.log("Context:");
       for(var prop in context){
         console.log(prop);
