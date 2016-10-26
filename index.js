@@ -29,7 +29,7 @@ var map_url = "https://maps.googleapis.com/maps/api/staticmap?maptype=satellite&
 // additional options available to them such as creating inspections.
 const WIT_TOKEN = process.env.WIT_TOKEN;
 const WIT_TOKEN_AGENT = process.env.WIT_TOKEN_AGENT;
-let wit = require('node-wit').Wit;
+let Wit = require('node-wit').Wit;
 var log = require('node-wit').log;
 
 
