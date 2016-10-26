@@ -164,6 +164,7 @@ const actions = {
                                           " at " + hours + ":" + minutes + suffix;
                   }
                   context.inspection = inspection_message;
+
               });
             }
           });
@@ -490,7 +491,7 @@ app.post('/webhook', function (req, res) {
                 } else if (response.body.error) {
                     console.log("Error: ", response.body.error);
                 } else {
-                  console.log("Added lead");
+                  console.log("Added lead")
                 }
               }
             );
@@ -658,7 +659,7 @@ app.post('/webhook', function (req, res) {
 
 // Generic function sending messages
 const fbMessage = (id, text) => {
-  var x = true;
+//  var x = true; // I think this was here to test the generic
   console.log(text.text);
   payload = JSON.parse(text.text);
   console.log(payload);
