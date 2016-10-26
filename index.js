@@ -104,7 +104,7 @@ const actions = {
       if (text.text[0] === "{") {
         console.log("Sending generic message:" + text);
 
-        sendGenericMessage(recipientId, text);
+        sendGenericMessage(recipientId, text.text);
       } else {
         console.log("Sending regular message" + text);
 
