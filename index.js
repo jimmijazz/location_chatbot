@@ -394,7 +394,7 @@ app.post('/webhook', function (req, res) {
 
               updateMsg(id,msg_meta);   // See if new user and update message.
               requestLocation(id);      // Request users location
-        };
+        }
 
         // ** EMAIL VIA MESSAGE ** //
         else if (event.message && event.message.text && !event.message.echo && String(event.message.text).includes("@")) {
