@@ -234,7 +234,7 @@ const actions = {
   },
 
   // Sends a generic template message for the user to check into that property
-  checkIn({context, entities}) {
+  checkIn({sessionId}, {context, entities}) {
     return new Promise(function(resolve, reject) {
       const recipientId = sessions[sessionId].fbid;
 
