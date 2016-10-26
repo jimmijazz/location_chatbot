@@ -564,7 +564,9 @@ app.post('/webhook', function (req, res) {
                       sessions[sessionId].context = context;
                     })
                   .catch((err) => {
+                    console.log(sessionId,event.message.text,sessions[sessionId].context);
                     console.error('Got an error from Wit: ', err.stack || err);
+
                   })
 
                 } else {
