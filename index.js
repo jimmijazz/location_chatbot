@@ -399,9 +399,11 @@ app.post('/webhook', function (req, res) {
                                     "seq" : "NA"
                                 };
 
+
                 updateMsg(id,msg_meta);   // See if new user and update message.
                 sendMessage(id, {text: "Hi " + user.first_name +". Thanks for looking at 146/54 Slobodian Avenue. Here are a few photos: "} )
                 sendGenericMessage(id,get_started);
+                sendQuickReply(id,"Are you renting or buying?", rentOrBuy );
           }
 
           // ** EMAIL VIA MESSAGE ** //
@@ -663,6 +665,8 @@ function userProfile(userId){
 };
 
 function sendGenericMessage(recipientId, payload) {
+  // Sends a generic message to the user.
+  // sendGenericMessage(string,array[object]) -> None
 
 	var messageData = {
 		"attachment": {
@@ -690,6 +694,34 @@ function sendGenericMessage(recipientId, payload) {
 		}
 	})
 };
+
+function sendQuickReply(recipientId,message,buttons){
+  // Sends quick reply button(s) to the user
+  // sendQuickReply(string, dict) -> None
+  var messageData = {
+    "message" : {
+      "text" : message,
+      "quick_replies": buttons
+    }
+  };
+
+  request({
+    url: 'https://graph.facebook.com/v2.6/me/messages',
+    qs: {access_token:process.env.PAGE_ACCESS_TOKEN},
+    method: 'POST',
+    json: {
+      recipient: {id:recipientId},
+      message: messageData,
+    }
+  }, function(error, response, body) {
+    if (error) {
+      console.log('Error sending messages: ', error)
+    } else if (response.body.error) {
+      console.log('Error: ', response.body.error)
+    }
+  })
+
+}
 
 function read_message(recipientId, user_message) {
 // Sends a message to the user(id) based on message
@@ -813,6 +845,8 @@ const get_started = ([{
 "subtitle" : "146/54 Slobodian Avenue",
 "image_url" :  "http://cdn2.ljhooker.com/56d425fc7cd7193b270008f2.jpg"
 }
+
+
 // {
 // "title" : "Modern Bathroom",
 // "subtitle" : "146/54 Slobodian Avenue",
@@ -847,6 +881,18 @@ const get_started = ([{
 // "subtitle" : "146/54 Slobodian Avenue",
 // "image_url" :  "http://cdn4.ljhooker.com/57874eaf7bd719e71900028a.jpg"
 // }
+]);
+
+const rentOrBuy = ([
+  {"content_type":"text",
+    "title":"Renting",
+    "payload":"Renting"
+  },
+  {
+    "content_type":"text",
+    "title":"Buy",
+    "payload":"buying"
+  }
 ]);
 
 // Initialize the app
