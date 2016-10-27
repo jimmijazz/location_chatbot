@@ -699,10 +699,8 @@ function sendQuickReply(recipientId,message,buttons){
   // Sends quick reply button(s) to the user
   // sendQuickReply(string, dict) -> None
   var messageData = {
-    "message" : {
       "text" : message,
       "quick_replies": buttons
-    }
   };
 
   request({
