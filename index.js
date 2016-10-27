@@ -836,8 +836,7 @@ const get_started = JSON.stringify({
 "title" : "Generous Balcony Views",
 "subtitle" : "146/54 Slobodian Avenue",
 "image_url" :  "http://cdn4.ljhooker.com/57874eaf7bd719e71900028a.jpg"
-},
-);
+});
 
 // Initialize the app
 app.listen((process.env.PORT || 3000));
