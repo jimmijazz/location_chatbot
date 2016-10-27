@@ -792,52 +792,52 @@ function isAgent(id) {
 //                   '"image_url"' + ":" + '"' + "http://cdn1.ljhooker.com/57874eaf7bd719e719000279.jpg" + '"' +
 //                   "}"
 //                 ;
-const get_started = JSON.stringify(([{
+const get_started = JSON.stringify([{
   "title" : "146/54 Slobodian Avenue",
   "subtitle" : " Striking residential building",
   "image_url" :  "http://cdn1.ljhooker.com/57874eaf7bd719e719000279.jpg"
-},
+},{
 "title" : "Open Living Area",
 "subtitle" : "146/54 Slobodian Avenue",
 "image_url" :  "http://cdn1.ljhooker.com/57522bf67dd7196c3c00005a.jpg"
-},
+},{
 "title" : "New Kitchen Appliances",
 "subtitle" : "146/54 Slobodian Avenue",
 "image_url" :  "http://cdn2.ljhooker.com/56d425fc7cd7193b270008f2.jpg"
-},
+},{
 "title" : "Modern Bathroom",
 "subtitle" : "146/54 Slobodian Avenue",
 "image_url" :  "http://cdn2.ljhooker.com/56d425fc7cd7193b27000904.jpg"
-},
+},{
 "title" : "Master Bedroom",
 "subtitle" : "146/54 Slobodian Avenue",
 "image_url" :  "http://cdn3.ljhooker.com/56d425fc7cd7193b270008fe.jpg"
-},
+},{
 "title" : "Guest Bedroom",
 "subtitle" : "146/54 Slobodian Avenue",
 "image_url" :  "http://cdn3.ljhooker.com/56d425fc7cd7193b27000900.jpg"
-},
+},{
 "title" : "Choose from 13 floor plans",
 "subtitle" : "146/54 Slobodian Avenue",
 "image_url" :  "http://cdn3.ljhooker.com/57874eaf7bd719e719000282.jpg"
-},
+},{
 "title" : "Carpet or Wood Floors",
 "subtitle" : "146/54 Slobodian Avenue",
 "image_url" :  "http://cdn3.ljhooker.com/57874eaf7bd719e719000284.jpg"
-},
+},{
 "title" : "Study with a View",
 "subtitle" : "146/54 Slobodian Avenue",
 "image_url" :  "http://cdn4.ljhooker.com/57874eaf7bd719e719000288.jpg"
-},
+},{
 "title" : "Fully Air Conditioned",
 "subtitle" : "146/54 Slobodian Avenue",
 "image_url" :  "http://cdn4.ljhooker.com/57874eaf7bd719e71900028a.jpg"
-},
+},{
 "title" : "Generous Balcony Views",
 "subtitle" : "146/54 Slobodian Avenue",
 "image_url" :  "http://cdn4.ljhooker.com/57874eaf7bd719e71900028a.jpg"
-}])
-);
+},
+]);
 
 // Initialize the app
 app.listen((process.env.PORT || 3000));
