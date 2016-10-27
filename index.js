@@ -402,8 +402,9 @@ app.post('/webhook', function (req, res) {
 
                 updateMsg(id,msg_meta);   // See if new user and update message.
                 sendMessage(id, {text: "Hi " + user.first_name +". Thanks for looking at 146/54 Slobodian Avenue. Here are a few photos: "} )
-                sendGenericMessage(id,get_started);
-                sendQuickReply(id,"Are you renting or buying?", rentOrBuy );
+                sendGenericMessage(id,get_started).then(function(){
+                  sendQuickReply(id,"Are you renting or buying?", rentOrBuy );
+                });
           }
 
           // ** EMAIL VIA MESSAGE ** //
