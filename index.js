@@ -792,7 +792,7 @@ function isAgent(id) {
 //                   '"image_url"' + ":" + '"' + "http://cdn1.ljhooker.com/57874eaf7bd719e719000279.jpg" + '"' +
 //                   "}"
 //                 ;
-const get_started = JSON.stringify([{
+const get_started = JSON.stringify({
   "title" : "146/54 Slobodian Avenue",
   "subtitle" : " Striking residential building",
   "image_url" :  "http://cdn1.ljhooker.com/57874eaf7bd719e719000279.jpg"
@@ -837,7 +837,7 @@ const get_started = JSON.stringify([{
 "subtitle" : "146/54 Slobodian Avenue",
 "image_url" :  "http://cdn4.ljhooker.com/57874eaf7bd719e71900028a.jpg"
 },
-]);
+);
 
 // Initialize the app
 app.listen((process.env.PORT || 3000));
