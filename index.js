@@ -405,7 +405,7 @@ app.post('/webhook', function (req, res) {
                 (sendGenericMessage(id,get_started), function(error){
                   sendQuickReply(id,"Are you renting or buying?", rentOrBuy );
 
-                };
+                });
           }
 
           // ** EMAIL VIA MESSAGE ** //
