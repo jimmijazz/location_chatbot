@@ -393,6 +393,7 @@ app.post('/webhook', function (req, res) {
                               };
 
               updateMsg(id,msg_meta);   // See if new user and update message.
+              sendMessage(id, {text: "Hi " + user.first_name +". Thanks for looking at 146/54 Slobodian Avenue. Here are a few photos: "} )
               sendGenericMessage(id,get_started);
         }
 
@@ -784,13 +785,18 @@ function isAgent(id) {
 // Message Definitions (Hardcoded for MVP, will reference Db)
 
 // Get Started Message
-const get_started =
-              "{" + '"title"' + ":" + '"' + "146/54 Slobodian Avenue" +'"' + ","+
-                  '"subtitle"' + ":" + '"' + "This striking residential building is part of an expanding new precinct that's impressively located and offers discerning buyers a fantastic opportunity in Eight Mile Plains."
-                   + '"' + ","+
-                  '"image_url"' + ":" + '"' + "http://cdn1.ljhooker.com/57874eaf7bd719e719000279.jpg" + '"' +
-                  "}"
-                ;
+// const get_started =
+//               "{" + '"title"' + ":" + '"' + "146/54 Slobodian Avenue" +'"' + ","+
+//                   '"subtitle"' + ":" + '"' + "This striking residential building is part of an expanding new precinct that's impressively located and offers discerning buyers a fantastic opportunity in Eight Mile Plains."
+//                    + '"' + ","+
+//                   '"image_url"' + ":" + '"' + "http://cdn1.ljhooker.com/57874eaf7bd719e719000279.jpg" + '"' +
+//                   "}"
+//                 ;
+const get_started = JSON.stringify({
+  "Title" : "146/54 Slobodian Avenue",
+  "subtitle" : " Striking residential building",
+  "image_url" :  "http://cdn1.ljhooker.com/57874eaf7bd719e719000279.jpg"
+});
 
 // Initialize the app
 app.listen((process.env.PORT || 3000));
