@@ -19,6 +19,9 @@ const ObjectID = mongodb.ObjectID;
 // LockedOn CRM
 var lockedOnCode = "6975de34da026024dae43389185661ef@lockedoncloud.com";
 
+// Agent's Facebook page ID
+const agentFBID = "652607908238304";
+
 // Google Maps
 var google_api_key ="AIzaSyDbhlnIkxUmb0cwIMCx34P9W2lGYYa-UFg";
 var map_url = "https://maps.googleapis.com/maps/api/staticmap?maptype=satellite&center=";
@@ -367,202 +370,206 @@ app.post('/webhook', function (req, res) {
 
       // Get Basic Facebook Graph Information
       // Nothing can happen until this returns info
-      request({
-        url: 'https://graph.facebook.com/v2.6/'+event.sender.id+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
-        qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
-        method: 'GET',
 
-      }, function(error, response, body) {
-          if (error) {
-            console.log('Error: ', error);
-        } else if (response.body.error) {
-            console.log('Error: ', response.body.error);
-            sendMessage(id, {text: "I'm sorry something went wrong. I'm not sure who you are."});
-        };
+      // Ignore messages from OpenHood page
+      if (id != agentFBID) {
+        request({
+          url: 'https://graph.facebook.com/v2.6/'+event.sender.id+'?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=PAGE_ACCESS_TOKEN"',
+          qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
+          method: 'GET',
 
-        user = JSON.parse(response.body); // Convert FB response from string to object
-        console.log(event);
+        }, function(error, response, body) {
+            if (error) {
+              console.log('Error: ', error);
+          } else if (response.body.error) {
+              console.log('Error: ', response.body.error);
+              sendMessage(id, {text: "I'm sorry something went wrong. I'm not sure who you are."});
+          };
 
-        // ** GET STARTED **//
-        if (event.postback && event.postback.payload && event.postback.payload == "Get Started") {
+          user = JSON.parse(response.body); // Convert FB response from string to object
+          console.log(event);
 
+          // ** GET STARTED **//
+          if (event.postback && event.postback.payload && event.postback.payload == "Get Started") {
+
+                var msg_meta = {
+                                    "message" : event.postback.payload,
+                                    "timestamp" : event.timestamp,
+                                    "mid" : "NA",
+                                    "seq" : "NA"
+                                };
+
+                updateMsg(id,msg_meta);   // See if new user and update message.
+                sendMessage(id, {text: "Hi " + user.first_name +". Thanks for looking at 146/54 Slobodian Avenue. Here are a few photos: "} )
+                sendGenericMessage(id,get_started);
+          }
+
+          // ** EMAIL VIA MESSAGE ** //
+          else if (event.message && event.message.text && !event.message.echo && String(event.message.text).includes("@")) {
+              // user sends email address
               var msg_meta = {
-                                  "message" : event.postback.payload,
+                                  "message" : event.message.text,
                                   "timestamp" : event.timestamp,
-                                  "mid" : "NA",
-                                  "seq" : "NA"
+                                  "mid" : event.message.mid,
+                                  "seq" : event.message.seq
                               };
+              // See if new user and update messages
+              updateMsg(id, msg_meta);
+              sendMessage(id, {text: "Thank you."})
+              // Update leads in LockedOn
+              // Eventually this will have within the context of talking about a
+              // property where the user asks about a property, we ask for their
+              // email for updates and then update the database with leads.
 
-              updateMsg(id,msg_meta);   // See if new user and update message.
-              sendMessage(id, {text: "Hi " + user.first_name +". Thanks for looking at 146/54 Slobodian Avenue. Here are a few photos: "} )
-              sendGenericMessage(id,get_started);
-        }
+              var formdata = {
+                to: 				      lockedOnCode,
+                property_address: "12 Mascot Street Upper Mount Gravatt",
+                property_url: 		"",
+                ad_id: 				    "",
+                full_name: 			  user.first_name + " " + user.last_name,
+                email: 				    event.message.text,
+                phone: 				    "",
+                comments: 			  ""
+              };
 
-        // ** EMAIL VIA MESSAGE ** //
-        else if (event.message && event.message.text && !event.message.echo && String(event.message.text).includes("@")) {
-            // user sends email address
-            var msg_meta = {
-                                "message" : event.message.text,
-                                "timestamp" : event.timestamp,
-                                "mid" : event.message.mid,
-                                "seq" : event.message.seq
-                            };
-            // See if new user and update messages
-            updateMsg(id, msg_meta);
-            sendMessage(id, {text: "Thank you."})
-            // Update leads in LockedOn
-            // Eventually this will have within the context of talking about a
-            // property where the user asks about a property, we ask for their
-            // email for updates and then update the database with leads.
-
-            var formdata = {
-              to: 				      lockedOnCode,
-              property_address: "12 Mascot Street Upper Mount Gravatt",
-              property_url: 		"",
-              ad_id: 				    "",
-              full_name: 			  user.first_name + " " + user.last_name,
-              email: 				    event.message.text,
-              phone: 				    "",
-              comments: 			  ""
-            };
-
-            // Send enquiry to the server
-            request({
-              url: 'https://www.lockedoncloud.com/leads/submit',
-              method:'POST',
-              json: formdata,
-            }, function(error, message, body) {
-                if (error) {
-                  console.log("Error sending message: ", error);
-                } else if (response.body.error) {
-                    console.log("Error: ", response.body.error);
-                } else {
-                  console.log("Added lead")
-                }
-              }
-            );
-
-        }
-
-        // ** TEXT MESSAGE ** //
-        else if (event.message && event.message.text && !event.message.echo) {
-
-            var msg_meta = {
-                                "message" : event.message.text,
-                                "timestamp" : event.timestamp,
-                                "mid" : event.message.mid,
-                                "seq" : event.message.seq
-                            };
-
-            // See if a new user
-            updateMsg(id, msg_meta);
-
-            if(isAgent(id)) {
-              // Forward the message to the Wit.ai Bot Engine
-              // This will run all actions until our bot has nothing left to do
-              wit_agent.runActions(
-                sessionId, // the user's current session
-                event.message.text, // the user's message
-                sessions[sessionId].context // the user's current session state
-              ).then((context) => {
-                  // Our bot did everything it has to do.
-                  // Now it's waiting for further messages to proceed.
-                  console.log('Waiting for next user messages');
-                  // Based on session state, might want to reset session.
-                  // This depends havily on the business logic of the bot.
-                  // Example:
-                  // if (context['done']) {
-                  // delete sessions[sessionId];
-                  //   }
-                  sessions[sessionId].context = context;
-                })
-              .catch((err) => {
-                console.log(sessionId,event.message.text,sessions[sessionId].context);
-                console.error('Got an error from Wit: ', err.stack || err);
-
-              })
-            } else {
-              wit_agent.runActions(
-                sessionId,
-                event.message.text,
-                sessions[sessionId].context
-              ).then((context) => {
-                console.log('Waiting for next user messages');
-                sessions[sessionId].context = context;
-              })
-              .catch((err) => {
-                console.error('Got an error from Wit: ', err.stack || err);
-              })
-            }
-
-          // ** LOCATION MESSAGE ** //
-        } else if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
-              // TO DO:
-              // - Search for nearest property rather then trying to find an exact match
-              var lat = event.message.attachments[0].payload.coordinates.lat;
-              var long = event.message.attachments[0].payload.coordinates.long;
-
-              // Send Generic Message with location
-              geocoder.reverseGeocode(lat,long,function(err, data){
-                if(err) {
-                  console.log("Error geocoding property location");
-                } else {
-                  // data = google JSON formatted address
-                  var address = data.results[0];
-
-                  // Search or property in x amount of metres
-                  db.collection(PROPERTIES).findOne(
-                    {
-                      loc : {
-                      $near : {
-                        $geometry: {
-                          type : "Point" ,
-                           coordinates: [long, lat]
-                         },
-                         $maxDistance : 5000 }
-                       }
-                 }, function(err, result){
-                    if (err) {
-                      console.log("Error finding property. Error: " + err);
-                    } else if (result) {
-                        console.log("Property found by location!" + result);
-                        var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
-                        var payload =
-                        ("{" + '"title"' + ":" + '"' + address.formatted_address +'"' + ","+
-                          '"subtitle"' + ":" + '"' + result.description + '"' + ","+
-                          '"image_url"' + ":" + '"' + result.photos[0] + '"' + ","+
-                          '"buttons"' + ":" + "[{" +
-                            '"type"' + ":" + '"postback",' +
-                             '"title"' + ":" + '"Check In",' +
-                              '"payload"' + ":" + '"hello hello hello"'+
-                            "},{" +
-                              '"type"' + ":" + '"postback",' +
-                              '"title"' + ":" + '"View Photos",' +
-                              '"payload"' + ":" + '"hello hello hello"'+
-                            "},{" +
-                              '"type"' + ":" + '"postback",' +
-                              '"title"' + ":" + '"Inspection Times",' +
-                              '"payload"' + ":" + '"hello hello hello"'+
-                              "}" +
-                           "]" +
-                          "}"
-                        );
-
-                      sendGenericMessage(id, payload );
-                      for (var key in result) {
-                        console.log(result[key]);
-                      }
-                    } else {
-                      console.log("No property found ")
-                    }
-                  });
-
+              // Send enquiry to the server
+              request({
+                url: 'https://www.lockedoncloud.com/leads/submit',
+                method:'POST',
+                json: formdata,
+              }, function(error, message, body) {
+                  if (error) {
+                    console.log("Error sending message: ", error);
+                  } else if (response.body.error) {
+                      console.log("Error: ", response.body.error);
+                  } else {
+                    console.log("Added lead")
                   }
-              });
+                }
+              );
 
           }
 
-        });
+          // ** TEXT MESSAGE ** //
+          else if (event.message && event.message.text && !event.message.echo) {
+
+              var msg_meta = {
+                                  "message" : event.message.text,
+                                  "timestamp" : event.timestamp,
+                                  "mid" : event.message.mid,
+                                  "seq" : event.message.seq
+                              };
+
+              // See if a new user
+              updateMsg(id, msg_meta);
+
+              if(isAgent(id)) {
+                // Forward the message to the Wit.ai Bot Engine
+                // This will run all actions until our bot has nothing left to do
+                wit_agent.runActions(
+                  sessionId, // the user's current session
+                  event.message.text, // the user's message
+                  sessions[sessionId].context // the user's current session state
+                ).then((context) => {
+                    // Our bot did everything it has to do.
+                    // Now it's waiting for further messages to proceed.
+                    console.log('Waiting for next user messages');
+                    // Based on session state, might want to reset session.
+                    // This depends havily on the business logic of the bot.
+                    // Example:
+                    // if (context['done']) {
+                    // delete sessions[sessionId];
+                    //   }
+                    sessions[sessionId].context = context;
+                  })
+                .catch((err) => {
+                  console.log(sessionId,event.message.text,sessions[sessionId].context);
+                  console.error('Got an error from Wit: ', err.stack || err);
+
+                })
+              } else {
+                wit_agent.runActions(
+                  sessionId,
+                  event.message.text,
+                  sessions[sessionId].context
+                ).then((context) => {
+                  console.log('Waiting for next user messages');
+                  sessions[sessionId].context = context;
+                })
+                .catch((err) => {
+                  console.error('Got an error from Wit: ', err.stack || err);
+                })
+              }
+
+            // ** LOCATION MESSAGE ** //
+          } else if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
+                // TO DO:
+                // - Search for nearest property rather then trying to find an exact match
+                var lat = event.message.attachments[0].payload.coordinates.lat;
+                var long = event.message.attachments[0].payload.coordinates.long;
+
+                // Send Generic Message with location
+                geocoder.reverseGeocode(lat,long,function(err, data){
+                  if(err) {
+                    console.log("Error geocoding property location");
+                  } else {
+                    // data = google JSON formatted address
+                    var address = data.results[0];
+
+                    // Search or property in x amount of metres
+                    db.collection(PROPERTIES).findOne(
+                      {
+                        loc : {
+                        $near : {
+                          $geometry: {
+                            type : "Point" ,
+                             coordinates: [long, lat]
+                           },
+                           $maxDistance : 5000 }
+                         }
+                   }, function(err, result){
+                      if (err) {
+                        console.log("Error finding property. Error: " + err);
+                      } else if (result) {
+                          console.log("Property found by location!" + result);
+                          var location_image = map_url + lat + "," + long + "&zoom=" + 20 + "&size=640x400&key=" + google_api_key;
+                          var payload =
+                          ("{" + '"title"' + ":" + '"' + address.formatted_address +'"' + ","+
+                            '"subtitle"' + ":" + '"' + result.description + '"' + ","+
+                            '"image_url"' + ":" + '"' + result.photos[0] + '"' + ","+
+                            '"buttons"' + ":" + "[{" +
+                              '"type"' + ":" + '"postback",' +
+                               '"title"' + ":" + '"Check In",' +
+                                '"payload"' + ":" + '"hello hello hello"'+
+                              "},{" +
+                                '"type"' + ":" + '"postback",' +
+                                '"title"' + ":" + '"View Photos",' +
+                                '"payload"' + ":" + '"hello hello hello"'+
+                              "},{" +
+                                '"type"' + ":" + '"postback",' +
+                                '"title"' + ":" + '"Inspection Times",' +
+                                '"payload"' + ":" + '"hello hello hello"'+
+                                "}" +
+                             "]" +
+                            "}"
+                          );
+
+                        sendGenericMessage(id, payload );
+                        for (var key in result) {
+                          console.log(result[key]);
+                        }
+                      } else {
+                        console.log("No property found ")
+                      }
+                    });
+
+                    }
+                });
+
+            }
+
+          });
+      };
     };
     res.sendStatus(200);
   });
