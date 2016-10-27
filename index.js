@@ -480,7 +480,7 @@ app.post('/webhook', function (req, res) {
 
               })
             } else {
-              wit.runActions(
+              wit_agent.runActions(
                 sessionId,
                 event.message.text,
                 sessions[sessionId].context
