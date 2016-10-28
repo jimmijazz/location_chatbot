@@ -409,9 +409,10 @@ app.post('/webhook', function (req, res) {
                 // })
 
                 // if works delete the True/false from sendGenericMessage()
-                sendGenericMessage(id,get_started, function() {
-                  sendQuickReply(id,"Are you renting or buying?", rentOrBuy );
-                });
+                sendGenericMessageThanQuickReply(id, get_started, "Are you renting or buying?", rentOrBuy);
+                // sendGenericMessage(id,get_started);
+                // sendQuickReply(id,"Are you renting or buying?", rentOrBuy );
+
           }
 
           // ** EMAIL VIA MESSAGE ** //
@@ -675,7 +676,6 @@ function userProfile(userId){
 function sendGenericMessage(recipientId, payload) {
   // Sends a generic message to the user. Returns true if successful
   // sendGenericMessage(string,array[object]) -> Bool
-  let result = false;
 	var messageData = {
 		"attachment": {
 			"type": "template",
@@ -731,7 +731,62 @@ function sendQuickReply(recipientId,message,buttons){
     }
   })
 
-}
+};
+
+function sendGenericMessageThanQuickReply(recipientId, payload, text, buttons) {
+  // Sends a generic message to the user. If successful sends quick reply message.
+  // sendGenericMessageThanQuickReply(string,array[object], string, array[object]) -> None
+
+  let result = false;
+	var messageData = {
+		"attachment": {
+			"type": "template",
+			"payload": {
+				"template_type": "generic",
+				"elements": payload
+			}
+		}
+	};
+
+  var quickMessageData = {
+      "text" : text,
+      "quick_replies": buttons
+  };
+
+
+  // First send generic message
+	request({
+		url: 'https://graph.facebook.com/v2.6/me/messages',
+		qs: {access_token:process.env.PAGE_ACCESS_TOKEN},
+		method: 'POST',
+		json: {
+			recipient: {id:recipientId},
+			message: messageData,
+		}
+	}, function(error, response, body) {
+		if (error) {
+			console.log('Error sending messages: ', error)
+		} else if (response.body.error) {
+			console.log('Error: ', response.body.error)
+		} else {
+      request({
+        url: 'https://graph.facebook.com/v2.6/me/messages',
+        qs: {access_token:process.env.PAGE_ACCESS_TOKEN},
+        method: 'POST',
+        json: {
+          recipient: {id:recipientId},
+          message: quickMessageData,
+        }
+      }, function(error, response, body) {
+        if (error) {
+          console.log("Error sending messages: ", error)
+        } else if (response.body.error) {
+          console.log("Error: ", response.body.error)
+        };
+      })
+    }
+	})
+};
 
 function read_message(recipientId, user_message) {
 // Sends a message to the user(id) based on message
