@@ -469,11 +469,11 @@ app.post('/webhook', function (req, res) {
                 // Renting or buying
                 case "renting":
                   console.log("User is renting");
-                  sendMessage(recipientId, "Thanks")
+                  sendMessage(id, "Thanks")
                   break;
                 case "buying":
                   console.log("User is buying");
-                  sendQuickReply(recipientId, "Are you looking for an investment property?", isInvestor)
+                  sendQuickReply(id, "Are you looking for an investment property?", isInvestor)
                   break;
                 // Investor or home owner
                 case "investor":
