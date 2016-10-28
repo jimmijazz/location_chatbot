@@ -404,9 +404,9 @@ app.post('/webhook', function (req, res) {
                 sendMessage(id, {text: "Hi " + user.first_name +". Thanks for looking at 146/54 Slobodian Avenue. Here are a few photos: "} )
 
                 // Might not work because sendGenericMessage != null so is true
-                if (sendGenericMessage(id, get_started) {
-                  sendQuickReply(id, "Are you renting or buying?", rentOrBuy);
-                })
+                // if (sendGenericMessage(id, get_started) {
+                //   sendQuickReply(id, "Are you renting or buying?", rentOrBuy);
+                // })
 
                 // if works delete the True/false from sendGenericMessage()
                 sendGenericMessage(id,get_started, function() {
