@@ -463,7 +463,7 @@ app.post('/webhook', function (req, res) {
 
           // ** TEXT MESSAGE (Default if text doesn't meet above criteria)** //
           else if (event.message && event.message.text && !event.message.echo) {
-
+              console.log("Text Message");
               var msg_meta = {
                                   "message" : event.message.text,
                                   "timestamp" : event.timestamp,
