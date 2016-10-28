@@ -402,9 +402,15 @@ app.post('/webhook', function (req, res) {
 
                 updateMsg(id,msg_meta);   // See if new user and update message.
                 sendMessage(id, {text: "Hi " + user.first_name +". Thanks for looking at 146/54 Slobodian Avenue. Here are a few photos: "} )
-                (sendGenericMessage(id,get_started), function(error){
-                  sendQuickReply(id,"Are you renting or buying?", rentOrBuy );
 
+                // Might not work because sendGenericMessage != null so is true
+                if (sendGenericMessage(id, get_started) {
+                  sendQuickReply(id, "Are you renting or buying?", rentOrBuy);
+                })
+
+                // if works delete the True/false from sendGenericMessage()
+                sendGenericMessage(id,get_started, function() {
+                  sendQuickReply(id,"Are you renting or buying?", rentOrBuy );
                 });
           }
 
@@ -667,9 +673,9 @@ function userProfile(userId){
 };
 
 function sendGenericMessage(recipientId, payload) {
-  // Sends a generic message to the user.
-  // sendGenericMessage(string,array[object]) -> None
-
+  // Sends a generic message to the user. Returns true if successful
+  // sendGenericMessage(string,array[object]) -> Bool
+  let result = false;
 	var messageData = {
 		"attachment": {
 			"type": "template",
@@ -680,6 +686,7 @@ function sendGenericMessage(recipientId, payload) {
 		}
 	};
   console.log(messageData);
+
 	request({
 		url: 'https://graph.facebook.com/v2.6/me/messages',
 		qs: {access_token:process.env.PAGE_ACCESS_TOKEN},
@@ -693,7 +700,10 @@ function sendGenericMessage(recipientId, payload) {
 			console.log('Error sending messages: ', error)
 		} else if (response.body.error) {
 			console.log('Error: ', response.body.error)
-		}
+		} else {
+      result = true;
+    }
+    return result;
 	})
 };
 
