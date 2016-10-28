@@ -460,7 +460,7 @@ app.post('/webhook', function (req, res) {
               );
 
             // ** QUICK REPLIES ** //
-          } else if ( event.postback && event.message.quick_reply) {
+          } else if ( event.message && event.message.quick_reply) {
               console.log("Quick Reply!");
 
               var reply = event.message.quick_reply.payload;
