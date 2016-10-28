@@ -459,7 +459,33 @@ app.post('/webhook', function (req, res) {
                 }
               );
 
-          }
+            // ** QUICK REPLIES ** //
+          } else if ( event.postback && event.message.quick_reply) {
+              console.log("Quick Reply!");
+
+              var reply = event.message.quick_reply.payload;
+
+              switch(reply) {
+                // Renting or buying
+                case "renting":
+                  console.log("User is renting");
+                  sendMessage(recipientId, "Thanks")
+                  break;
+                case "buying":
+                  console.log("User is buying");
+                  sendQuickReply(recipientId, "Are you looking for an investment property?", isInvestor)
+                  break;
+                // Investor or home owner
+                case "investor":
+                  console.log("User is an investor");
+                  sendMessage("Thanks investor");
+                  break;
+                case "home owner":
+                  console.log("User is a home owner");
+                  sendMessage("Thanks. This home is perfect for the first home buyers grant");
+                  break;
+              }
+            }
 
           // ** TEXT MESSAGE (Default if text doesn't meet above criteria)** //
           else if (event.message && event.message.text && !event.message.echo) {
@@ -576,33 +602,7 @@ app.post('/webhook', function (req, res) {
                     }
                 });
 
-            // ** QUICK REPLIES ** //
-          } else if ( event.postback && event.message.quick_reply) {
-              console.log("Quick Reply!");
-
-              var reply = event.message.quick_reply.payload;
-
-              switch(reply) {
-                // Renting or buying
-                case "renting":
-                  console.log("User is renting");
-                  sendMessage(recipientId, "Thanks")
-                  break;
-                case "buying":
-                  console.log("User is buying");
-                  sendQuickReply(recipientId, "Are you looking for an investment property?", isInvestor)
-                  break;
-                // Investor or home owner
-                case "investor":
-                  console.log("User is an investor");
-                  sendMessage("Thanks investor");
-                  break;
-                case "home owner":
-                  console.log("User is a home owner");
-                  sendMessage("Thanks. This home is perfect for the first home buyers grant");
-                  break;
-              }
-            }
+          }
 
           });
       };
