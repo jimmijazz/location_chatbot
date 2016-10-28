@@ -478,11 +478,11 @@ app.post('/webhook', function (req, res) {
                 // Investor or home owner
                 case "investor":
                   console.log("User is an investor");
-                  sendMessage("Thanks investor");
+                  sendMessage(id, "Thanks investor");
                   break;
                 case "home owner":
                   console.log("User is a home owner");
-                  sendMessage("Thanks. This home is perfect for the first home buyers grant");
+                  sendMessage(id,"Thanks. This home is perfect for the first home buyers grant");
                   break;
               }
             }
