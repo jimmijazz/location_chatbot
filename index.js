@@ -589,7 +589,7 @@ app.post('/webhook', function (req, res) {
                 case "buying":
                   console.log("User is buying");
                   sendQuickReply(recipientId, "Are you looking for an investment property?", isInvestor)
-
+                  break;
                 // Investor or home owner
                 case "investor":
                   console.log("User is an investor");
