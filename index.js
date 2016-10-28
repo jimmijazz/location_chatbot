@@ -201,6 +201,7 @@ const actions = {
 
   // Used by agent to create an inspection at a property
   createProperty({context, entities}) {
+
     return new Promise(function(resolve, reject) {
       console.log("Creating property");
 
@@ -237,7 +238,6 @@ const actions = {
         });
         delete context.address;
       } else if (!address) {
-        console.log("No address provided");
         context.address = true;
         delete context.address;
       }
@@ -585,6 +585,7 @@ app.post('/webhook', function (req, res) {
                 // Renting or buying
                 case "renting":
                   console.log("User is renting");
+                  sendMessage(recipientId, "Thanks")
                   break;
                 case "buying":
                   console.log("User is buying");
@@ -593,9 +594,11 @@ app.post('/webhook', function (req, res) {
                 // Investor or home owner
                 case "investor":
                   console.log("User is an investor");
+                  sendMessage("Thanks investor");
                   break;
                 case "home owner":
                   console.log("User is a home owner");
+                  sendMessage("Thanks. This home is perfect for the first home buyers grant");
                   break;
               }
             }
