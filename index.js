@@ -578,6 +578,7 @@ app.post('/webhook', function (req, res) {
 
                 // ** QUICK REPLIES ** //
             } else if ( event.message && event.message.quick_reply && event.message.quick_reply.payload) {
+              console.log("Quick Reply!");
 
               var reply = event.message.quick_reply.payload;
 
@@ -979,7 +980,7 @@ const rentOrBuy = ([
   },
   {
     "content_type":"text",
-    "title":"Buy",
+    "title":"Buying",
     "payload":"buying"
   }
 ]);
