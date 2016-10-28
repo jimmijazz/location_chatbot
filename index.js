@@ -461,7 +461,7 @@ app.post('/webhook', function (req, res) {
 
           }
 
-          // ** TEXT MESSAGE ** //
+          // ** TEXT MESSAGE (Default if text doesn't meet above criteria)** //
           else if (event.message && event.message.text && !event.message.echo) {
 
               var msg_meta = {
@@ -573,10 +573,31 @@ app.post('/webhook', function (req, res) {
                         console.log("No property found ")
                       }
                     });
-
                     }
                 });
 
+                // ** QUICK REPLIES ** //
+            } else if ( event.message && event.message.quick_reply && event.message.quick_reply.payload) {
+
+              const reply = event.message.quick_reply.payload;
+
+              switch(reply) {
+                // Renting or buying
+                case "renting":
+                  console.log("User is renting");
+                  break;
+                case "buying":
+                  console.log("User is buying");
+                  sendQuickReply(recipientId, "Are you looking for an investment property?", isInvestor)
+
+                // Investor or home owner
+                case "investor":
+                  console.log("User is an investor");
+                  break;
+                case "home owner":
+                  console.log("User is a home owner");
+                  break;
+              }
             }
 
           });
@@ -951,12 +972,24 @@ const get_started = ([{
 const rentOrBuy = ([
   {"content_type":"text",
     "title":"Renting",
-    "payload":"Renting"
+    "payload":"renting"
   },
   {
     "content_type":"text",
     "title":"Buy",
     "payload":"buying"
+  }
+]);
+
+const isInvestor = ([
+  {"content_type":"text",
+    "title":"Yes",
+    "payload":"investor"
+  },
+  {
+    "content_type":"text",
+    "title":"No",
+    "payload":"home owner"
   }
 ]);
 
