@@ -479,7 +479,7 @@ app.post('/webhook', function (req, res) {
                 case "investor":
                   console.log("User is an investor");
                   sendMessage(id, {text:"Great. This property has a 7% rental guarantee over 3 years!"});
-                  sendQuickReply(id, "Would you like me to email you with our floor plans? "}, floorplans)
+                  sendQuickReply(id, "Would you like me to email you with our floor plans? ", floorplans)
                   break;
                 case "home owner":
                   console.log("User is a home owner");
