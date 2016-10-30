@@ -468,8 +468,8 @@ app.post('/webhook', function (req, res) {
               switch(reply) {
                 // Renting or buying
                 case "renting":
+                  sendMessage(id, {text:"Thanks"});
                   console.log("User is renting");
-                  sendMessage(id, "Thanks")
                   break;
                 case "buying":
                   console.log("User is buying");
@@ -478,12 +478,17 @@ app.post('/webhook', function (req, res) {
                 // Investor or home owner
                 case "investor":
                   console.log("User is an investor");
-                  sendMessage(id, "Thanks investor");
+                  sendMessage(id, {text:"Great. This property has a 7% rental guarantee over 3 years!"});
+                  sendQuickReply(id, "Would you like me to email you with our floor plans? "}, floorplans)
                   break;
                 case "home owner":
                   console.log("User is a home owner");
-                  sendMessage(id,"Thanks. This home is perfect for the first home buyers grant");
+                  sendMessage(id,{text:"Thanks. This home is perfect for the first home buyers grant"});
+                  // how many bed // baths are you looking for
                   break;
+                default :
+                  console.log("didnt understand quick reply");
+                  breakl
               }
             }
 
@@ -973,6 +978,7 @@ const get_started = ([{
 // }
 ]);
 
+// condense this into one variable that can accept input for title & payload.
 const rentOrBuy = ([
   {"content_type":"text",
     "title":"Renting",
@@ -994,6 +1000,18 @@ const isInvestor = ([
     "content_type":"text",
     "title":"No",
     "payload":"home owner"
+  }
+]);
+
+const floorPlans = ([
+  {"content_type":"text",
+    "title":"Yes",
+    "payload":"email_floorplans"
+  },
+  {
+    "content_type":"text",
+    "title":"No",
+    "payload":"no_floorplans"
   }
 ]);
 
