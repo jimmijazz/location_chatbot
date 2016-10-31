@@ -473,13 +473,15 @@ app.post('/webhook', function (req, res) {
                   break;
                 case "buying":
                   console.log("User is buying");
-                  sendQuickReply(id, "Are you looking for an investment property?", isInvestor)
+                  sendQuickReply(id, "Are you looking for an investment property?", quickReply([
+                    {title:"Yes",payload:"investor"},
+                    {title:"No",payload:"home owner"},
+                  ]));
                   break;
                 // Investor or home owner
                 case "investor":
                   console.log("User is an investor");
-                  sendMessage(id, {text:"Great. This property has a 7% rental guarantee over 3 years!"});
-                  sendQuickReply(id, "Would you like me to email you with our floor plans? ", floorPlans)
+                  sendQuickReply(id, "Great. This property has a 7% rental guarantee over 3 years! Would you like me to email you with our floor plans? ", floorPlans)
                   break;
                 case "home owner":
                   console.log("User is a home owner");
@@ -1019,6 +1021,23 @@ const floorPlans = ([
     "payload":"no_floorplans"
   }
 ]);
+
+function quickReply(buttons) {
+  // quickReply([dict]) - > []
+  replies = [];
+  for (i = 0; i < buttons ; i ++ ) {
+
+    var button =
+    {
+      "content_type":"text",
+      "title":button[i].title,
+      "payload":button[i].payload
+    };
+
+    replies.push(button);
+  }
+  return replies;
+}
 
 // Initialize the app
 app.listen((process.env.PORT || 3000));
