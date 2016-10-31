@@ -483,7 +483,6 @@ app.post('/webhook', function (req, res) {
                     {title:"two",payload:"two"},
                     {title:"three",payload:"three"},
                   ]));
-                  sendMessage(id, {text: "Thanks! You can ask us about nearby shops, schools or any other questions about the property."})
                   break;
                 case "buying":
                   sendQuickReply(id, "Are you looking for an investment property?", quickReply([
@@ -493,10 +492,18 @@ app.post('/webhook', function (req, res) {
                   break;
                 // Investor or home owner
                 case "investor":
-                  sendMessage(id, {text: "You can ask us about nearby shops, schools or any other questions about the property."})
+                sendQuickReply(id,"You can ask us any question about this property. Here are some other FAQ:",
+                quickReply([
+                  {title:"Schools",payload:"schools"},
+                  {title:"Shops",payload:"shops"},
+                  {title:"NBN",payload:"nbn"},
+                  {title:"Features",payload:"features"},
+
+                ])
+              );
                   break;
                 case "home owner":
-                  sendMessage(id,{text:"Thanks. This home is perfect for the first home buyers grant. You can ask us about nearby shops, schools or any other questions about the property."});
+                  sendMessage(id,{text:"Thanks. This home is perfect for the first home buyers grant. You can ask us about nearby shops, schools or any other questions about the property.. Send 'help' for FAQ."});
 
                 // How many bedrooms
                 case "two":
