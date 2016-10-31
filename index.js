@@ -401,7 +401,7 @@ app.post('/webhook', function (req, res) {
 
 
                 updateMsg(id,msg_meta);   // See if new user and update message.
-                sendMessage(id, {text: "Hi " + user.first_name +". Thanks for looking at 146/54 Slobodian Avenue. You can ask us any question about the property."} )
+                sendMessage(id, {text: "Hi " + user.first_name +". Thanks for looking at 146/54 Slobodian Avenue. You can ask us any question about the property or send 'help' for FAQ."} )
 
                 // Might not work because sendGenericMessage != null so is true
                 // if (sendGenericMessage(id, get_started) {
@@ -458,9 +458,8 @@ app.post('/webhook', function (req, res) {
                   }
                 }
               );
-
-            // ** QUICK REPLIES ** //
-          }else if (event.message && event.message.text && !event.message.echo && String(event.message.text).toLowerCase() == "help" {
+              // HELP MESSAGES
+          } else if (event.message && event.message.text && !event.message.echo && String(event.message.text).toLowerCase() == "help") {
             // TO DO: Replace agency details
             sendQuickReply(id,
               "This chat is managed by a bot to help you get instant answers to your questions. You can also email us at agent@bestagency.com. Here are some FAQ:",
@@ -472,6 +471,7 @@ app.post('/webhook', function (req, res) {
 
             ])
           )
+          // ** QUICK REPLIES ** //
           } else if ( event.message && event.message.quick_reply) {
               console.log("Quick Reply!");
 
