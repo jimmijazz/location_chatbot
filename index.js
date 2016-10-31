@@ -461,8 +461,7 @@ app.post('/webhook', function (req, res) {
             // HELP MESSAGES
           } else if (event.message && event.message.text && !event.message.echo && String(event.message.text).toLowerCase() == "help") {
             // TO DO: Replace agency details
-            sendQuickReply(id,
-              "This chat is managed by a bot to help you get instant answers to your questions. You can also email us at agent@bestagency.com. Here are some FAQ:",
+            sendQuickReply(id,"This chat is managed by a bot to help you get instant answers to your questions. You can also email us at agent@bestagency.com. Here are some FAQ:",
             quickReply([
               {title:"Schools",payload:"schools"},
               {title:"Shops",payload:"shops"},
@@ -470,7 +469,7 @@ app.post('/webhook', function (req, res) {
               {title:"Features",payload:"features"},
 
             ])
-          )
+          );
           // ** QUICK REPLIES ** //
           } else if ( event.message && event.message.quick_reply) {
               console.log("Quick Reply!");
