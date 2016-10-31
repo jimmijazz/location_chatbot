@@ -1144,6 +1144,7 @@ function quickReply(buttons) {
 
     replies.push(button);
   }
+  console.log(replies);
   return replies;
 }
 
