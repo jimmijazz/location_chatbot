@@ -1138,8 +1138,8 @@ function quickReply(buttons) {
     var button =
     {
       "content_type":"text",
-      "title":button[i].title,
-      "payload":button[i].payload
+      "title":buttons[i].title,
+      "payload":buttons[i].payload
     };
 
     replies.push(button);
