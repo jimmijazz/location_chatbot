@@ -458,7 +458,7 @@ app.post('/webhook', function (req, res) {
                   }
                 }
               );
-              // HELP MESSAGES
+            // HELP MESSAGES
           } else if (event.message && event.message.text && !event.message.echo && String(event.message.text).toLowerCase() == "help") {
             // TO DO: Replace agency details
             sendQuickReply(id,
