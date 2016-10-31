@@ -4,6 +4,8 @@
 // Use fbMessage over SendMessage
 // Show how a person could query about a house
 // Condense new user check into a class (is agent? is new user? messages)
+// Get home valuations
+
 
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -106,11 +108,9 @@ const actions = {
       // Check if text paylad is an object
       if (text.text[0] === "{") {
         console.log("Sending generic message:" + text);
-
         sendGenericMessage(recipientId, text.text);
       } else {
         console.log("Sending regular message" + text);
-
         sendMessage(recipientId,text);
       }
       // return fbMessage(recipientId, text)
@@ -401,7 +401,7 @@ app.post('/webhook', function (req, res) {
 
 
                 updateMsg(id,msg_meta);   // See if new user and update message.
-                sendMessage(id, {text: "Hi " + user.first_name +". Thanks for looking at 146/54 Slobodian Avenue. Here are a few photos: "} )
+                sendMessage(id, {text: "Hi " + user.first_name +". Thanks for looking at 146/54 Slobodian Avenue. You can ask us any question about the property."} )
 
                 // Might not work because sendGenericMessage != null so is true
                 // if (sendGenericMessage(id, get_started) {
@@ -460,6 +460,18 @@ app.post('/webhook', function (req, res) {
               );
 
             // ** QUICK REPLIES ** //
+          }else if (event.message && event.message.text && !event.message.echo && String(event.message.text).toLowerCase() == "help" {
+            // TO DO: Replace agency details
+            sendQuickReply(id,
+              "This chat is managed by a bot to help you get instant answers to your questions. You can also email us at agent@bestagency.com. Here are some FAQ:",
+            quickReply([
+              {title:"Schools",payload:"schools"},
+              {title:"Shops",payload:"shops"},
+              {title:"NBN",payload:"nbn"},
+              {title:"Features",payload:"features"},
+
+            ])
+          )
           } else if ( event.message && event.message.quick_reply) {
               console.log("Quick Reply!");
 
@@ -468,11 +480,13 @@ app.post('/webhook', function (req, res) {
               switch(reply) {
                 // Renting or buying
                 case "renting":
-                  console.log("User is renting");
+                  sendQuickReply(id, "Great! Would you like to look at two or three bedroom apartments?", quickReply([
+                    {title:"two",payload:"two"},
+                    {title:"three",payload:"three"},
+                  ]));
                   sendMessage(id, {text: "Thanks! You can ask us about nearby shops, schools or any other questions about the property."})
                   break;
                 case "buying":
-                  console.log("User is buying");
                   sendQuickReply(id, "Are you looking for an investment property?", quickReply([
                     {title:"Yes",payload:"investor"},
                     {title:"No",payload:"home owner"},
@@ -480,19 +494,70 @@ app.post('/webhook', function (req, res) {
                   break;
                 // Investor or home owner
                 case "investor":
-                  console.log("User is an investor");
-                  sendQuickReply(id, "Great. This property has a 7% rental guarantee over 3 years! Would you like me to email you with our floor plans? ", floorPlans)
+                  sendMessage(id, {text: "You can ask us about nearby shops, schools or any other questions about the property."})
                   break;
                 case "home owner":
-                  console.log("User is a home owner");
-                  sendMessage(id,{text:"Thanks. This home is perfect for the first home buyers grant"});
-                  sendMessage(id, {text: "You can ask us about nearby shops, schools or any other questions about the property."})
+                  sendMessage(id,{text:"Thanks. This home is perfect for the first home buyers grant. You can ask us about nearby shops, schools or any other questions about the property."});
 
-                  // how many bed // baths are you looking for
+                // How many bedrooms
+                case "two":
+                  // send photos of two bedroom homes
+                  sendGenericMessage(id, twoBedroom);
                   break;
+
+                case "three":
+                  // send photos of three bedroom homes
+                  sendGenericMessage(id, threeBedroom);
+
                 case "email_floorplans":
 
                   break;
+
+                // Help Menu Options
+                case "schools":
+                  sendQuickReply(id, "Primary schools - Warrigal Road State School, Eight Mile Plains State School, Redeemer Lutheran College, MacGregor State School, St Peter's Primary School Secondary Schools - Rochedale State High School, Redeemer Lutheran College, MacGregor State High School, Runcorn State High SChool, Brisbane Adventist College",
+                    quickReply([
+                      {title:"Schools",payload:"schools"},
+                      {title:"Shops",payload:"shops"},
+                      {title:"NBN",payload:"nbn"},
+                      {title:"Features",payload:"features"},
+
+                    ])
+                  );
+                  break;
+                case "shops":
+                  sendQuickReply(id, "Garden city is five minutes away",
+                    quickReply([
+                      {title:"Schools",payload:"schools"},
+                      {title:"Shops",payload:"shops"},
+                      {title:"NBN",payload:"nbn"},
+                      {title:"Features",payload:"features"},
+
+                    ])
+                  )
+                break;
+                case "nbn":
+                  sendQuickReply(id, "All homes are NBN ready!",
+                    quickReply([
+                      {title:"Schools",payload:"schools"},
+                      {title:"Shops",payload:"shops"},
+                      {title:"NBN",payload:"nbn"},
+                      {title:"Features",payload:"features"},
+
+                    ])
+                  )
+                break;
+                case "features" :
+                  sendQuickReply(id, "Each apartment",
+                    quickReply([
+                      {title:"Schools",payload:"schools"},
+                      {title:"Shops",payload:"shops"},
+                      {title:"NBN",payload:"nbn"},
+                      {title:"Features",payload:"features"},
+
+                    ])
+                );
+                break;
                 default :
                   console.log("didnt understand quick reply");
                   break;
@@ -537,6 +602,8 @@ app.post('/webhook', function (req, res) {
 
                 })
               } else {
+                // User is not agent. Currently only  using one bot. Eventually
+                // might use two (one for agent one for users).
                 wit_agent.runActions(
                   sessionId,
                   event.message.text,
@@ -552,8 +619,8 @@ app.post('/webhook', function (req, res) {
 
             // ** LOCATION MESSAGE ** //
           } else if (event.message && event.message.attachments && event.message.attachments[0].type == 'location') {
-                // TO DO:
-                // - Search for nearest property rather then trying to find an exact match
+
+                // Get lat and longitude from location object
                 var lat = event.message.attachments[0].payload.coordinates.lat;
                 var long = event.message.attachments[0].payload.coordinates.long;
 
@@ -565,7 +632,7 @@ app.post('/webhook', function (req, res) {
                     // data = google JSON formatted address
                     var address = data.results[0];
 
-                    // Search or property in x amount of metres
+                    // Search for property in $maxDistance amount of metres
                     db.collection(PROPERTIES).findOne(
                       {
                         loc : {
@@ -611,7 +678,7 @@ app.post('/webhook', function (req, res) {
                         console.log("No property found ")
                       }
                     });
-                    }
+                  }           // FIX CALLBACK MESS
                 });
 
           }
@@ -619,12 +686,13 @@ app.post('/webhook', function (req, res) {
           });
       };
     };
+
     res.sendStatus(200);
   });
 
 // Generic function sending messages
 const fbMessage = (id, text) => {
-//  var x = true; // I think this was here to test the generic
+//  var x = true; // I think this was here to test the generic message
   console.log(text.text);
   payload = JSON.parse(text.text);
   console.log(payload);
@@ -672,7 +740,9 @@ const fbMessage = (id, text) => {
 
 
 function sendMessage(recipientId, message) {
-  // Sends generic Message
+  // Sends normal text message to recipient ID
+  // sendMessage(string, {text:string})
+
     request({
         url: 'https://graph.facebook.com/v2.6/me/messages',
         qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
@@ -687,7 +757,7 @@ function sendMessage(recipientId, message) {
         } else if (response.body.error) {
             console.log('Error: ', response.body.error);
         }
-        console.log(body);
+        //console.log(body);
     });
 };
 
@@ -722,7 +792,7 @@ function sendGenericMessage(recipientId, payload) {
 			}
 		}
 	};
-  console.log(messageData);
+  //console.log(messageData);
 
 	request({
 		url: 'https://graph.facebook.com/v2.6/me/messages',
@@ -985,6 +1055,37 @@ const get_started = ([{
 // }
 ]);
 
+const twoBedroom = ([{
+  "title" : "Two Bedroom Floorplan",
+  "subtitle" : "146/54 Slobodian Avenue",
+  "image_url" :  "http://cdn6.ljhooker.com/56d425fc7cd7193b2700090e.jpg"
+},{
+"title" : "Two bedrooms",
+"subtitle" : "146/54 Slobodian Avenue",
+"image_url" :  "http://cdn5.ljhooker.com/57874eaf7bd719e719000292.jpg"
+},{
+"title" : "New Kitchen Appliances",
+"subtitle" : "146/54 Slobodian Avenue",
+"image_url" :  "http://cdn6.ljhooker.com/57874eaf7bd719e719000298.jpg"
+}
+]);
+
+const threeBedroom = ([{
+  "title" : "146/54 Slobodian Avenue",
+  "subtitle" : "146/54 Slobodian Avenue",
+  "image_url" :  "http://cdn3.ljhooker.com/57874eaf7bd719e719000284.jpg"
+},{
+"title" : "Open Living Area",
+"subtitle" : "146/54 Slobodian Avenue",
+"image_url" :  "http://cdn3.ljhooker.com/57874eaf7bd719e719000282.jpg"
+},{
+"title" : "New Kitchen Appliances",
+"subtitle" : "146/54 Slobodian Avenue",
+"image_url" :  "http://cdn4.ljhooker.com/57874eaf7bd719e719000288.jpg"
+}
+]);
+
+
 // condense this into one variable that can accept input for title & payload.
 const rentOrBuy = ([
   {"content_type":"text",
@@ -1023,6 +1124,7 @@ const floorPlans = ([
 ]);
 
 function quickReply(buttons) {
+  // Used for generating quick reply template
   // quickReply([dict]) - > []
   replies = [];
   for (i = 0; i < buttons ; i ++ ) {
