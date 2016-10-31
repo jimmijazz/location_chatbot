@@ -461,7 +461,7 @@ app.post('/webhook', function (req, res) {
             // HELP MESSAGES
           } else if (event.message && event.message.text && !event.message.echo && String(event.message.text).toLowerCase() == "help") {
             // TO DO: Replace agency details
-            sendQuickReply(id,"This chat is managed by a bot to help you get instant answers to your questions. You can also email us at agent@bestagency.com. Here are some FAQ:",
+            sendQuickReply(id,"This chat is managed the OpenHood bot to help you get instant answers to all your real estate questions. You can also email us at joshua.bitossi@gmail.com. Here are some FAQ:",
             quickReply([
               {title:"Schools",payload:"schools"},
               {title:"Shops",payload:"shops"},
