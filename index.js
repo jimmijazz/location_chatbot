@@ -1133,7 +1133,7 @@ function quickReply(buttons) {
   // Used for generating quick reply template
   // quickReply([dict]) - > []
   replies = [];
-  for (i = 0; i < buttons ; i ++ ) {
+  for (i = 0; i < buttons.length ; i ++ ) {
 
     var button =
     {
