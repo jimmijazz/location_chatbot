@@ -468,8 +468,8 @@ app.post('/webhook', function (req, res) {
               switch(reply) {
                 // Renting or buying
                 case "renting":
-                  sendMessage(id, {text:"Thanks"});
                   console.log("User is renting");
+                  sendMessage(id, {text: "Thanks! You can ask us about nearby shops, schools or any other questions about the property."})
                   break;
                 case "buying":
                   console.log("User is buying");
@@ -479,16 +479,21 @@ app.post('/webhook', function (req, res) {
                 case "investor":
                   console.log("User is an investor");
                   sendMessage(id, {text:"Great. This property has a 7% rental guarantee over 3 years!"});
-                  sendQuickReply(id, "Would you like me to email you with our floor plans? ", floorplans)
+                  sendQuickReply(id, "Would you like me to email you with our floor plans? ", floorPlans)
                   break;
                 case "home owner":
                   console.log("User is a home owner");
                   sendMessage(id,{text:"Thanks. This home is perfect for the first home buyers grant"});
+                  sendMessage(id, {text: "You can ask us about nearby shops, schools or any other questions about the property."})
+
                   // how many bed // baths are you looking for
+                  break;
+                case "email_floorplans":
+
                   break;
                 default :
                   console.log("didnt understand quick reply");
-                  breakl
+                  break;
               }
             }
 
