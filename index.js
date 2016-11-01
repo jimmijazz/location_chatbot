@@ -409,7 +409,7 @@ app.post('/webhook', function (req, res) {
                 // })
 
                 // if works delete the True/false from sendGenericMessage()
-                sendGenericMessageThanQuickReply(id, get_started, "Are you renting or buying?", rentOrBuy);
+                sendGenericMessageThenQuickReply(id, get_started, "Are you renting or buying?", rentOrBuy);
                 // sendGenericMessage(id,get_started);
                 // sendQuickReply(id,"Are you renting or buying?", rentOrBuy );
 
@@ -513,6 +513,14 @@ app.post('/webhook', function (req, res) {
 
                 case "three":
                   // send photos of three bedroom homes
+                  sendGenericMessageThenQuickReply(id, threeBedroom, "Here are som frequently asked questions:", quickReply([
+                    {title:"Schools",payload:"schools"},
+                    {title:"Shops",payload:"shops"},
+                    {title:"NBN",payload:"nbn"},
+                    {title:"Features",payload:"features"},
+
+                  ]));
+
                   sendGenericMessage(id, threeBedroom);
 
                 case "email_floorplans":
@@ -846,7 +854,7 @@ function sendQuickReply(recipientId,message,buttons){
 
 };
 
-function sendGenericMessageThanQuickReply(recipientId, payload, text, buttons) {
+function sendGenericMessageThenQuickReply(recipientId, payload, text, buttons) {
   // Sends a generic message to the user. If successful sends quick reply message.
   // sendGenericMessageThanQuickReply(string,array[object], string, array[object]) -> None
 
