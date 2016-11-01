@@ -508,12 +508,18 @@ app.post('/webhook', function (req, res) {
                 // How many bedrooms
                 case "two":
                   // send photos of two bedroom homes
-                  sendGenericMessage(id, twoBedroom);
+                  sendGenericMessageThenQuickReply(id, threeBedroom, "Here are something frequently asked questions:", quickReply([
+                    {title:"Schools",payload:"schools"},
+                    {title:"Shops",payload:"shops"},
+                    {title:"NBN",payload:"nbn"},
+                    {title:"Features",payload:"features"},
+
+                  ]));
                   break;
 
                 case "three":
                   // send photos of three bedroom homes
-                  sendGenericMessageThenQuickReply(id, threeBedroom, "Here are som frequently asked questions:", quickReply([
+                  sendGenericMessageThenQuickReply(id, threeBedroom, "Here are something frequently asked questions:", quickReply([
                     {title:"Schools",payload:"schools"},
                     {title:"Shops",payload:"shops"},
                     {title:"NBN",payload:"nbn"},
@@ -521,7 +527,6 @@ app.post('/webhook', function (req, res) {
 
                   ]));
 
-                  sendGenericMessage(id, threeBedroom);
 
                 case "email_floorplans":
 
