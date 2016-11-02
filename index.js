@@ -16,6 +16,11 @@ const geocoder = require('geocoder');
 const mongodb = require("mongodb");
 const ObjectID = mongodb.ObjectID;
 
+// Wit Paramters
+const wit_url = "https://api.wit.ai/";
+const wit_version = "20161102";
+
+
 
 
 // LockedOn CRM
@@ -768,7 +773,8 @@ function witConverse(userMsg) {
     url: wit_url + "converse/" + wit_version + "q=" + encodeURI(userMsg),
     method: 'POST',
     headers: {'Content-Type' : 'application/json',
-              'Accept': 'application/json'
+              'Accept': 'application/json',
+              'Authorization' : 'Bearer ' + WIT_TOKEN_AGENT
             }
   }, function(error, response) {
     if (error) {
