@@ -588,7 +588,7 @@ app.post('/webhook', function (req, res) {
               }
             }
           else if (event.message && event.message.text && event.message.text =="school" && ! event.message.echo) {
-            console.log(witConverse("What schools are close?"));
+            console.log(witConverse("Does this property have NBN?"));
           }
           // ** TEXT MESSAGE (Default if text doesn't meet above criteria)** //
           else if (event.message && event.message.text && !event.message.echo) {
@@ -767,9 +767,12 @@ const fbMessage = (id, text) => {
 function witConverse(userMsg) {
   // Takes a user message and gets the response from Wit.AI
   // witConverse(String) -> Object
+  var session id = "12345678pokl"
   console.log("Conversing with Wit")
+  console.log(encodeURI(usermsg));
+
   request({
-    url: wit_url + "converse/" + wit_version + "q=" + encodeURI(userMsg),
+    url: wit_url + "converse/?v=" + wit_version +"session_id=" + session_id + "q=" + encodeURI(userMsg),
     method: 'POST',
     headers: {'Content-Type' : 'application/json',
               'Accept': 'application/json',
@@ -779,9 +782,8 @@ function witConverse(userMsg) {
     if (error) {
       console.log("Error from Wit: ", error);
     } else {
-      console.log("Response body: " + response.body)
+      console.log("Response body: " + response.body);
       return (response);
-
     }
   })
 }
