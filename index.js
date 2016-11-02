@@ -770,9 +770,9 @@ function witConverse(userMsg) {
   var session_id = "12345678pokl"
   console.log("Conversing with Wit")
   console.log(encodeURI(userMsg));
-
+  var combined_url = wit_url + "converse/?v=" + wit_version +"session_id=" + session_id + "q=" + encodeURI(userMsg);
   request({
-    url: wit_url + "converse/?v=" + wit_version +"session_id=" + session_id + "q=" + encodeURI(userMsg),
+    url: combined_url,
     method: 'POST',
     headers: {'Content-Type' : 'application/json',
               'Accept': 'application/json',
@@ -783,6 +783,7 @@ function witConverse(userMsg) {
       console.log("Error from Wit: ", error);
     } else {
       console.log("Response body: " + response.body);
+      console.log(response);
       return (response);
     }
   })
