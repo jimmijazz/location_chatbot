@@ -588,8 +588,7 @@ app.post('/webhook', function (req, res) {
               }
             }
           else if (event.message && event.message.text && event.message.text =="school" && ! event.message.echo) {
-            console.log("Conversing with Wit");
-            console.log(witConverse("test"));
+            console.log(witConverse("What schools are close?"));
           }
           // ** TEXT MESSAGE (Default if text doesn't meet above criteria)** //
           else if (event.message && event.message.text && !event.message.echo) {
