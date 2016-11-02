@@ -110,7 +110,7 @@ const actions = {
         console.log("Sending generic message:" + text.title);
         sendGenericMessage(recipientId, text);
       } else {
-        console.log("Sending regular message" + text.title;
+        console.log("Sending regular message" + text.title);
         sendMessage(recipientId,text);
       }
       // return fbMessage(recipientId, text)
