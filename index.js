@@ -762,7 +762,7 @@ const fbMessage = (id, text) => {
 function witConverse(userMsg) {
   // Takes a user message and gets the response from Wit.AI
   // witConverse(String) -> Object
-
+  console.log("Conversing with Wit")
   request({
     url: wit_url + "converse/" + wit_version + "q=" + encodeURI(userMsg),
     method: 'POST',
@@ -773,7 +773,9 @@ function witConverse(userMsg) {
     if (error) {
       console.log("Error from Wit: ", error);
     } else {
+      console.log(response);
       return (response);
+
     }
   })
 }
