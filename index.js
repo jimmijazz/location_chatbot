@@ -107,10 +107,10 @@ const actions = {
 
       // Check if text paylad is an object
       if (text.text[0] === "{") {
-        console.log("Sending generic message:" + text);
-        sendGenericMessage(recipientId, text.text);
+        console.log("Sending generic message:" + text.title);
+        sendGenericMessage(recipientId, text);
       } else {
-        console.log("Sending regular message" + text);
+        console.log("Sending regular message" + text.title;
         sendMessage(recipientId,text);
       }
       // return fbMessage(recipientId, text)
@@ -582,7 +582,9 @@ app.post('/webhook', function (req, res) {
                   break;
               }
             }
-
+          else if (event.mesasge && event.message.text && event.message.text =="test" && ! event.message.echo) {
+            console.log(witConverse("test"));
+          }
           // ** TEXT MESSAGE (Default if text doesn't meet above criteria)** //
           else if (event.message && event.message.text && !event.message.echo) {
               console.log("Text Message");
@@ -757,6 +759,24 @@ const fbMessage = (id, text) => {
   });
 };
 
+function witConverse(userMsg) {
+  // Takes a user message and gets the response from Wit.AI
+  // witConverse(String) -> Object
+
+  request({
+    url: wit_url + "converse/" + wit_version + "q=" + encodeURI(userMsg),
+    method: 'POST',
+    headers: {'Content-Type' : 'application/json',
+              'Accept': 'application/json'
+            }
+  }, function(error, response) {
+    if (error) {
+      console.log("Error from Wit: ", error);
+    } else {
+      return (response);
+    }
+  })
+}
 
 function sendMessage(recipientId, message) {
   // Sends normal text message to recipient ID
