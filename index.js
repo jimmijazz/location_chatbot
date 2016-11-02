@@ -779,8 +779,8 @@ function witConverse(userMsg) {
     if (error) {
       console.log("Error from Wit: ", error);
     } else {
-      console.log(response.body)
-      return (response.body);
+      console.log("Response body: " + response.body)
+      return (response);
 
     }
   })
