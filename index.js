@@ -769,7 +769,7 @@ function witConverse(userMsg) {
   // witConverse(String) -> Object
   var session_id = "12345678pokl"
   console.log("Conversing with Wit")
-  console.log(encodeURI(usermsg));
+  console.log(encodeURI(userMsg));
 
   request({
     url: wit_url + "converse/?v=" + wit_version +"session_id=" + session_id + "q=" + encodeURI(userMsg),
