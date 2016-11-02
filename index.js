@@ -770,7 +770,7 @@ function witConverse(userMsg) {
   var session_id = "12345678pokl"
   console.log("Conversing with Wit")
   console.log(encodeURI(userMsg));
-  var combined_url = wit_url + "converse/?v=" + wit_version +"session_id=" + session_id + "q=" + encodeURI(userMsg);
+  var combined_url = wit_url + "converse/?v=" + wit_version +"&session_id=" + session_id + "&q=" + encodeURI(userMsg);
   request({
     url: combined_url,
     method: 'POST',
