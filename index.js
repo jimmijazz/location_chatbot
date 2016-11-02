@@ -583,6 +583,7 @@ app.post('/webhook', function (req, res) {
               }
             }
           else if (event.mesasge && event.message.text && event.message.text =="test" && ! event.message.echo) {
+            console.log("Conversing with Wit");
             console.log(witConverse("test"));
           }
           // ** TEXT MESSAGE (Default if text doesn't meet above criteria)** //
