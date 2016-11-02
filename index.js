@@ -588,7 +588,7 @@ app.post('/webhook', function (req, res) {
               }
             }
           else if (event.message && event.message.text && event.message.text =="school" && ! event.message.echo) {
-            console.log(witConverse("Does this property have NBN?"));
+            console.log(witConverse("Does this property have NBN"));
           }
           // ** TEXT MESSAGE (Default if text doesn't meet above criteria)** //
           else if (event.message && event.message.text && !event.message.echo) {
