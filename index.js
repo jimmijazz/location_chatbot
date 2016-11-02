@@ -767,7 +767,7 @@ const fbMessage = (id, text) => {
 function witConverse(userMsg) {
   // Takes a user message and gets the response from Wit.AI
   // witConverse(String) -> Object
-  var session id = "12345678pokl"
+  var session_id = "12345678pokl"
   console.log("Conversing with Wit")
   console.log(encodeURI(usermsg));
 
