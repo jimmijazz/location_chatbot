@@ -587,7 +587,7 @@ app.post('/webhook', function (req, res) {
                   break;
               }
             }
-          else if (event.message && event.message.text && event.message.text =="test" && ! event.message.echo) {
+          else if (event.message && event.message.text && event.message.text =="school" && ! event.message.echo) {
             console.log("Conversing with Wit");
             console.log(witConverse("test"));
           }
@@ -780,8 +780,8 @@ function witConverse(userMsg) {
     if (error) {
       console.log("Error from Wit: ", error);
     } else {
-      console.log(response);
-      return (response);
+      console.log(response.body)
+      return (response.body);
 
     }
   })
