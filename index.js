@@ -24,13 +24,13 @@ const wit_version = "20161102";
 
 
 // LockedOn CRM
-var lockedOnCode = "6975de34da026024dae43389185661ef@lockedoncloud.com";
+var lockedOnCode =
 
 // Agent's Facebook page ID
-const agentFBID = "652607908238304";
+const agentFBID =
 
 // Google Maps
-var google_api_key ="AIzaSyDbhlnIkxUmb0cwIMCx34P9W2lGYYa-UFg";
+var google_api_key =
 var map_url = "https://maps.googleapis.com/maps/api/staticmap?maptype=satellite&center=";
 
 // ----------------------------------------------------------------------------
